@@ -1,0 +1,27 @@
+// 将设置放入此文件中以覆盖默认值和用户设置。
+{
+    "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/**/._*":true
+  },
+  "files.associations": {
+    "locale": "cpp",
+    "bitset": "cpp",
+    "algorithm": "cpp",
+    "atomic": "cpp",
+    "functional": "cpp",
+    "memory": "cpp",
+    "system_error": "cpp",
+    "tuple": "cpp",
+    "type_traits": "cpp",
+    "__functional_base": "cpp",
+    "istream": "cpp",
+    "utility": "cpp",
+    "*.tcc": "cpp",
+    "ratio": "cpp"
+  }
+}
