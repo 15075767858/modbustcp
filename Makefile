@@ -13,8 +13,7 @@ libs=\
 2:
 	$(cc) $(libs) server.c -o a.out -g
 1:
-	cc server.c
-	./a.out
+	cc test.c -g && ./a.out
 3:
 	$(cc) $(libs) server.c -o a.out -g && 	./a.out
 run:all

@@ -9,4 +9,4 @@ set hiredisdir=hiredis
 	REM %gcc% -c %hiredisdir%/read.c -I%hiredisdir%/ -o ./output/read.o
 	REM %gcc% -c %hiredisdir%/sds.c -I%hiredisdir%/ -o ./output/sds.o
 	REM %gcc% -c %hiredisdir%/hiredis.c -I%hiredisdir%/ -o ./output/hiredis.o
-%gcc% test.c ./output/modbus.o ./output/modbus-tcp.o ./output/modbus-data.o ./output/dict.o ./output/net.o ./output/read.o ./output/sds.o ./output/hiredis.o  -o test.out -I./libmodbus-3.1.4/src  -I./hiredis
+%gcc% server.c ./output/modbus.o ./output/modbus-tcp.o ./output/modbus-data.o ./output/dict.o ./output/net.o ./output/read.o ./output/sds.o ./output/hiredis.o  -o test.out -I./libmodbus-3.1.4/src  -I./hiredis

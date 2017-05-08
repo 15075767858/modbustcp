@@ -1,16 +1,26 @@
 #include <stdio.h>
 #include <string.h>
 
-char * test()
+void test(char *buf)
 {
-
-    char *a = "11111";
-    return a;
+    buf[0] = '1';
+    buf[1] = '1';
+    buf[2] = '1';
 }
+
+
 int main()
 {
+    char resdata[100];
+    memset(resdata, 0, 100);
+    char *sbit = "1111111111";
+    bufAddSbit(resdata, sbit);
 
-    test();
+    //char buf[100]="asd";
+    //test(buf);
+    //printf("%s \n",buf);
+
+    //test();
     // int num = 10;
 
     // char buf[10];
