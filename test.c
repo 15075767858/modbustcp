@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
+#include <stdlib.h>
 void test(char *buf)
 {
     buf[0] = '1';
@@ -8,15 +8,21 @@ void test(char *buf)
     buf[2] = '1';
 }
 
+void catNumAdd0(char *buffer, int num)
+{
+    char buf[10];
+    memset(buf, 0, 10);
+    sprintf(buf, "%02d", num);
+    strcat(buffer, buf);
+}
 
 int main()
 {
-    char resdata[100];
-    memset(resdata, 0, 100);
-    char *sbit = "1111111111";
-    bufAddSbit(resdata, sbit);
+    char s[] = "11.1";
+    int a = atoi(s);
 
-    //char buf[100]="asd";
+    printf("%d  \n", a);
+    //printf("%Lf\n", a);
     //test(buf);
     //printf("%s \n",buf);
 

@@ -12,7 +12,7 @@
             "cwd": "${workspaceRoot}",
             "environment": [],
             "externalConsole": true,
-            "preLaunchTask":"make",
+            //"preLaunchTask":"make",
             "linux": {
                 "MIMode": "gdb",
                 "setupCommands": [
