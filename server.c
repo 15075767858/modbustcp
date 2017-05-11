@@ -9,12 +9,14 @@
 #include <fcntl.h>
 #include <sys/shm.h>
 #include "hiredis/hiredis.h"
-#define MYPORT 8888
+#include "mxml-release-2.10/mxml.h"
+#define MYPORT 502
 #define QUEUE 20
 #define BUFFER_SIZE 1024
 
 typedef unsigned short u16;
 typedef unsigned char u8;
+static const char *netnum;
 //1001001
 //网络号 模块地址 点位类型 点位编号
 //单元标识符对应网络号 模块地址对应模块地址 函数对应的应该是功能代码 寄存器开始地址 应该是点位编号
@@ -40,12 +42,14 @@ typedef struct
     u8 bit_num;      //数据字节个数
     char *bit_data;  //数据
 } modbus_response;
-char *resBuffer;
+static const char *netnum;
+
 modbus_request readMessage(char *buffer, int len, int conn);
 void catNumAdd0(char *buffer, int num);    //在字符串后面加上一个两位数的数字 如果该数字小于10则在前面补0
 int bit8ToInt(char *strbuf);               //8位字符串转数字
 char *intToChar(int num);                  //数字转字符串
 int bufAddSbit(char *resdata, char *sbit); //字符数组后面添加一个16进制数字，每8位字符串就是一个数字
+int initNetNum();
 
 modbus_response readAI(modbus_request *mrq)
 {
@@ -60,7 +64,7 @@ modbus_request readMessage(char *buffer, int len, int conn)
     mrq.protocol = buffer[2] * 256 + buffer[3];
     mrq.len = buffer[4] * 256 + buffer[5];
     mrq.slave = buffer[6];                       //设备地址
-    mrq.fun = (int)buffer[7];                    //点位类型
+    mrq.fun = (int)buffer[7];                    //功能码
     mrq.reg_str = buffer[8] * 256 + buffer[9];   //点位编号
     mrq.reg_num = buffer[10] * 256 + buffer[11]; //数量
 
@@ -82,19 +86,47 @@ modbus_request readMessage(char *buffer, int len, int conn)
     //mrp.len = mrq.len; //待修改
     mrp.slave = mrq.slave;
     mrp.fun = mrq.fun;
-
     if (len - 6 != mrq.len)
     {
         printf("data length error %d %d \n", len - 6, mrq.len);
+        send(conn, buffer, len, 0);
     }
     char key[10];
     memset(key, 0, 10);
-    char *netnum = "1000";
     key[0] = netnum[0];
     key[1] = netnum[1];
     catNumAdd0(key, mrq.slave);
 
     redisContext *redis = redisConnect("127.0.0.1", 6379);
+    
+    //功能吗01对应04
+    //02对应03
+    //03对应02
+    //04对应0
+    //05
+    //key0-5
+    //6个页面的地址是多少 列出草稿
+    //0最多99个单精度浮点 4字节一个 总共400
+    //0-400
+    //从0第一页面 key的
+    //1的功能吗 512
+    //modbus 6个内存页面，对modbus 0-6的功能码
+    //一个内存页面做成512个字节 内存页面可以增加
+    //按照这样编排
+    //AI的点看有多少个 全部映射到modbus的内存页面
+    //modbus 中内存 01 地址
+    //012是单精度浮点型
+    //345是booeal
+    //前四位的key相同 就是一个设备标识符
+    //一个内存页面 存储一个设备标识符
+    //1001 1001有6个页面
+    //1002到另外6个内存页面 每一个设备都有6个内存页面
+    //客户端访问modbus直接给
+    //每隔10秒钟 把所有的点重新写入到内存页面
+    //可以订阅数据库发布的信息 解释出来 写入到modbus内存页面
+    //数据库先不管 初始化的时候查一下有多少key 把前四位相同的分多少个设备 每个设备初始化多少页面
+    //客户端数据可以通过
+    //
 
     if (mrq.fun == 1) //AO 1
     {
@@ -125,22 +157,25 @@ modbus_request readMessage(char *buffer, int len, int conn)
         resdata[5] = dtlen + 3;
         send(conn, resdata, 9 + dtlen, 0);
     }
-    if (mrq.fun == 6) //02 ab 00 00 00 06 ff 06 00 02 00 03
+    else if (mrq.fun == 6) //02 ab 00 00 00 06 ff 06 00 02 00 03
     {
         key[4] = '4';
-        char skey[10];
-        memset(skey, 0, 10);
-        strcat(skey, key);
-        catNumAdd0(skey, i + mrq.reg_str + 1);
         int addr = buffer[8] * 256 + buffer[9];
         int data = buffer[10] * 256 + buffer[11];
+        char skey[10];
+        memset(skey, 0, 10);
+        //sprintf(skey,)
+        strcat(skey, key);
+        catNumAdd0(skey, addr + 1);
+        printf("key = %s\n", skey);
         char commandbuffer[100];
-        sprintf(commandbuffer, "hget %s Present_Value", skey);
+        sprintf(commandbuffer, "hset %s Present_Value %d", skey, data);
         redisReply *rest = (redisReply *)redisCommand(redis, commandbuffer);
-    }
-    if (mrq.fun == 3) //BI 3
-    {
 
+        send(conn, buffer, 12, 0);
+    }
+    else if (mrq.fun == 3) //BI 3
+    {
         key[4] = '4';
         int i;
         char sbit[100];
@@ -173,6 +208,11 @@ modbus_request readMessage(char *buffer, int len, int conn)
             resdata[8] = count;
         }
         send(conn, resdata, 9 + resdata[8], 0);
+    }
+    else
+    {
+        buffer[7] = buffer[7] + 0x80;
+        send(conn, buffer, len, 0);
     }
     if (mrq.fun == 3) //
     {
@@ -280,6 +320,7 @@ void redisTest()
 
 int main()
 {
+    initNetNum();
     //redisTest();
     test();
     return 0;
@@ -313,4 +354,25 @@ void catNumAdd0(char *buffer, int num)
     memset(buf, 0, 10);
     sprintf(buf, "%02d", num);
     strcat(buffer, buf);
+}
+
+int initNetNum()
+{
+    FILE *fp;
+    mxml_node_t *tree;
+
+    fp = fopen("./bac_config.xml", "r");
+    if (fp == 0)
+    {
+        printf("/mnt/nandflash/bac_config.xml not found\n");
+        return 1;
+    }
+    tree = mxmlLoadFile(NULL, fp, MXML_TEXT_CALLBACK);
+    mxml_node_t *node;
+    node = mxmlFindElement(tree, tree, "net", NULL, NULL, MXML_DESCEND);
+
+    netnum = mxmlGetText(node, 0);
+    printf("net number = %s \n", netnum);
+    fclose(fp);
+    return 0;
 }

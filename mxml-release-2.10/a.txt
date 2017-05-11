@@ -1,0 +1,12 @@
+.//mxml-attr.o
+.//mxml-entity.o
+.//mxml-file.o
+.//mxml-get.o
+.//mxml-index.o
+.//mxml-node.o
+.//mxml-private.o
+.//mxml-search.o
+.//mxml-set.o
+.//mxml-string.o
+.//mxmldoc.o
+.//testmxml.o

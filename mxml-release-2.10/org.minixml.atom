@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:docset="http://developer.apple.com/rss/docset_extensions" xml:lang="en">
+    <id>http://www.minixml.org/org.minixml.atom/20170510085843</id>
+    <title type="text">minixml.org</title>
+    <link rel="self" href="http://www.minixml.org/org.minixml.atom"></link>
+    <updated>2017-05-10T08:58:43+08:00</updated>
+    <entry>
+        <id>tag:www.minixml.org,2017-05-10:org.minixml.docset/2.10.0</id>
+        <title type="text">Mini-XML API Reference</title>
+        <updated>2017-05-10T08:58:43+08:00</updated>
+        <content type="text">Mini-XML API Reference (v2.10.0)</content>
+        <link rel="enclosure" type="application/octet-stream" href="http://www.minixml.org/org.minixml.xar" length="75377"></link>
+        <docset:identifier>org.minixml.docset</docset:identifier>
+        <docset:version>2.10.0</docset:version>
+    </entry>
+</feed>

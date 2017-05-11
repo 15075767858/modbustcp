@@ -5,8 +5,7 @@
     "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/**/._*":true
+    "**/.DS_Store": true
   },
   "files.associations": {
     "locale": "cpp",
@@ -28,6 +27,7 @@
     "__locale": "cpp",
     "string": "cpp",
     "initializer_list": "cpp",
-    "iterator": "cpp"
+    "iterator": "cpp",
+    "__mutex_base": "cpp"
   }
 }

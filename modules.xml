@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<isa>
+    <Modules Total="1" AITotal="1" ADOTotal="0" DITotal="0">
+        <!-- Modules Info -->
+        <module address="2" net="1100">
+            <type>XFI821-AI</type>
+            <version>v1.4.1</version>
+            <referencevoltage>10.00</referencevoltage>
+        </module>
+    </Modules>
+</isa>
