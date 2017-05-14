@@ -81,6 +81,7 @@ int getDeviceMemory(DeviceMemory *dm, char *dev);
 void sortKeys(Keys *keys, int n);
 int DeviceMemoryInit();
 int redisInit();
+int DeviceMemoryAllUpdate();
 int freeKeys(Keys *keys);
 int freeDevs(Devs *devs);
 int fun01(modbus_request *mrq, char *resdata);
@@ -111,7 +112,8 @@ int fun01(modbus_request *mrq, char *resdata) //BO
 {
     //mrq->reg_str = mrq->reg_str + 1;
     printf("fun03  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->reg_str, mrq->reg_num);
-    DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
+    //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
+    DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;
     int count = 0;
@@ -179,7 +181,8 @@ int fun04(modbus_request *mrq, char *resdata)
 int fun03(modbus_request *mrq, char *resdata) //AV
 {
     printf("fun03  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->reg_str, mrq->reg_num);
-    DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
+    //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
+    DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;
     int count = 0;
@@ -697,8 +700,8 @@ int DeviceMemoryInit()
 
 void signal_handler(int m)
 {
-
-    DeviceMemoryInit();
+    DeviceMemoryAllUpdate();
+    //    DeviceMemoryInit();
     printf("%s\n", "timer runing");
 }
 void set_timer()
@@ -798,15 +801,12 @@ int DeviceMemoryAllUpdate()
 }
 int main()
 {
-    redisInit();
-    initDeviceMemoryAll();
-
-    while (1)
-    {
-        DeviceMemoryAllUpdate();
-        //test();
-        //DeviceMemoryInit();
-    }
+    // redisInit();
+    // initDeviceMemoryAll();
+    // while (1)
+    // {
+    //     DeviceMemoryAllUpdate();
+    // }
 
     redisInit();
     initDeviceMemoryAll();
