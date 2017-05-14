@@ -53,7 +53,7 @@ typedef struct Devs
 {
     int size;
     char **devs;
-} deviceSizeStrs;
+} Devs;
 typedef struct DeviceMemory
 {
     char *dev;
@@ -64,21 +64,31 @@ typedef struct DeviceMemory
     char BO[512];
     char BV[512];
 } DeviceMemory;
+typedef struct DeviceMemoryAll
+{
+    DeviceMemory **dma;
+    int size;
+} DeviceMemoryAll;
+static DeviceMemoryAll dma;
+
 static DeviceMemory **DeviceMemorys; //静态的当前所有设备的内存
+
 static int DeviceMemorysCount = 0;
 int Unique(char **devs, int len);
 int getKeys(Keys *keys);
-int getDevs(deviceSizeStrs *sdevs);
+int getDevs(Devs *sdevs);
 int getDeviceMemory(DeviceMemory *dm, char *dev);
 void sortKeys(Keys *keys, int n);
 int DeviceMemoryInit();
 int redisInit();
-
+int freeKeys(Keys *keys);
+int freeDevs(Devs *devs);
 int fun01(modbus_request *mrq, char *resdata);
 int fun02(modbus_request *mrq, char *resdata);
 int fun03(modbus_request *mrq, char *resdata);
 int fun04(modbus_request *mrq, char *resdata);
 
+int initDeviceMemoryAll();
 int readMessage(char *buffer, int len, int conn);
 void catNumAdd0(char *buffer, int num);    //在字符串后面加上一个两位数的数字 如果该数字小于10则在前面补0
 int bit8ToInt(char *strbuf);               //8位字符串转数字
@@ -328,7 +338,7 @@ int bufAddSbit(char *resdata, char *sbit)
     // }
     // return count - 1;
 }
-void test()
+void run()
 {
     ///定义sockfd
     int server_sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -389,20 +399,19 @@ void test()
     close(server_sockfd);
 }
 
-
 int bit8ToInt(char *strbuf)
 {
     char resbuf[9];
-    memset(resbuf,0,9);
-    resbuf[0]=strbuf[7];
-    resbuf[1]=strbuf[6];
-    resbuf[2]=strbuf[5];
-    resbuf[3]=strbuf[4];
-    resbuf[4]=strbuf[3];
-    resbuf[5]=strbuf[2];
-    resbuf[6]=strbuf[1];
-    resbuf[7]=strbuf[0];
-    resbuf[8]='\0';
+    memset(resbuf, 0, 9);
+    resbuf[0] = strbuf[7];
+    resbuf[1] = strbuf[6];
+    resbuf[2] = strbuf[5];
+    resbuf[3] = strbuf[4];
+    resbuf[4] = strbuf[3];
+    resbuf[5] = strbuf[2];
+    resbuf[6] = strbuf[1];
+    resbuf[7] = strbuf[0];
+    resbuf[8] = '\0';
     int i, reg_data = 0;
     int len = strlen(strbuf);
     for (i = 0; i < 8; i++)
@@ -521,13 +530,13 @@ int getKeys(Keys *keys)
         printf("%s ", reply->element[k]->str);
     }
     printf(")\n");
-    if (len == 0)
-    {
-        keys->size = len;
-        return 0;
-    }
-
     keys->keys = (char **)calloc(reply->elements, sizeof(char *));
+
+    // if (len == 0)
+    // {
+    //     keys->size = len;
+    //     return 0;
+    // }
 
     int i;
     int count = 0;
@@ -535,11 +544,10 @@ int getKeys(Keys *keys)
 
     for (i = 0; i < len; i++)
     {
-
         //char *key =reply->element[i]->str;// strdup(reply->element[i]->str);
         if (reply->element[i]->str[4] < '6')
         {
-            keys->keys[count] = reply->element[i]->str;
+            keys->keys[count] = strdup(reply->element[i]->str);
             count++;
         }
     }
@@ -554,10 +562,10 @@ int getKeys(Keys *keys)
     //     printf("key%d=(%s) ", i, keys->keys[i]);
     // }
     //redisFree(c);
-    //freeReplyObject(reply);
+    freeReplyObject(reply);
     return 0;
 }
-int getDevs(deviceSizeStrs *sdevs)
+int getDevs(Devs *sdevs)
 {
 
     Keys keys;
@@ -580,16 +588,15 @@ int getDevs(deviceSizeStrs *sdevs)
     sdevs->devs = (char **)calloc(count, sizeof(char *));
     for (i = 0; i < count; i++)
     {
-        //sdevs->devs[i] = strdup(devs[i]);
-        sdevs->devs[i] = devs[i];
+        sdevs->devs[i] = strdup(devs[i]);
+        //sdevs->devs[i] = devs[i];
         printf("dev%d=(%s) ", i, sdevs->devs[i]);
     }
+    freeKeys(&keys);
     return 0;
 }
 int getDeviceMemory(DeviceMemory *dm, char *dev)
 {
-    //redisContext *c = redisConnect("127.0.0.1", 6379);
-
     int i, types = 6;
     for (i = 0; i < types; i++)
     {
@@ -598,17 +605,15 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
         sprintf(command, "%s%d%s", dev, i, "??\0");
         Keys keys;
         keys.dev = command;
-
         getKeys(&keys);
         memset(command, 0, 10);
         //free(command);
-
         printf("findkey = (%s) size = (%d)\n", command, keys.size);
-
         int j;
         for (j = 0; j < keys.size; j++)
         {
             char *command1 = (char *)malloc(30);
+            //memset(command1,0,30);
             sprintf(command1, "%s %s %s", "hget", keys.keys[j], "Present_Value");
             redisReply *reply = (redisReply *)redisCommand(redis, command1);
             printf("command1 = (%s) value = (%s)", command1, reply->str);
@@ -642,15 +647,11 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
             }
             freeReplyObject(reply);
         }
+        printf("a");
+        freeKeys(&keys);
 
         printf("end   \n");
-        // int j;
-        // for (j = 0; j < reply->elements; j++)
-        // {
-        //     printf("--value =  %s --\n", reply->element[j]->str);
-        // }
     }
-    //redisFree(c);
 
     return 0;
 }
@@ -675,38 +676,28 @@ void sortKeys(Keys *keys, int n)
 
 int DeviceMemoryInit()
 {
-    deviceSizeStrs devs;
+    Devs devs;
     getDevs(&devs);
     //DeviceMemory **dms = (DeviceMemory **)calloc(devs.size, sizeof(DeviceMemory));
     DeviceMemory *dms[sizeof(DeviceMemory) * devs.size];
     int i;
     for (i = 0; i < devs.size; i++)
     {
-        DeviceMemory *a = (DeviceMemory *)malloc(sizeof(DeviceMemory));
-        a->dev = devs.devs[i];
-        getDeviceMemory(a, devs.devs[i]);
-        dms[i] = a;
+        DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
+        dm->dev = devs.devs[i];
+        getDeviceMemory(dm, devs.devs[i]);
+        dms[i] = dm;
     }
     printf(" %s ", " devs.devs[i]");
     DeviceMemorys = dms;
     DeviceMemorysCount = i;
-    free(devs.devs);
+    freeDevs(&devs);
     return 0;
 }
+
 void signal_handler(int m)
 {
-    // if (DeviceMemorysCount != 0)
-    // {
-    //     int i;
-    //     for (i = 0; i < DeviceMemorysCount; i++)
-    //     {
-    //         free(DeviceMemorys[i]);
-    //     }
-    //     free(DeviceMemorys);
-    // }
-    //free(DeviceMemorys[0]);
-    // free(DeviceMemorys[1]);
-    
+
     DeviceMemoryInit();
     printf("%s\n", "timer runing");
 }
@@ -733,15 +724,99 @@ int redisInit()
     redis = c;
     return 0;
 }
+
+int test()
+{
+    Keys keys;
+    keys.dev = "11018??\n";
+    getKeys(&keys);
+    freeKeys(&keys);
+    // Devs devs;
+    // getDevs(&devs);
+    // freeDevs(&devs);
+    return 0;
+}
+int freeDevs(Devs *devs)
+{
+    int i;
+    for (i = 0; i < devs->size; i++)
+    {
+        free(devs->devs[i]);
+    }
+    free(devs->devs);
+    return 0;
+}
+int freeKeys(Keys *keys)
+{
+    int i;
+    for (i = 0; i < keys->size; i++)
+    {
+        free(keys->keys[i]);
+    }
+    free(keys->keys);
+    return 0;
+}
+int initDeviceMemoryAll()
+{
+    Devs devs;
+    getDevs(&devs);
+    DeviceMemory *dms[sizeof(DeviceMemory) * devs.size];
+    int i;
+    for (i = 0; i < devs.size; i++)
+    {
+        DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
+        dm->dev = devs.devs[i];
+        getDeviceMemory(dm, devs.devs[i]);
+        dms[i] = dm;
+    }
+    dma.dma = dms;
+    dma.size = i;
+    freeDevs(&devs);
+    return 0;
+}
+int DeviceMemoryAllUpdate()
+{
+    int i;
+    for (i = 0; i < dma.size; i++)
+    {
+        free(dma.dma[i]);
+    }
+    Devs devs;
+    getDevs(&devs);
+    DeviceMemory *dms[sizeof(DeviceMemory) * devs.size];
+    for (i = 0; i < devs.size; i++)
+    {
+        DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
+        dm->dev = devs.devs[i];
+        getDeviceMemory(dm, devs.devs[i]);
+        dms[i] = dm;
+    }
+    dma.dma = dms;
+    dma.size = i;
+    freeDevs(&devs);
+    return 0;
+}
 int main()
 {
     redisInit();
+    initDeviceMemoryAll();
+
+    while (1)
+    {
+        DeviceMemoryAllUpdate();
+        //test();
+        //DeviceMemoryInit();
+    }
+
+    redisInit();
+    initDeviceMemoryAll();
+
     signal(14, signal_handler);
     set_timer();
     //DeviceMemoryInit();
     sleep(10);
     printf("run server\n");
-    test();
+    run();
     //initNetNum();
     //redisTest();
     //10100010000

@@ -27,13 +27,11 @@ hiredislibs=\
 	$(cc) $(hiredislibs) server.c -o a.out -g
 1:
 	cc test.c -g && ./a.out
-3:
+server:
 	$(cc) $(hiredislibs) $(mxmllibs)  server.c -o a.out -g && 	./a.out
 run:all
 	./server
 all:server 
-server:server.c 
-	$(cc) $(libs) server.c -o server
 test:  hiredis.a  mxmllibs.a
 	$(cc)  $(libs) test.c -o test.out
 test1: hiredis.a  mxmllibs.a
