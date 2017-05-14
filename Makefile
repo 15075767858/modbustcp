@@ -24,11 +24,11 @@ hiredislibs=\
 	./output/sds.o \
 	./output/hiredis.o 
 2:
-	$(cc) $(libs) server.c -o a.out -g
+	$(cc) $(hiredislibs) server.c -o a.out -g
 1:
 	cc test.c -g && ./a.out
 3:
-	$(cc) $(libs) server.c -o a.out -g && 	./a.out
+	$(cc) $(hiredislibs) $(mxmllibs)  server.c -o a.out -g && 	./a.out
 run:all
 	./server
 all:server 
@@ -38,6 +38,8 @@ test:  hiredis.a  mxmllibs.a
 	$(cc)  $(libs) test.c -o test.out
 test1: hiredis.a  mxmllibs.a
 	$(cc)  $(hiredislibs)  $(mxmllibs) test.c  -o a.out  -g   -I./${libxmldir}/include
+test2: hiredis.a  
+	$(cc)  $(hiredislibs)  test/test2.c  -o a.out  -g   -I./${libxmldir}/include &&./a.out
 hiredis.a:
 	ar -r hiredis.a $(hiredislibs) 
 mxmllibs.a:

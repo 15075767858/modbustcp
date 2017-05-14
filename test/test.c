@@ -36,9 +36,9 @@ int main()
 
     modbus_new_tcp("127.0.0.1", 1502);
     redisContext *c = redisConnect("127.0.0.1", 6379);
-    const char* command1 = "set stest1 value1";
-    redisReply* r = (redisReply*)redisCommand(c, command1);
-
+    const char *command1 = "hget *";
+    redisReply *r = (redisReply *)redisCommand(c, command1);
+    
     // redisFree(c);
     return 0;
 }
