@@ -18,6 +18,7 @@ mxmllibs=\
 	./output/mxml-string.o \
 
 hiredislibs=\
+	./output/async.o \
 	./output/dict.o \
 	./output/net.o \
 	./output/read.o \
@@ -50,6 +51,7 @@ hiredis.o:
 	$(cc) -c ${hiredisdir}/read.c -I${hiredisdir}/ -o ./output/read.o
 	$(cc) -c ${hiredisdir}/sds.c -I${hiredisdir}/ -o ./output/sds.o
 	$(cc) -c ${hiredisdir}/hiredis.c -I${hiredisdir}/ -o ./output/hiredis.o
+	$(cc) -c ${hiredisdir}/async.c -I${hiredisdir}/ -o ./output/async.o
 mxml.o:
 	$(cc) -c ${mxmldir}/mxml-search.c -I${mxmldir}/ -o ./output/mxml-search.o
 	$(cc) -c ${mxmldir}/mxml-attr.c -I${mxmldir}/ -o ./output/mxml-attr.o
