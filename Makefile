@@ -40,6 +40,8 @@ test1: hiredis.a  mxmllibs.a
 	$(cc)  $(hiredislibs)  $(mxmllibs) test.c  -o a.out  -g   -I./${libxmldir}/include
 test2: hiredis.a  
 	$(cc)  $(hiredislibs)  test/test2.c  -o a.out  -g   -I./${libxmldir}/include &&./a.out
+testredis: hiredis.a  
+	$(cc)  $(hiredislibs)  test/testredis.c  -o a.out  -g   -I./${libxmldir}/include &&./a.out
 hiredis.a:
 	ar -r hiredis.a $(hiredislibs) 
 mxmllibs.a:

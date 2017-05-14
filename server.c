@@ -739,7 +739,6 @@ int main()
     signal(14, signal_handler);
     set_timer();
     //DeviceMemoryInit();
-
     sleep(10);
     printf("run server\n");
     test();
