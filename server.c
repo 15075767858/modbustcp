@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <sys/shm.h>
 #include "hiredis/hiredis.h"
-#include "mxml-release-2.10/mxml.h"
+//#include "mxml-release-2.10/mxml.h"
 #define MYPORT 8888
 #define QUEUE 20
 #define BUFFER_SIZE 1024
@@ -95,7 +95,7 @@ void catNumAdd0(char *buffer, int num);    //在字符串后面加上一个两�
 int bit8ToInt(char *strbuf);               //8位字符串转数字
 char *intToChar(int num);                  //数字转字符串
 int bufAddSbit(char *resdata, char *sbit); //字符数组后面添加一个16进制数字，每8位字符串就是一个数字
-int initNetNum();
+//int initNetNum();
 static redisContext *redis;
 
 static struct itimerval oldtv;
@@ -158,14 +158,11 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         int res = bit8ToInt(sb);
         resdata[9 + i] = res;
     }
-    // int slen = strlen(str);
-    //bit8ToInt(strbuf)
-    //bufAddSbit(resdata, str);
+
     printf("\n str = (%s) ", str);
     send(mrq->conn, resdata, 100, 0);
     return 0;
-    //1010001000
-    // 0100010000
+
 }
 int fun02(modbus_request *mrq, char *resdata) //BI
 {
@@ -326,20 +323,7 @@ int bufAddSbit(char *resdata, char *sbit)
         resdata[9 + i] = reg_data;
     }
     return 0;
-    // for (i = 0; i < len; i += 8)
-    // {
-    //     strncpy(strbuf, sbit, 8);
-    //     sbit = sbit + 8;
-    //     reg_data = bit8ToInt(strbuf);
-    //     resdata[8] = count;
-    //     resdata[9 + count - 1] = reg_data;
-    //     printf("9+i = %d\n", 9 + count - 1);
-    //     resdata[10 + i] = '\0';
-    //     printf("bb=%x %d %d\n", resdata[9 + count - 1], reg_data, count);
-    //     reg_data = 0;
-    //     count++;
-    // }
-    // return count - 1;
+
 }
 void run()
 {
@@ -444,26 +428,26 @@ void catNumAdd0(char *buffer, int num)
     strcat(buffer, buf);
 }
 
-int initNetNum()
-{
-    FILE *fp;
-    mxml_node_t *tree;
+// int initNetNum()
+// {
+//     FILE *fp;
+//     mxml_node_t *tree;
 
-    fp = fopen("./bac_config.xml", "r");
-    if (fp == 0)
-    {
-        printf("/mnt/nandflash/bac_config.xml not found\n");
-        return 1;
-    }
-    tree = mxmlLoadFile(NULL, fp, MXML_TEXT_CALLBACK);
-    mxml_node_t *node;
-    node = mxmlFindElement(tree, tree, "net", NULL, NULL, MXML_DESCEND);
+//     fp = fopen("./bac_config.xml", "r");
+//     if (fp == 0)
+//     {
+//         printf("/mnt/nandflash/bac_config.xml not found\n");
+//         return 1;
+//     }
+//     tree = mxmlLoadFile(NULL, fp, MXML_TEXT_CALLBACK);
+//     mxml_node_t *node;
+//     node = mxmlFindElement(tree, tree, "net", NULL, NULL, MXML_DESCEND);
 
-    netnum = mxmlGetText(node, 0);
-    printf("net number = %s \n", netnum);
-    fclose(fp);
-    return 0;
-}
+//     netnum = mxmlGetText(node, 0);
+//     printf("net number = %s \n", netnum);
+//     fclose(fp);
+//     return 0;
+// }
 
 int Unique(char **devs, int len)
 {

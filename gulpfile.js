@@ -1,3 +1,4 @@
+/*
 var gulp = require('gulp');
 
 const changed = require('gulp-changed');
@@ -6,7 +7,7 @@ var dest = "/Volumes/XiaoMi-usb0/共享/modbustcp/"
 
 gulp.task('default', function () {
     // 将你的默认的任务代码放在这
-    var watcher = gulp.watch('**/**', []);
+    var watcher = gulp.watch('*', []);
     watcher.on('change', function (event) {
             console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
             var filename = event.path.substring(event.path.lastIndexOf("/")+1,event.path.length);
@@ -17,4 +18,13 @@ gulp.task('default', function () {
             gulp.src(event.path).pipe(gulp.dest(destpath));
             //.pipe(gulp.dest(filepath))
     });
+});
+*/
+var gulp = require('gulp'),
+    fileSync = require('gulp-file-sync');
+
+gulp.task('sync', function() {
+  gulp.watch(['src/**/**'], function() {
+    fileSync('src', 'dest', {recursive: true});
+  });
 });

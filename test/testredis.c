@@ -11,60 +11,53 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/shm.h>
-#define NUM 2
-static int  count = 0;
-void *thread_function(void *arg);
+#include <hiredis.h>
+#include <async.h>
+#include <adapters/libevent.h>
+//#include <adapters/libevent.h>
+//设置命令执行后的回调函数
+//gcc  ./output/async.o ./output/dict.o ./output/net.o ./output/read.o ./output/sds.o ./output/hiredis.o   test/testredis.c  -o a.out  -g  -I./hiredis/ -L/usr/include/sys
+void getCallback(redisAsyncContext *c, void *r, void *privdata) {
+    redisReply *reply = r;
+    if (reply == NULL) return;
+    printf("argv[%s]: %s\n", (char*)privdata, reply->str);
 
-int main()
-{
-    int res;
-    pthread_t a_thread[NUM];
-    void *thread_result;
-    int index;
-    char *aaa = "asd";
-    for (index = 0; index < NUM; ++index)
-    {
-
-        res = pthread_create(&a_thread[index], NULL, thread_function, (void *)aaa);
-        if (res != 0)
-        {
-            perror("Thread create failed!");
-            exit(EXIT_FAILURE);
-        }
-        // sleep(1);
-    }
-
-    printf("Waiting for threads to finished.../n");
-
-    for (index = NUM - 1; index >= 0; --index)
-    {
-        res = pthread_join(a_thread[index], &thread_result);
-        if (res == 0)
-        {
-            printf("Picked up a thread:%d/n", index + 1);
-        }
-        else
-        {
-            perror("pthread_join failed/n");
-        }
-    }
-
-    printf("All done/n");
-
-    exit(EXIT_SUCCESS);
+    /* Disconnect after receiving the reply to GET */
+    redisAsyncDisconnect(c);
 }
 
-void *thread_function(void *arg)
-{
-    int rand_num;
-    while (1)
-    {
-        printf("Argument was %d /n ",count++);
-        //sleep(1);
+void connectCallback(const redisAsyncContext *c, int status) {
+    if (status != REDIS_OK) {
+        printf("Error: %s\n", c->errstr);
+        return;
+    }
+    printf("Connected...\n");
+}
+
+void disconnectCallback(const redisAsyncContext *c, int status) {
+    if (status != REDIS_OK) {
+        printf("Error: %s\n", c->errstr);
+        return;
+    }
+    printf("Disconnected...\n");
+}
+
+int main (int argc, char **argv) {
+    signal(SIGPIPE, SIG_IGN);
+    struct event_base *base = event_base_new();
+
+    redisAsyncContext *c = redisAsyncConnect("127.0.0.1", 6379);
+    if (c->err) {
+        /* Let *c leak for now... */
+        printf("Error: %s\n", c->errstr);
+        return 1;
     }
 
-    //rand_num = 1 + (int)(9.0 * rand()/(RAND_MAX + 1.0));
-    //sleep(rand_num);
-    //printf("Bye from %d/n", my_number);
-    pthread_exit(NULL);
+    redisLibeventAttach(c,base);
+    redisAsyncSetConnectCallback(c,connectCallback);
+    redisAsyncSetDisconnectCallback(c,disconnectCallback);
+    redisAsyncCommand(c, NULL, NULL, "SET key %b", argv[argc-1], strlen(argv[argc-1]));
+    redisAsyncCommand(c, getCallback, (char*)"end-1", "GET key");
+    event_base_dispatch(base);
+    return 0;
 }
