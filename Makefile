@@ -56,14 +56,14 @@ test1: hiredis.a  mxmllibs.a
 	$(cc)  $(hiredislibs)  $(mxmllibs) test.c  -o a.out  -g   -I./${libxmldir}/include
 test2: hiredis.a  
 	$(cc)  $(hiredislibs)  test/test2.c  -o a.out  -g   -I./${libxmldir}/include &&./a.out
-testredis: hiredis.a  
+testredis: hiredis.a
 	$(cc)  $(hiredislibs) $(libevent)   test/testredis.c  -o a.out  -g  -I./${hiredisdir}/    &&./a.out
-testthread: hiredis.a  
+testthread: hiredis.a
 	$(cc)  $(hiredislibs)  test/testthread.c  -o a.out  -g  -I./${hiredisdir}/    &&./a.out
 hiredis.a:
 	ar -r hiredis.a $(hiredislibs) 
 mxmllibs.a:
-	ar -r mxmllibs.a $(mxmllibs)   
+	ar -r mxmllibs.a $(mxmllibs)
 hiredis.o:
 	$(cc) -c ${hiredisdir}/dict.c -I${hiredisdir}/ -o ./output/dict.o
 	$(cc) -c ${hiredisdir}/net.c -I${hiredisdir}/ -o ./output/net.o
@@ -83,20 +83,20 @@ mxml.o:
 	$(cc) -c ${mxmldir}/mxml-private.c -I${mxmldir}/ -o ./output/mxml-private.o
 	$(cc) -c ${mxmldir}/mxml-index.c -I${mxmldir}/ -o ./output/mxml-index.o
 libevent.o:
-	$(cc) -c ${libeventdir}/evutil_rand.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/evutil_rand.o
-	$(cc) -c ${libeventdir}/epoll.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/epoll.o
-	$(cc) -c ${libeventdir}/poll.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/poll.o
-	$(cc) -c ${libeventdir}/select.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/select.o
-	$(cc) -c ${libeventdir}/signal.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/signal.o
-	$(cc) -c ${libeventdir}/evport.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/evport.o
-	$(cc) -c ${libeventdir}/devpoll.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/devpoll.o
-	$(cc) -c ${libeventdir}/log.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/log.o
-	$(cc) -c ${libeventdir}/evthread.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/evthread.o
-	$(cc) -c ${libeventdir}/evutil_time.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/evutil_time.o
-	$(cc) -c ${libeventdir}/kqueue.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/kqueue.o
-	$(cc) -c ${libeventdir}/event.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/event.o
-	$(cc) -c ${libeventdir}/evutil.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/evutil.o
-	$(cc) -c ${libeventdir}/evmap.c -I${libeventdir}/include -I${libeventdir}/ -o ./output/evmap.o
+	$(cc) -c libevent/event.c -Ilibevent/include -Ilibevent/ -o ./output/event.o
+	$(cc) -c libevent/evutil_rand.c -Ilibevent/include -Ilibevent/ -o ./output/evutil_rand.o
+	$(cc) -c libevent/epoll.c -Ilibevent/include -Ilibevent/ -o ./output/epoll.o
+	$(cc) -c libevent/poll.c -Ilibevent/include -Ilibevent/ -o ./output/poll.o
+	$(cc) -c libevent/select.c -Ilibevent/include -Ilibevent/ -o ./output/select.o
+	$(cc) -c libevent/signal.c -Ilibevent/include -Ilibevent/ -o ./output/signal.o
+	$(cc) -c libevent/evport.c -Ilibevent/include -Ilibevent/ -o ./output/evport.o
+	$(cc) -c libevent/devpoll.c -Ilibevent/include -Ilibevent/ -o ./output/devpoll.o
+	$(cc) -c libevent/log.c -Ilibevent/include -Ilibevent/ -o ./output/log.o
+	$(cc) -c libevent/evthread.c -Ilibevent/include -Ilibevent/ -o ./output/evthread.o
+	$(cc) -c libevent/evutil_time.c -Ilibevent/include -Ilibevent/ -o ./output/evutil_time.o
+	$(cc) -c libevent/kqueue.c -Ilibevent/include -Ilibevent/ -o ./output/kqueue.o
+	$(cc) -c libevent/evutil.c -Ilibevent/include -Ilibevent/ -o ./output/evutil.o
+	$(cc) -c libevent/evmap.c -Ilibevent/include -Ilibevent/ -o ./output/evmap.o
 
 clean:
 	find ./ -name '._*' | xargs rm

@@ -20,11 +20,14 @@ gulp.task('default', function () {
     });
 });
 */
+
+var dest="/Applications/XAMPP/xamppfiles/htdocs/modbustcp"
+var sources="/Volumes/XiaoMi-usb0/共享/modbustcp"
+
 var gulp = require('gulp'),
     fileSync = require('gulp-file-sync');
-
 gulp.task('sync', function() {
-  gulp.watch(['src/**/**'], function() {
-    fileSync('src', 'dest', {recursive: true});
+  gulp.watch([dest+'/**/**'], function() {
+    fileSync(sources,dest, {recursive: true,ignore: ["gulpfile.js",".DS_Store","._.DS_Store",".git"]});
   });
 });
