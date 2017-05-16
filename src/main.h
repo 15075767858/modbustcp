@@ -13,9 +13,11 @@
 #define MYPORT 8888
 #define QUEUE 20
 #define BUFFER_SIZE 1024
+
+static const char *netnum;
+
 typedef unsigned short u16;
 typedef unsigned char u8;
-static const char *netnum;
 typedef struct
 {
     u16 transaction; //标志
