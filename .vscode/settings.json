@@ -33,6 +33,11 @@
     "__tuple": "cpp",
     "limits": "cpp",
     "ios": "cpp",
-    "__config": "cpp"
+    "__config": "cpp",
+    "__split_buffer": "cpp",
+    "deque": "cpp",
+    "vector": "cpp",
+    "cstdlib": "cpp",
+    "cstring": "cpp"
   }
 }

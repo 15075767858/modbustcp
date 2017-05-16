@@ -45,8 +45,5 @@ REM %ar% -r outputwin/winmxmllibs.a  %mxmllibs%
 	
 	REM %ar% -r outputwin/libevent.a %libeventlibs% 
 
-
 REM %gcc% server.c  outputwin/libevent.a  outputwin/winhiredis.a  -o outputwin/modbus-tcp-server -I./mxml-release-2.10  -I./hiredis
 %gcc% test/testredis.c  libevent.a  outputwin/winhiredis.a  -o outputwin/modbus-tcp-server   -I./hiredis -I./libevent/include 
-
-

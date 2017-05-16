@@ -57,7 +57,7 @@ test1: hiredis.a  mxmllibs.a
 test2: hiredis.a  
 	$(cc)  $(hiredislibs)  test/test2.c  -o a.out  -g   -I./${libxmldir}/include &&./a.out
 testredis: hiredis.a
-	$(cc)  $(hiredislibs) $(libevent)   test/testredis.c  -o a.out  -g  -I./${hiredisdir}/    &&./a.out
+	$(cc)  $(hiredislibs)  $(libevent)  test/testredis.c  -o a.out  -g  -I./${hiredisdir}/    &&./a.out
 testthread: hiredis.a
 	$(cc)  $(hiredislibs)  test/testthread.c  -o a.out  -g  -I./${hiredisdir}/    &&./a.out
 hiredis.a:
@@ -83,20 +83,20 @@ mxml.o:
 	$(cc) -c ${mxmldir}/mxml-private.c -I${mxmldir}/ -o ./output/mxml-private.o
 	$(cc) -c ${mxmldir}/mxml-index.c -I${mxmldir}/ -o ./output/mxml-index.o
 libevent.o:
-	$(cc) -c libevent/event.c -Ilibevent/include -Ilibevent/ -o ./output/event.o
-	$(cc) -c libevent/evutil_rand.c -Ilibevent/include -Ilibevent/ -o ./output/evutil_rand.o
-	$(cc) -c libevent/epoll.c -Ilibevent/include -Ilibevent/ -o ./output/epoll.o
-	$(cc) -c libevent/poll.c -Ilibevent/include -Ilibevent/ -o ./output/poll.o
-	$(cc) -c libevent/select.c -Ilibevent/include -Ilibevent/ -o ./output/select.o
-	$(cc) -c libevent/signal.c -Ilibevent/include -Ilibevent/ -o ./output/signal.o
-	$(cc) -c libevent/evport.c -Ilibevent/include -Ilibevent/ -o ./output/evport.o
-	$(cc) -c libevent/devpoll.c -Ilibevent/include -Ilibevent/ -o ./output/devpoll.o
-	$(cc) -c libevent/log.c -Ilibevent/include -Ilibevent/ -o ./output/log.o
-	$(cc) -c libevent/evthread.c -Ilibevent/include -Ilibevent/ -o ./output/evthread.o
-	$(cc) -c libevent/evutil_time.c -Ilibevent/include -Ilibevent/ -o ./output/evutil_time.o
-	$(cc) -c libevent/kqueue.c -Ilibevent/include -Ilibevent/ -o ./output/kqueue.o
-	$(cc) -c libevent/evutil.c -Ilibevent/include -Ilibevent/ -o ./output/evutil.o
-	$(cc) -c libevent/evmap.c -Ilibevent/include -Ilibevent/ -o ./output/evmap.o
+	$(cc) -c libevent/event.c -Ilibevent/include -o ./output/event.o
+	$(cc) -c libevent/evutil_rand.c -Ilibevent/include -o ./output/evutil_rand.o
+	$(cc) -c libevent/epoll.c -Ilibevent/include -o ./output/epoll.o
+	$(cc) -c libevent/poll.c -Ilibevent/include -o ./output/poll.o
+	$(cc) -c libevent/select.c -Ilibevent/include -o ./output/select.o
+	$(cc) -c libevent/signal.c -Ilibevent/include -o ./output/signal.o
+	$(cc) -c libevent/evport.c -Ilibevent/include -o ./output/evport.o
+	$(cc) -c libevent/devpoll.c -Ilibevent/include -o ./output/devpoll.o
+	$(cc) -c libevent/log.c -Ilibevent/include -o ./output/log.o
+	$(cc) -c libevent/evthread.c -Ilibevent/include -o ./output/evthread.o
+	$(cc) -c libevent/evutil_time.c -Ilibevent/include -o ./output/evutil_time.o
+	$(cc) -c libevent/kqueue.c -Ilibevent/include -o ./output/kqueue.o
+	$(cc) -c libevent/evutil.c -Ilibevent/include -o ./output/evutil.o
+	$(cc) -c libevent/evmap.c -Ilibevent/include -o ./output/evmap.o
 
 clean:
 	find ./ -name '._*' | xargs rm
