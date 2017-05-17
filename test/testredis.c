@@ -29,7 +29,6 @@ int getDevIndex(char *dev)
     devs[1] = "1002";
     devs[2] = "1003";
     devs[3] = "1004";
-
     return index;
 }
 
@@ -115,7 +114,6 @@ void asyn()
 
 int main(int argc, char **argv)
 {
-
     getDevIndex("1002");
     redisSubscribeRun();
     return 0;

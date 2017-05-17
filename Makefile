@@ -9,16 +9,19 @@ libeventdir=${libdir}/libevent
 mxmllibs=mxml-index.o mxml-private.o mxml-search.o mxml-attr.o mxml-entity.o mxml-get.o mxml-file.o mxml-node.o mxml-set.o mxml-string.o 
 libevent=evutil_rand.o epoll.o poll.o select.o signal.o evport.o devpoll.o log.o evthread.o evutil_time.o kqueue.o evmap.o evutil.o event.o
 hiredislibs=async.o dict.o net.o read.o sds.o hiredis.o
-
+libs = device.o
 run:
-	make all
+	make all 
 	./modbus-tcp-server
 debug:
-	${cc} src/main.c hiredis.a libevent.a -o modbus-tcp-server -g
-all:
-	${cc} src/main.c hiredis.a libevent.a -o modbus-tcp-server
-build:hiredis.a libevent.a
-	rm ${libevent} ${hiredislibs}
+	${cc} src/main.c hiredis.a libevent.a ${libs}  -g
+all:${libs}
+	${cc} src/main.c hiredis.a libevent.a ${libs} -o modbus-tcp-server
+build:hiredis.a libevent.a ${libs}
+	rm ${libevent} ${hiredislibs} 
+
+device.o:
+	gcc -c src/device.c
 hiredis.a: ${hiredislibs}
 	ar -r hiredis.a $(hiredislibs) 
 async.o:
