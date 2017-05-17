@@ -22,7 +22,7 @@ run:
 	make all
 	./modbus-tcp-server
 debug:
-	${cc} src/main.c hiredis.a libevent.a ${libs}  -g
+	${cc} ${src} hiredis.a libevent.a -I${hiredisdir}  -g
 all:
 	${cc} ${src} hiredis.a libevent.a -I${hiredisdir} -o modbus-tcp-server 
 build:hiredis.a libevent.a ${libs}

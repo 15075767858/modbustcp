@@ -18,12 +18,13 @@ int getDevIndex(char *dev)
     int i;
     for (i = 0; i < dma.size; i++)
     {
+        
         if (dma.dma[i]->dev == 0)
         {
             continue;
         }
-//        printf("devstr = %s %d \n", dma.dma[i]->dev, strncmp(dev, dma.dma[i]->dev, 4));
-        
+        //        printf("devstr = %s %d \n", dma.dma[i]->dev, strncmp(dev, dma.dma[i]->dev, 4));
+
         if (strncmp(dev, dma.dma[i]->dev, 4) == 0)
         {
             return i;
@@ -38,7 +39,7 @@ int getKeyIndex(char *key)
     strncpy(qKey, key, 5);
     strcat(qKey, "??");
 
-    printf("qKey= %s \n", qKey);
+    //printf("qKey= %s \n", qKey);
 
     Keys keys;
     keys.dev = &qKey[0];
@@ -59,7 +60,7 @@ void signal_handler(int m)
 {
     DeviceMemoryAllUpdate();
     //    DeviceMemoryInit();
-    printf("%s\n", "timer runing");
+    //printf("%s\n", "timer runing");
 }
 
 void set_timer()
@@ -149,34 +150,34 @@ int getKeys(Keys *keys)
     if (keys->dev != NULL)
     {
         strcat(command, keys->dev);
-        printf("\n dev= %s \n", keys->dev);
+        //printf("\n dev= %s \n", keys->dev);
     }
     else
     {
         strcat(command, "???????\0");
         printf("\n 没有dev  \n");
     }
-    printf("command == ( %s )\n", command);
+    //printf("command == ( %s )\n", command);
     int y;
-    for (y = 0; y < 15; y++)
-    {
-        printf(" %c ", command[y]);
-    }
-    printf("\n");
+    // for (y = 0; y < 15; y++)
+    // {
+    //     printf(" %c ", command[y]);
+    // }
     redisReply *reply = (redisReply *)redisCommand(redis, command);
-    if(reply==0){
-       return getKeys(keys);
+    if (reply == 0)
+    {
+        return getKeys(keys);
     }
     memset(command, 0, 100);
     free(command);
     int k;
     int len = reply->elements;
-    printf("key(");
-    for (k = 0; k < len; k++)
-    {
-        printf("%s ", reply->element[k]->str);
-    }
-    printf(")\n");
+    // printf("key(");
+    // for (k = 0; k < len; k++)
+    // {
+    //     printf("%s ", reply->element[k]->str);
+    // }
+    // printf(")\n");
     keys->keys = (char **)calloc(reply->elements, sizeof(char *));
 
     // if (len == 0)
@@ -187,7 +188,6 @@ int getKeys(Keys *keys)
 
     int i;
     int count = 0;
-    printf("\n len = (%d)  \n", len);
 
     for (i = 0; i < len; i++)
     {
@@ -198,8 +198,6 @@ int getKeys(Keys *keys)
             count++;
         }
     }
-
-    printf("jieshu\n");
 
     keys->size = count;
 
@@ -253,9 +251,10 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
         Keys keys;
         keys.dev = command;
         getKeys(&keys);
+        printf("findkey = (%s) size = (%d)\n", command, keys.size);
+
         memset(command, 0, 10);
         //free(command);
-        printf("findkey = (%s) size = (%d)\n", command, keys.size);
         int j;
         for (j = 0; j < keys.size; j++)
         {
@@ -267,10 +266,10 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
 
             // printf("command1 = (%s) value = (%s)", command1, reply->str);
             free(command1);
-            if(reply==0){
+            if (reply == 0)
+            {
                 return 0;
             }
-            printf("isnull= (%d) ", reply->str == 0);
             if (reply->str == 0)
             {
                 reply->str = "0\0";
@@ -298,10 +297,7 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
             }
             freeReplyObject(reply);
         }
-        printf("a");
         freeKeys(&keys);
-
-        printf("end   \n");
     }
 
     return 0;
@@ -400,11 +396,12 @@ int DeviceMemoryAllUpdate()
         dms[i] = dm;
     }
     for (i = 0; i < dma.size; i++)
-    {   
-        if(dma.dma[i]->dev!=0){
+    {
+        if (dma.dma[i]->dev != 0)
+        {
             free(dma.dma[i]->dev);
         }
-        
+
         free(dma.dma[i]);
     }
     dma.dma = dms;

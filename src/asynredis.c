@@ -17,26 +17,26 @@ int changeDeviceMemory(char *key, char *value)
     {
         printf("dev not cmp %s", dev);
     }
-    printf("dev = %s\n", dma.dma[devIndex]->dev);
+    //printf("dev = %s\n", dma.dma[devIndex]->dev);
 
     switch (key[4])
     {
-    case 0: //AI
+    case '0': //AI
         dma.dma[devIndex]->AI[keyIndex] = atof(value);
         break;
-    case 1: //AO
+    case '1': //AO
         dma.dma[devIndex]->AO[keyIndex] = atof(value);
         break;
-    case 2: //AV
+    case '2': //AV
         dma.dma[devIndex]->AV[keyIndex] = atof(value);
         break;
-    case 3: //BI
+    case '3': //BI
         dma.dma[devIndex]->BI[keyIndex] = atoi(value);
         break;
-    case 4: //BO
+    case '4': //BO
         dma.dma[devIndex]->BO[keyIndex] = atoi(value);
         break;
-    case 5: //BV
+    case '5': //BV
         dma.dma[devIndex]->BV[keyIndex] = atoi(value);
         break;
     default: //other
@@ -59,7 +59,7 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         {
             changeDeviceMemory(key, val);
         }
-        printf("%s %s %s \n", key, type, val);
+        printf("pubdata =  %s %s %s \n", key, type, val);
         free(str);
     }
 

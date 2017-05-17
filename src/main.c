@@ -70,13 +70,13 @@ static void Data_handle(void *sock_fd)
 
     while (1)
     {
-        printf("waiting for request...\n");
+        //printf("waiting for request...\n");
         //Reset data.
         memset(data_recv, 0, BUFFER_LENGTH);
 
         i_recvBytes = read(fd, data_recv, BUFFER_LENGTH);
         int i;
-        printf("data =(");
+        printf("reqdata=(");
         for (i = 0; i < i_recvBytes; i++)
         {
             printf("%02hhx ", data_recv[i]);
@@ -95,15 +95,8 @@ static void Data_handle(void *sock_fd)
             {
                 break;
             }
-            printf("resNum=%d \n", resNum);
+            //printf("resNum=%d \n", resNum);
         }
-        //printf("read from client : %s\n", data_recv);
-
-        // if (write(fd, data_send, strlen(data_send)) == -1)
-        // {
-        //     printf("break\n");
-        //     break;
-        // }
     }
 
     //Clear
@@ -318,6 +311,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     int end = mrq->reg_num;
     int count = 0;
     int i;
+    printf("value = (");
     for (i = start; i < end + start; i++)
     {
         union {
@@ -326,12 +320,12 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         } my_data;
         if (mrq->fun == 3)
         {
-            printf(" i=(%d) value = (%f) \n", i, dm.AV[i]);
+            printf("%f, ", dm.AV[i]);
             my_data.real_value = dm.AV[i];
         }
         else
         {
-            printf(" i=(%d) value = (%f) \n", i, dm.AI[i]);
+            printf("%f, ", dm.AI[i]);
             my_data.real_value = dm.AI[i];
         }
         resdata[9 + count * 4] = my_data.byte[1];
@@ -340,6 +334,8 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         resdata[12 + count * 4] = my_data.byte[2];
         count++;
     }
+    printf(")\n");
+
     printf("resdata=(");
     for (i = 0; i < 8 + resdata[8] + 1; i++)
     {
@@ -349,6 +345,19 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
 }
 
+int test()
+{
+    Keys keys;
+    keys.dev = "11018??\n";
+    getKeys(&keys);
+    freeKeys(&keys);
+    // Devs devs;
+    // getDevs(&devs);
+    // freeDevs(&devs);
+    return 0;
+}
+
+//回收站------------------------------------------------------------------------------------------------------------------------------
 void run()
 {
     ///定义sockfd
@@ -396,7 +405,7 @@ void run()
                 break;
             }
             int i;
-            printf("data =(");
+            printf("reqdata =(");
             for (i = 0; i < len; i++)
             {
                 printf("%02hhx ", buffer[i]);
@@ -408,18 +417,6 @@ void run()
     printf("close\n");
     //close(conn);
     close(server_sockfd);
-}
-
-int test()
-{
-    Keys keys;
-    keys.dev = "11018??\n";
-    getKeys(&keys);
-    freeKeys(&keys);
-    // Devs devs;
-    // getDevs(&devs);
-    // freeDevs(&devs);
-    return 0;
 }
 
 //int initNetNum();
