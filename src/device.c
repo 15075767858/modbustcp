@@ -2,17 +2,74 @@
 #include "device.h"
 int redisInit()
 {
-    redisContext *c = redisConnect("127.0.0.1", 6379);
+
+    redis = redisConnect("127.0.0.1", 6379);
     //err 1 errstr[128]
-    if (c->err != 0)
+    if (redis->err != 0)
     {
-        printf("redis %s \n", c->errstr);
+        printf("redis %s \n", redis->errstr);
         exit(0);
-        return c->err;
+        return redis->err;
     }
-    redis = c;
-    
     return 0;
+}
+int getDevIndex(char *dev)
+{
+    int i;
+    for (i = 0; i < dma.size; i++)
+    {
+        if (dma.dma[i]->dev == 0)
+        {
+            continue;
+        }
+//        printf("devstr = %s %d \n", dma.dma[i]->dev, strncmp(dev, dma.dma[i]->dev, 4));
+        
+        if (strncmp(dev, dma.dma[i]->dev, 4) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+int getKeyIndex(char *key)
+{
+    char qKey[20];
+    memset(qKey, 0, 20);
+    strncpy(qKey, key, 5);
+    strcat(qKey, "??");
+
+    printf("qKey= %s \n", qKey);
+
+    Keys keys;
+    keys.dev = &qKey[0];
+    getKeys(&keys);
+    int i;
+    for (i = 0; i < keys.size; i++)
+    {
+        if (strncmp(key, keys.keys[i], 7) == 0)
+        {
+            freeKeys(&keys);
+            return i;
+        }
+    }
+    freeKeys(&keys);
+    return -1;
+}
+void signal_handler(int m)
+{
+    DeviceMemoryAllUpdate();
+    //    DeviceMemoryInit();
+    printf("%s\n", "timer runing");
+}
+
+void set_timer()
+{
+    struct itimerval itv;
+    itv.it_interval.tv_sec = 10;
+    itv.it_interval.tv_usec = 0;
+    itv.it_value.tv_sec = 1;
+    itv.it_value.tv_usec = 0;
+    setitimer(ITIMER_REAL, &itv, &oldtv);
 }
 
 int bit8ToInt(char *strbuf)
@@ -107,6 +164,9 @@ int getKeys(Keys *keys)
     }
     printf("\n");
     redisReply *reply = (redisReply *)redisCommand(redis, command);
+    if(reply==0){
+       return getKeys(keys);
+    }
     memset(command, 0, 100);
     free(command);
     int k;
@@ -202,10 +262,14 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
             char *command1 = (char *)malloc(30);
             //memset(command1,0,30);
             sprintf(command1, "%s %s %s", "hget", keys.keys[j], "Present_Value");
+            sleep(0);
             redisReply *reply = (redisReply *)redisCommand(redis, command1);
-            printf("command1 = (%s) value = (%s)", command1, reply->str);
-            free(command1);
 
+            // printf("command1 = (%s) value = (%s)", command1, reply->str);
+            free(command1);
+            if(reply==0){
+                return 0;
+            }
             printf("isnull= (%d) ", reply->str == 0);
             if (reply->str == 0)
             {
@@ -263,7 +327,7 @@ void sortKeys(Keys *keys, int n)
 
 int DeviceMemoryInit()
 {
-    DeviceMemorysCount=0;
+    DeviceMemorysCount = 0;
     Devs devs;
     getDevs(&devs);
     //DeviceMemory **dms = (DeviceMemory **)calloc(devs.size, sizeof(DeviceMemory));
@@ -312,7 +376,7 @@ int initDeviceMemoryAll()
     for (i = 0; i < devs.size; i++)
     {
         DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
-        dm->dev = devs.devs[i];
+        dm->dev = strdup(devs.devs[i]);
         getDeviceMemory(dm, devs.devs[i]);
         dms[i] = dm;
     }
@@ -323,20 +387,25 @@ int initDeviceMemoryAll()
 }
 int DeviceMemoryAllUpdate()
 {
+    sleep(0);
     int i;
-    for (i = 0; i < dma.size; i++)
-    {
-        free(dma.dma[i]);
-    }
     Devs devs;
     getDevs(&devs);
     DeviceMemory *dms[sizeof(DeviceMemory) * devs.size];
     for (i = 0; i < devs.size; i++)
     {
         DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
-        dm->dev = devs.devs[i];
+        dm->dev = strdup(devs.devs[i]);
         getDeviceMemory(dm, devs.devs[i]);
         dms[i] = dm;
+    }
+    for (i = 0; i < dma.size; i++)
+    {   
+        if(dma.dma[i]->dev!=0){
+            free(dma.dma[i]->dev);
+        }
+        
+        free(dma.dma[i]);
     }
     dma.dma = dms;
     dma.size = i;

@@ -38,6 +38,8 @@
     "deque": "cpp",
     "vector": "cpp",
     "cstdlib": "cpp",
-    "cstring": "cpp"
+    "cstring": "cpp",
+    "queue": "cpp",
+    "ostream": "cpp"
   }
 }

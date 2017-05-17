@@ -9,9 +9,14 @@
 #include <fcntl.h>
 #include <sys/shm.h>
 #include <pthread.h>
-#include <assert.h>     //Func :assert
+#include <assert.h> 
 #include "hiredis/hiredis.h"
+#include "asynreids.h"
+
+#ifndef include_device //X为你的标识符,保持唯一，可以长点，比如 #ifndef _INCLUDE_XXXXXX_H_
+#define include_device
 #include "device.h"
+#endif
 
 //#include "mxml-release-2.10/mxml.h"
 #define MYPORT 8888
@@ -26,7 +31,6 @@ int fun02(modbus_request *mrq, char *resdata);
 int fun03(modbus_request *mrq, char *resdata);
 int fun04(modbus_request *mrq, char *resdata);
 
-
 int readMessage(char *buffer, int len, int conn);
 //static const char *netnum;
 
@@ -37,3 +41,5 @@ static void Data_handle(void *sock_fd);
 
 
 
+void *asynRedis(void *arg);
+int runThread();

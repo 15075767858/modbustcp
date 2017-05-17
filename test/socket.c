@@ -19,6 +19,7 @@ int main()
     run1();
     return 0;
 }
+
 int socket_run(){
     int sockfd_server;
     int sockfd;
@@ -78,6 +79,7 @@ int socket_run(){
 
     return 0;
 }
+
 static void Data_handle(void *sock_fd)
 {
     int fd = *((int *)sock_fd);

@@ -75,14 +75,19 @@ int getDevs(Devs *sdevs);
 int getDeviceMemory(DeviceMemory *dm, char *dev);
 void sortKeys(Keys *keys, int n);
 int DeviceMemoryInit();
-int redisInit();
 int DeviceMemoryAllUpdate();
 int freeKeys(Keys *keys);
 int freeDevs(Devs *devs);
-int initDeviceMemoryAll();
 void catNumAdd0(char *buffer, int num);    //在字符串后面加上一个两位数的数字 如果该数字小于10则在前面补0
-
 int bufAddSbit(char *resdata, char *sbit); //字符数组后面添加一个16进制数字，每8位字符串就是一个数字
 static struct itimerval oldtv;
+
+
+int redisInit();
+int initDeviceMemoryAll();
 void set_timer();
 void signal_handler(int m);
+
+
+int getDevIndex(char *dev);
+int getKeyIndex(char *key);

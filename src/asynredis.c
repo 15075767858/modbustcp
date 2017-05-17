@@ -1,42 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/shm.h>
-#include <hiredis.h>
-#include <signal.h>
-#include <adapters/libevent.h>
-#include <pthread.h>
-#include "../src/device.h"
-//#include <adapters/libevent.h>
-//设置命令执行后的回调函数
-//gcc  ./output/async.o ./output/dict.o ./output/net.o ./output/read.o ./output/sds.o ./output/hiredis.o   test/testredis.c  -o a.out  -g  -I./hiredis/ -L/usr/include/sys
-void *thread_function(void *arg);
-void asyn();
+#include  "asynreids.h"
 
-void *thread_function(void *arg)
-{
-    printf("thread run");
-    sleep(0);
-    asyn();
-    pthread_exit(NULL);
-}
-int redisSubscribeRun()
-{
-    int res;
-    pthread_t a_thread;
-    void *thread_result;
-    res = pthread_create(&a_thread, NULL, thread_function, NULL);
-    pthread_t b_thread;
-    res = pthread_join(a_thread, &thread_result);
 
-    return 0;
-}
+
 int changeDeviceMemory(char *key, char *value)
 {
     char dev[10];
@@ -103,7 +68,6 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         return;
     //printf("argv[%s]: %s\n", (char *)privdata, reply->str);
 }
-
 void connectCallback(const redisAsyncContext *c, int status)
 {
     if (status != REDIS_OK)
@@ -113,7 +77,6 @@ void connectCallback(const redisAsyncContext *c, int status)
     }
     printf("Connected...\n");
 }
-
 void disconnectCallback(const redisAsyncContext *c, int status)
 {
     if (status != REDIS_OK)
@@ -141,21 +104,14 @@ void asyn()
     //环境  回调函数 私人传值 命令 参数。。。
 }
 
-int main(int argc, char **argv)
-{
-    redisInit();
-
-    initDeviceMemoryAll();
-    signal(14, signal_handler);
-    set_timer();
-    printf("%d\n", getDevIndex("1001"));
-    printf("keyindex =  (%d)\n", getKeyIndex("1001108"));
-
-    // while (1)
-    // {
-    //     DeviceMemoryAllUpdate();
-    // };
-    redisSubscribeRun();
-
-    return 0;
-}
+//int main(int argc, char **argv)
+//{
+//    redisInit();
+//    initDeviceMemoryAll();
+//    signal(14, signal_handler);
+//    set_timer();
+//    printf("%d\n", getDevIndex("1001"));
+//    printf("keyindex =  (%d)\n", getKeyIndex("1001108"));
+//    redisSubscribeRun();
+//    return 0;
+//}

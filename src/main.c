@@ -1,4 +1,5 @@
 #include "main.h"
+
 int socket_run()
 {
     int sockfd_server;
@@ -16,7 +17,7 @@ int socket_run()
     s_addr_in.sin_family = AF_INET;
     s_addr_in.sin_addr.s_addr = htonl(INADDR_ANY); //trans addr from uint32_t host byte order to network byte order.
     s_addr_in.sin_port = htons(SOCK_PORT);         //trans port from uint16_t host byte order to network byte order.
-    fd_temp = bind(sockfd_server, (struct scokaddr *)(&s_addr_in), sizeof(s_addr_in));
+    fd_temp = bind(sockfd_server, (struct scokaddr *)&s_addr_in, sizeof(s_addr_in));
     if (fd_temp == -1)
     {
         fprintf(stderr, "bind error!\n");
@@ -37,7 +38,7 @@ int socket_run()
         client_length = sizeof(s_addr_client);
 
         //Block here. Until server accpets a new connection.
-        sockfd = accept(sockfd_server, (struct sockaddr_ *)(&s_addr_client), (socklen_t *)(&client_length));
+        sockfd = accept(sockfd_server, (struct sockaddr_ *)&s_addr_client, (socklen_t *)(&client_length));
         if (sockfd == -1)
         {
             fprintf(stderr, "Accept error!\n");
@@ -90,7 +91,8 @@ static void Data_handle(void *sock_fd)
         else
         {
             int resNum = readMessage(data_recv, i_recvBytes, fd);
-            if(resNum==-1){
+            if (resNum == -1)
+            {
                 break;
             }
             printf("resNum=%d \n", resNum);
@@ -109,16 +111,45 @@ static void Data_handle(void *sock_fd)
     close(fd);          //close a file descriptor.
     pthread_exit(NULL); //terminate calling thread!
 }
+void *asynRedis(void *arg)
+{
+    printf("asynRedis run");
+    sleep(1);
+    asyn();
+    pthread_exit(NULL);
+}
+void *socketStart(void *arg)
+{
+    printf("socketStart run");
+    sleep(1);
+    socket_run();
+    pthread_exit(NULL);
+}
+int runThread()
+{
+    //socket_run();
+    int res;
+    pthread_t a_thread;
+    pthread_t b_thread;
+    void *thread_result;
+    res = pthread_create(&a_thread, NULL, asynRedis, NULL);
+    res = pthread_create(&b_thread, NULL, socketStart, NULL);
+    res = pthread_join(a_thread, &thread_result);
+    res = pthread_join(b_thread, &thread_result);
+    return 0;
+}
 int main()
 {
     redisInit();
     initDeviceMemoryAll();
     signal(14, signal_handler);
     set_timer();
+    printf("redis run \n");
     sleep(10);
-    printf("run server\n");
     //run();
-    socket_run();
+    runThread();
+    printf("asyn redis run\n");
+    //socket_run();
     redisFree(redis);
     return 0;
 }
@@ -213,23 +244,6 @@ int readMessage(char *buffer, int len, int conn)
     }
 
     return 0;
-}
-
-void signal_handler(int m)
-{
-    DeviceMemoryAllUpdate();
-    //    DeviceMemoryInit();
-    printf("%s\n", "timer runing");
-}
-
-void set_timer()
-{
-    struct itimerval itv;
-    itv.it_interval.tv_sec = 10;
-    itv.it_interval.tv_usec = 0;
-    itv.it_value.tv_sec = 1;
-    itv.it_value.tv_usec = 0;
-    setitimer(ITIMER_REAL, &itv, &oldtv);
 }
 
 int fun01(modbus_request *mrq, char *resdata) //BO
