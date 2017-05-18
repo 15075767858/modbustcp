@@ -1,4 +1,4 @@
-arm-none-linux-gnueabi-gcc -c src/asynredis.c -Ilibrary/libevent -Ilibrary -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
+arm-none-linux-gnueabi-gcc -c src/asynredis.c src/device.c -Ilibrary/libevent -Ilibrary -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
 arm-none-linux-gnueabi-gcc -c src/device.c -Ilibrary/
 
 arm-none-linux-gnueabi-gcc -c library/hiredis/async.c -Ilibrary/hiredis

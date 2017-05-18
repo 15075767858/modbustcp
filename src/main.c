@@ -1,7 +1,5 @@
 #include "main.h"
 
-
-
 int main()
 {
     redisInit();
@@ -81,7 +79,7 @@ static void Data_handle(void *sock_fd)
     int fd = *((int *)sock_fd);
     int i_recvBytes;
     char data_recv[BUFFER_LENGTH];
-    const char *data_send = "Server has received your request!\n";
+    //const char *data_send = "Server has received your request!\n";
 
     while (1)
     {
@@ -90,17 +88,20 @@ static void Data_handle(void *sock_fd)
         memset(data_recv, 0, BUFFER_LENGTH);
 
         i_recvBytes = read(fd, data_recv, BUFFER_LENGTH);
+
         int i;
         printf("reqdata=(");
+        
         for (i = 0; i < i_recvBytes; i++)
         {
             printf("%02hhx ", data_recv[i]);
         }
         printf(" )\n");
+        //write(fd, data_send, strlen(data_send));
+
         if (i_recvBytes < 8)
         {
-            write(fd, data_send, strlen(data_send));
-            //printf("Maybe the client has closed\n");
+            write(fd, data_recv, i_recvBytes);
             break;
         }
         else
@@ -110,7 +111,6 @@ static void Data_handle(void *sock_fd)
             {
                 break;
             }
-            //printf("resNum=%d \n", resNum);
         }
     }
 
@@ -140,13 +140,12 @@ int runThread()
     pthread_t a_thread;
     pthread_t b_thread;
     void *thread_result;
-    res = pthread_create(&a_thread, NULL, asynRedis, NULL);
+    //res = pthread_create(&a_thread, NULL, asynRedis, NULL);
     res = pthread_create(&b_thread, NULL, socketStart, NULL);
-    res = pthread_join(a_thread, &thread_result);
+    //res = pthread_join(a_thread, &thread_result);
     res = pthread_join(b_thread, &thread_result);
     return 0;
 }
-
 
 int readMessage(char *buffer, int len, int conn)
 {

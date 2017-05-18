@@ -26,8 +26,8 @@ var sources="/Volumes/XiaoMi-usb0/共享/modbustcp"
 
 var gulp = require('gulp'),
     fileSync = require('gulp-file-sync');
-gulp.task('sync', function() {
+gulp.task('file', function() {
   gulp.watch([dest+'/**/**'], function() {
-    fileSync(sources,dest, {recursive: true,ignore: ["gulpfile.js",".DS_Store","._.DS_Store",".git"]});
+    fileSync(dest,sources, {recursive: true,ignore: ["gulpfile.js",".DS_Store","._.DS_Store",".git","modbus-tcp-server"]});
   });
 });

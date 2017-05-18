@@ -20,7 +20,7 @@
 
 //#include "mxml-release-2.10/mxml.h"
 
-#define SOCK_PORT 8888
+#define SOCK_PORT 502
 #define BUFFER_LENGTH 1024
 #define MAX_CONN_LIMIT 512 //MAX connection limit
 
