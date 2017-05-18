@@ -19,9 +19,7 @@
 #endif
 
 //#include "mxml-release-2.10/mxml.h"
-#define MYPORT 8888
-#define QUEUE 20
-#define BUFFER_SIZE 1024
+
 #define SOCK_PORT 8888
 #define BUFFER_LENGTH 1024
 #define MAX_CONN_LIMIT 512 //MAX connection limit
@@ -34,12 +32,9 @@ int fun04(modbus_request *mrq, char *resdata);
 int readMessage(char *buffer, int len, int conn);
 //static const char *netnum;
 
-void run();
-
 int socket_run();
 static void Data_handle(void *sock_fd);
 
-
-
 void *asynRedis(void *arg);
 int runThread();
+

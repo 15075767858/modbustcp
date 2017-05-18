@@ -20,14 +20,14 @@ testredis:
 	$(cc) hiredis.a libevent.a src/device.c test/testredis.c  -o a.out  -g  -I./${hiredisdir}/    &&./a.out
 run:
 	make all
-	./modbus-tcp-server
-debug:
-	${cc} ${src} hiredis.a libevent.a -I${hiredisdir}  -g
+	./a.out
 all:
-	${cc} ${src} hiredis.a libevent.a -I${hiredisdir} -o modbus-tcp-server 
+	${cc} ${src} hiredis.a libevent.a -I${hiredisdir}  -g
 build:hiredis.a libevent.a ${libs}
 	rm ${libevent} ${hiredislibs} ${libs}
-
+win:
+	arm-none-linux-gnueabi-gcc src/main.c src/asynredis.c src/device.c winlibs/hiredis.a winlibs/libevent.a \
+	-Ilibrary -Ilibrary/libevent -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
 asynredis.o:
 	$(cc) -c src/asynredis.c -I${hiredisdir}
 device.o:
@@ -77,3 +77,4 @@ evutil.o:
 	${cc} -c ${libeventdir}/evutil.c -I${libeventdir}/include 
 event.o:
 	${cc} -c ${libeventdir}/event.c -I${libeventdir}/include 
+

@@ -1,0 +1,33 @@
+arm-none-linux-gnueabi-gcc -c src/asynredis.c -Ilibrary/libevent -Ilibrary -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
+arm-none-linux-gnueabi-gcc -c src/device.c -Ilibrary/
+
+arm-none-linux-gnueabi-gcc -c library/hiredis/async.c -Ilibrary/hiredis
+arm-none-linux-gnueabi-gcc -c library/hiredis/dict.c -Ilibrary/hiredis
+arm-none-linux-gnueabi-gcc -c library/hiredis/net.c -Ilibrary/hiredis
+arm-none-linux-gnueabi-gcc -c library/hiredis/read.c -Ilibrary/hiredis
+arm-none-linux-gnueabi-gcc -c library/hiredis/sds.c -Ilibrary/hiredis
+arm-none-linux-gnueabi-ar -r hiredis.a async.o dict.o net.o read.o sds.o hiredis.o
+
+
+
+
+ arm-none-linux-gnueabi-gcc -c event.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c evutil_rand.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c epoll.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c poll.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c select.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c signal.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c evport.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c devpoll.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c log.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c evthread.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c evutil_time.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c kqueue.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c evmap.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c evutil.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c event.c -Iinclude -IWIN32-Code/nmake
+ arm-none-linux-gnueabi-gcc -c strlcpy.c -Iinclude -IWIN32-Code/nmake
+arm-none-linux-gnueabi-ar -r libevent.a buffer.o devpoll.o epoll.o event.o evmap.o evport.o evthread.o evutil.o evutil_rand.o evutil_time.o kqueue.o log.o poll.o select.o signal.o strlcpy.o
+
+arm-none-linux-gnueabi-gcc src/main.c hiredis.a libevent.a libevent_pthreads.a libevent_core.a libevent_extra.a device.o asynredis.o -Ilibrary/libevent -Ilibrary -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
+

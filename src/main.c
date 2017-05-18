@@ -1,5 +1,20 @@
 #include "main.h"
 
+
+
+int main()
+{
+    redisInit();
+    initDeviceMemoryAll();
+    signal(14, signal_handler);
+    set_timer();
+    printf("redis run \n");
+    sleep(10);
+    runThread();
+    printf("asyn redis run\n");
+    redisFree(redis);
+    return 0;
+}
 int socket_run()
 {
     int sockfd_server;
@@ -131,21 +146,7 @@ int runThread()
     res = pthread_join(b_thread, &thread_result);
     return 0;
 }
-int main()
-{
-    redisInit();
-    initDeviceMemoryAll();
-    signal(14, signal_handler);
-    set_timer();
-    printf("redis run \n");
-    sleep(10);
-    //run();
-    runThread();
-    printf("asyn redis run\n");
-    //socket_run();
-    redisFree(redis);
-    return 0;
-}
+
 
 int readMessage(char *buffer, int len, int conn)
 {
@@ -216,19 +217,7 @@ int readMessage(char *buffer, int len, int conn)
         return fun04(&mrq, resdata);
         break;
     case 6:
-        //     key[4] = '4';
-        //     int addr = buffer[8] * 256 + buffer[9];
-        //     int data = buffer[10] * 256 + buffer[11];
-        //     char skey[10];
-        //     memset(skey, 0, 10);
-        //     //sprintf(skey,)
-        //     strcat(skey, key);
-        //     catNumAdd0(skey, addr + 1);
-        //     printf("key = %s\n", skey);
-        //     char commandbuffer[100];
-        //     sprintf(commandbuffer, "hset %s Present_Value %d", skey, data);
-        //     redisReply *rest = (redisReply *)redisCommand(redis, commandbuffer);
-        //     send(conn, buffer, 12, 0);
+
         break;
     default:
         return send(conn, resdata, 8, 0);
@@ -345,6 +334,20 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
 }
 
+//回收站------------------------------------------------------------------------------------------------------------------------------
+//     key[4] = '4';
+//     int addr = buffer[8] * 256 + buffer[9];
+//     int data = buffer[10] * 256 + buffer[11];
+//     char skey[10];
+//     memset(skey, 0, 10);
+//     //sprintf(skey,)
+//     strcat(skey, key);
+//     catNumAdd0(skey, addr + 1);
+//     printf("key = %s\n", skey);
+//     char commandbuffer[100];
+//     sprintf(commandbuffer, "hset %s Present_Value %d", skey, data);
+//     redisReply *rest = (redisReply *)redisCommand(redis, commandbuffer);
+//     send(conn, buffer, 12, 0);
 int test()
 {
     Keys keys;
@@ -356,86 +359,3 @@ int test()
     // freeDevs(&devs);
     return 0;
 }
-
-//回收站------------------------------------------------------------------------------------------------------------------------------
-void run()
-{
-    ///定义sockfd
-    int server_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    ///定义sockaddr_in
-    struct sockaddr_in server_sockaddr;
-    server_sockaddr.sin_family = AF_INET;
-    server_sockaddr.sin_port = htons(MYPORT);
-    server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    ///bind，成功返回0，出错返回-1
-    if (bind(server_sockfd, (struct sockaddr *)&server_sockaddr, sizeof(server_sockaddr)) == -1)
-    {
-        perror("bind");
-        exit(1);
-    }
-    ///listen，成功返回0，出错返回-1
-    if (listen(server_sockfd, QUEUE) == -1)
-    {
-        perror("listen");
-        exit(1);
-    }
-    printf("start listen\n");
-    ///客户端套接字
-    char buffer[BUFFER_SIZE];
-    memset(buffer, 0, sizeof(buffer));
-    struct sockaddr_in client_addr;
-    socklen_t length = sizeof(client_addr);
-    while (1)
-    {
-        int conn = accept(server_sockfd, (struct sockaddr *)&client_addr, &length);
-        ///成功返回非负描述字，出错返回-1
-        printf("start accept\n");
-        if (conn < 0)
-        {
-            perror("connect");
-            exit(1);
-        }
-        while (1)
-        {
-            memset(buffer, 0, sizeof(buffer));
-            int len = read(conn, buffer, sizeof(buffer));
-            if (len == 0)
-            {
-                break;
-            }
-            int i;
-            printf("reqdata =(");
-            for (i = 0; i < len; i++)
-            {
-                printf("%02hhx ", buffer[i]);
-            }
-            printf(" )\n");
-            readMessage(buffer, len, conn);
-        }
-    }
-    printf("close\n");
-    //close(conn);
-    close(server_sockfd);
-}
-
-//int initNetNum();
-
-// int initNetNum()
-// {
-//     FILE *fp;
-//     mxml_node_t *tree;
-//     fp = fopen("./bac_config.xml", "r");
-//     if (fp == 0)
-//     {
-//         printf("/mnt/nandflash/bac_config.xml not found\n");
-//         return 1;
-//     }
-//     tree = mxmlLoadFile(NULL, fp, MXML_TEXT_CALLBACK);
-//     mxml_node_t *node;
-//     node = mxmlFindElement(tree, tree, "net", NULL, NULL, MXML_DESCEND);
-//     netnum = mxmlGetText(node, 0);
-//     printf("net number = %s \n", netnum);
-//     fclose(fp);
-//     return 0;
-// }
