@@ -31,3 +31,8 @@ arm-none-linux-gnueabi-ar -r libevent.a buffer.o devpoll.o epoll.o event.o evmap
 
 arm-none-linux-gnueabi-gcc src/main.c hiredis.a libevent.a libevent_pthreads.a libevent_core.a libevent_extra.a device.o asynredis.o -Ilibrary/libevent -Ilibrary -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
 
+My.randomChangeValue("127.0.0.1","1001201","Present_Value",100)
+My.randomChangeValue("127.0.0.1","1001202","Present_Value",100)
+My.randomChangeValue("127.0.0.1","1001203","Present_Value",100)
+My.randomChangeValue("127.0.0.1","1001204","Present_Value",100)
+My.randomChangeValue("127.0.0.1","1001205","Present_Value",100)

@@ -66,7 +66,7 @@ void signal_handler(int m)
 void set_timer()
 {
     struct itimerval itv;
-    itv.it_interval.tv_sec = 10;
+    itv.it_interval.tv_sec = 3;
     itv.it_interval.tv_usec = 0;
     itv.it_value.tv_sec = 1;
     itv.it_value.tv_usec = 0;
@@ -155,21 +155,22 @@ int getKeys(Keys *keys)
     else
     {
         strcat(command, "???????\0");
-        printf("\n 没有dev  \n");
+        printf("\n 没有dev command = (%s) \n",command);
     }
     //printf("command == ( %s )\n", command);
-    int y;
+    //int y;
     // for (y = 0; y < 15; y++)
     // {
     //     printf(" %c ", command[y]);
     // }
     redisReply *reply = (redisReply *)redisCommand(redis, command);
-    if (reply == 0)
-    {
-        return getKeys(keys);
-    }
-    memset(command, 0, 100);
     free(command);
+    
+    // if (reply == 0)
+    // {
+    //     return getKeys(keys);
+    // }
+    memset(command, 0, 100);
     int k;
     int len = reply->elements;
     // printf("key(");
@@ -385,6 +386,15 @@ int DeviceMemoryAllUpdate()
 {
     sleep(0);
     int i;
+    char *asd;
+    for (i = 0; i < dma.size; i++)
+    {
+        if (dma.dma[i]->dev != 0)
+        {
+            free(dma.dma[i]->dev);
+        }
+        free(dma.dma[i]);
+    }
     Devs devs;
     getDevs(&devs);
     DeviceMemory *dms[sizeof(DeviceMemory) * devs.size];
@@ -395,15 +405,7 @@ int DeviceMemoryAllUpdate()
         getDeviceMemory(dm, devs.devs[i]);
         dms[i] = dm;
     }
-    for (i = 0; i < dma.size; i++)
-    {
-        if (dma.dma[i]->dev != 0)
-        {
-            free(dma.dma[i]->dev);
-        }
-
-        free(dma.dma[i]);
-    }
+    
     dma.dma = dms;
     dma.size = i;
     freeDevs(&devs);

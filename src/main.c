@@ -1,7 +1,15 @@
 #include "main.h"
 
+int isMac()
+{
+    struct utsname un;
+    uname(&un);
+
+    return strncmp(un.sysname, "Darwin", 5);
+}
 int main()
 {
+
     redisInit();
     initDeviceMemoryAll();
     signal(14, signal_handler);
@@ -11,6 +19,7 @@ int main()
     runThread();
     printf("asyn redis run\n");
     redisFree(redis);
+
     return 0;
 }
 int socket_run()
@@ -29,7 +38,12 @@ int socket_run()
     memset(&s_addr_in, 0, sizeof(s_addr_in));
     s_addr_in.sin_family = AF_INET;
     s_addr_in.sin_addr.s_addr = htonl(INADDR_ANY); //trans addr from uint32_t host byte order to network byte order.
-    s_addr_in.sin_port = htons(SOCK_PORT);         //trans port from uint16_t host byte order to network byte order.
+    int port = 502;
+    if (isMac() == 0)
+    {
+        port = 8888;
+    }
+    s_addr_in.sin_port = htons(port); //trans port from uint16_t host byte order to network byte order.
     fd_temp = bind(sockfd_server, (struct scokaddr *)&s_addr_in, sizeof(s_addr_in));
     if (fd_temp == -1)
     {
@@ -91,7 +105,7 @@ static void Data_handle(void *sock_fd)
 
         int i;
         printf("reqdata=(");
-        
+
         for (i = 0; i < i_recvBytes; i++)
         {
             printf("%02hhx ", data_recv[i]);
@@ -140,10 +154,10 @@ int runThread()
     pthread_t a_thread;
     pthread_t b_thread;
     void *thread_result;
-    //res = pthread_create(&a_thread, NULL, asynRedis, NULL);
-    res = pthread_create(&b_thread, NULL, socketStart, NULL);
-    //res = pthread_join(a_thread, &thread_result);
-    res = pthread_join(b_thread, &thread_result);
+    res = pthread_create(&a_thread, NULL, asynRedis, NULL);
+    //res = pthread_create(&b_thread, NULL, socketStart, NULL);
+    res = pthread_join(a_thread, &thread_result);
+    //res = pthread_join(b_thread, &thread_result);
     return 0;
 }
 
@@ -294,6 +308,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
 {
     printf("fun03  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
+    
     DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;

@@ -9,9 +9,10 @@
 #include <fcntl.h>
 #include <sys/shm.h>
 #include <pthread.h>
-#include <assert.h> 
+#include <assert.h>
 #include "hiredis/hiredis.h"
 #include "asynreids.h"
+#include <sys/utsname.h>
 
 #ifndef include_device //X为你的标识符,保持唯一，可以长点，比如 #ifndef _INCLUDE_XXXXXX_H_
 #define include_device
@@ -19,8 +20,14 @@
 #endif
 
 //#include "mxml-release-2.10/mxml.h"
+// #define SOCK_PORT 502
+// #if defined(Q_OS_WIN32) || defined(Q_OS_WIN64) || defined(Q_OS_WINCE)
+// #define SOCK_PORT 8888
+// #endif
+// #if defined(Q_OS_DARWIN64)
+#define SOCK_PORT 8888
+//#define SOCK_PORT 502
 
-#define SOCK_PORT 502
 #define BUFFER_LENGTH 1024
 #define MAX_CONN_LIMIT 512 //MAX connection limit
 
@@ -38,3 +45,4 @@ static void Data_handle(void *sock_fd);
 void *asynRedis(void *arg);
 int runThread();
 
+int isMac();

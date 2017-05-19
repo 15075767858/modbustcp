@@ -68,24 +68,6 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         return;
     //printf("argv[%s]: %s\n", (char *)privdata, reply->str);
 }
-void connectCallback(const redisAsyncContext *c, int status)
-{
-    if (status != REDIS_OK)
-    {
-        printf("Error: %s\n", c->errstr);
-        return;
-    }
-    printf("Connected...\n");
-}
-void disconnectCallback(const redisAsyncContext *c, int status)
-{
-    if (status != REDIS_OK)
-    {
-        printf("Error: %s\n", c->errstr);
-        return;
-    }
-    printf("Disconnected...\n");
-}
 
 void asyn()
 {
@@ -115,3 +97,21 @@ void asyn()
 //    redisSubscribeRun();
 //    return 0;
 //}
+void connectCallback(const redisAsyncContext *c, int status)
+{
+    if (status != REDIS_OK)
+    {
+        printf("Error: %s\n", c->errstr);
+        return;
+    }
+    printf("Connected...\n");
+}
+void disconnectCallback(const redisAsyncContext *c, int status)
+{
+    if (status != REDIS_OK)
+    {
+        printf("Error: %s\n", c->errstr);
+        return;
+    }
+    printf("Disconnected...\n");
+}
