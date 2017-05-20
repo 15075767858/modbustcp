@@ -9,7 +9,6 @@ int isMac()
 }
 int main()
 {
-
     redisInit();
     initDeviceMemoryAll();
     signal(14, signal_handler);
@@ -30,7 +29,7 @@ int socket_run()
     struct sockaddr_in s_addr_in;
     struct sockaddr_in s_addr_client;
     int client_length;
-
+    socketCount = 0;
     sockfd_server = socket(AF_INET, SOCK_STREAM, 0); //ipv4,TCP
     assert(sockfd_server != -1);
 
@@ -44,7 +43,8 @@ int socket_run()
         port = 8888;
     }
     s_addr_in.sin_port = htons(port); //trans port from uint16_t host byte order to network byte order.
-    fd_temp = bind(sockfd_server, (struct scokaddr *)&s_addr_in, sizeof(s_addr_in));
+    fd_temp = bind(sockfd_server, (struct scokaddr *)(&s_addr_in), sizeof(s_addr_in));
+
     if (fd_temp == -1)
     {
         fprintf(stderr, "bind error!\n");
@@ -65,12 +65,14 @@ int socket_run()
         client_length = sizeof(s_addr_client);
 
         //Block here. Until server accpets a new connection.
-        sockfd = accept(sockfd_server, (struct sockaddr_ *)&s_addr_client, (socklen_t *)(&client_length));
+        sockfd = accept(sockfd_server, (struct sockaddr_ *)(&s_addr_client), (socklen_t *)(&client_length));
+
         if (sockfd == -1)
         {
             fprintf(stderr, "Accept error!\n");
             continue; //ignore current socket ,continue while loop.
         }
+        socketCount++;
         printf("A new connection occurs!\n");
         if (pthread_create(&thread_id, NULL, (void *)(&Data_handle), (void *)(&sockfd)) == -1)
         {
@@ -100,20 +102,17 @@ static void Data_handle(void *sock_fd)
         //printf("waiting for request...\n");
         //Reset data.
         memset(data_recv, 0, BUFFER_LENGTH);
-
         i_recvBytes = read(fd, data_recv, BUFFER_LENGTH);
-
         int i;
         printf("reqdata=(");
-
         for (i = 0; i < i_recvBytes; i++)
         {
             printf("%02hhx ", data_recv[i]);
         }
-        printf(" )\n");
+        printf(" ) socketCount = (%d)\n", socketCount);
         //write(fd, data_send, strlen(data_send));
 
-        if (i_recvBytes < 8)
+        if (i_recvBytes < 1)
         {
             write(fd, data_recv, i_recvBytes);
             break;
@@ -154,10 +153,11 @@ int runThread()
     pthread_t a_thread;
     pthread_t b_thread;
     void *thread_result;
+
     res = pthread_create(&a_thread, NULL, asynRedis, NULL);
-    //res = pthread_create(&b_thread, NULL, socketStart, NULL);
+    res = pthread_create(&b_thread, NULL, socketStart, NULL);
     res = pthread_join(a_thread, &thread_result);
-    //res = pthread_join(b_thread, &thread_result);
+    res = pthread_join(b_thread, &thread_result);
     return 0;
 }
 
@@ -215,6 +215,19 @@ int readMessage(char *buffer, int len, int conn)
         send(conn, buffer, len, 0);
         return 1;
     }
+    if (mrq.slave - 1 > dma.size)
+    {
+        printf("error slave is not found (%d)\n ",mrq.slave);
+        send(conn, buffer, len, 0);
+        
+        return 1;
+    }
+    if (mrq.reg_str+mrq.reg_num>512)
+    {
+        printf("error key stackoverflow (%d) ",mrq.reg_str+mrq.reg_num);
+        send(conn, buffer, len, 0);
+        return 1;
+    }
     switch (mrq.fun)
     {
     case 1:
@@ -244,8 +257,9 @@ int readMessage(char *buffer, int len, int conn)
 int fun01(modbus_request *mrq, char *resdata) //BO
 {
     //mrq->reg_str = mrq->reg_str + 1;
-    printf("fun03  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->reg_str, mrq->reg_num);
+    printf("fun(%d)  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun,mrq->slave, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
+
     DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;
@@ -277,7 +291,6 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         printf("count = %d str=%s i = %d end =  %d yushu = %d strlen =%lu \n", count, str, i, end, end % 8, strlen(str));
         count++;
     }
-
     char *a = &str[0];
     char sb[8]; //一次装8个数字
     memset(sb, 0, 8);
@@ -293,7 +306,8 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     }
 
     printf("\n str = (%s) ", str);
-    return send(mrq->conn, resdata, 100, 0);
+    return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
+    
 }
 int fun02(modbus_request *mrq, char *resdata) //BI
 {
@@ -306,9 +320,9 @@ int fun04(modbus_request *mrq, char *resdata)
 }
 int fun03(modbus_request *mrq, char *resdata) //AV
 {
-    printf("fun03  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->reg_str, mrq->reg_num);
+    printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
-    
+
     DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;
@@ -331,10 +345,10 @@ int fun03(modbus_request *mrq, char *resdata) //AV
             printf("%f, ", dm.AI[i]);
             my_data.real_value = dm.AI[i];
         }
-        resdata[9 + count * 4] = my_data.byte[1];
-        resdata[10 + count * 4] = my_data.byte[0];
-        resdata[11 + count * 4] = my_data.byte[3];
-        resdata[12 + count * 4] = my_data.byte[2];
+        resdata[9 + count * 4] = my_data.byte[3];
+        resdata[10 + count * 4] = my_data.byte[2];
+        resdata[11 + count * 4] = my_data.byte[1];
+        resdata[12 + count * 4] = my_data.byte[0];
         count++;
     }
     printf(")\n");
@@ -362,6 +376,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
 //     sprintf(commandbuffer, "hset %s Present_Value %d", skey, data);
 //     redisReply *rest = (redisReply *)redisCommand(redis, commandbuffer);
 //     send(conn, buffer, 12, 0);
+
 int test()
 {
     Keys keys;

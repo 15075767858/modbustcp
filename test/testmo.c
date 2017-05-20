@@ -3,11 +3,14 @@
 #include <string.h>
 int main()
 {
-    char a[100];
-    a = (char *)calloc(100, 1);
 
-    memset(a,0,110);
-    printf("%s \n",a);
-
+    while (1)
+    {
+        char *a;
+        a = (char *)calloc(100, 1);
+        //printf("%s \n", a);
+        a = realloc(a, 200);
+        free(a);
+    }
     return 0;
 }

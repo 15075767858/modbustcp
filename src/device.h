@@ -50,7 +50,7 @@ typedef struct Devs
 } Devs;
 typedef struct DeviceMemory
 {
-    char *dev;
+    char dev[5];
     float AI[512];
     float AO[512];
     float AV[512];
@@ -63,6 +63,7 @@ typedef struct DeviceMemoryAll
     DeviceMemory **dma;
     int size;
 } DeviceMemoryAll;
+
 DeviceMemoryAll dma;
 DeviceMemory **DeviceMemorys; //静态的当前所有设备的内存
 int DeviceMemorysCount;

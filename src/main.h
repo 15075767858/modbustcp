@@ -30,7 +30,7 @@
 
 #define BUFFER_LENGTH 1024
 #define MAX_CONN_LIMIT 512 //MAX connection limit
-
+int socketCount;
 int fun01(modbus_request *mrq, char *resdata);
 int fun02(modbus_request *mrq, char *resdata);
 int fun03(modbus_request *mrq, char *resdata);

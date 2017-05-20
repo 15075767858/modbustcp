@@ -59,7 +59,7 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         {
             changeDeviceMemory(key, val);
         }
-        printf("pubdata =  %s %s %s \n", key, type, val);
+        //printf("pubdata =  %s %s %s ", key, type, val);
         free(str);
     }
 

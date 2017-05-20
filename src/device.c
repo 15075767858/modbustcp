@@ -18,11 +18,11 @@ int getDevIndex(char *dev)
     int i;
     for (i = 0; i < dma.size; i++)
     {
-        
-        if (dma.dma[i]->dev == 0)
-        {
-            continue;
-        }
+
+        // if (dma.dma[i]->dev == 0)
+        // {
+        //     continue;
+        // }
         //        printf("devstr = %s %d \n", dma.dma[i]->dev, strncmp(dev, dma.dma[i]->dev, 4));
 
         if (strncmp(dev, dma.dma[i]->dev, 4) == 0)
@@ -59,14 +59,13 @@ int getKeyIndex(char *key)
 void signal_handler(int m)
 {
     DeviceMemoryAllUpdate();
-    //    DeviceMemoryInit();
-    //printf("%s\n", "timer runing");
+
 }
 
 void set_timer()
 {
     struct itimerval itv;
-    itv.it_interval.tv_sec = 3;
+    itv.it_interval.tv_sec = 10;
     itv.it_interval.tv_usec = 0;
     itv.it_value.tv_sec = 1;
     itv.it_value.tv_usec = 0;
@@ -76,6 +75,7 @@ void set_timer()
 int bit8ToInt(char *strbuf)
 {
     char resbuf[9];
+
     memset(resbuf, 0, 9);
     resbuf[0] = strbuf[7];
     resbuf[1] = strbuf[6];
@@ -137,10 +137,7 @@ int Unique(char **devs, int len)
 int getKeys(Keys *keys)
 {
 
-    //redisContext *c = redisConnect("127.0.0.1", 6379);
-
     char *command = (char *)malloc(100);
-    //strcat(command, "keys ");
     command[0] = 'k';
     command[1] = 'e';
     command[2] = 'y';
@@ -150,27 +147,17 @@ int getKeys(Keys *keys)
     if (keys->dev != NULL)
     {
         strcat(command, keys->dev);
-        //printf("\n dev= %s \n", keys->dev);
     }
     else
     {
         strcat(command, "???????\0");
-        printf("\n 没有dev command = (%s) \n",command);
+        printf("\n  command = (%s) \n", command);
     }
-    //printf("command == ( %s )\n", command);
-    //int y;
-    // for (y = 0; y < 15; y++)
-    // {
-    //     printf(" %c ", command[y]);
-    // }
-    redisReply *reply = (redisReply *)redisCommand(redis, command);
-    free(command);
-    
-    // if (reply == 0)
-    // {
-    //     return getKeys(keys);
-    // }
+    sleep(0);
+    redisContext *c = redisConnect("127.0.0.1", 6379);
+    redisReply *reply = (redisReply *)redisCommand(c, command);
     memset(command, 0, 100);
+    free(command);
     int k;
     int len = reply->elements;
     // printf("key(");
@@ -181,18 +168,11 @@ int getKeys(Keys *keys)
     // printf(")\n");
     keys->keys = (char **)calloc(reply->elements, sizeof(char *));
 
-    // if (len == 0)
-    // {
-    //     keys->size = len;
-    //     return 0;
-    // }
-
     int i;
     int count = 0;
 
     for (i = 0; i < len; i++)
     {
-        //char *key =reply->element[i]->str;// strdup(reply->element[i]->str);
         if (reply->element[i]->str[4] < '6')
         {
             keys->keys[count] = strdup(reply->element[i]->str);
@@ -203,12 +183,9 @@ int getKeys(Keys *keys)
     keys->size = count;
 
     sortKeys(keys, keys->size - 1);
-    // for (i = 0; i < keys->size; i++)
-    // {
-    //     printf("key%d=(%s) ", i, keys->keys[i]);
-    // }
-    //redisFree(c);
     freeReplyObject(reply);
+    redisFree(c);
+
     return 0;
 }
 int getDevs(Devs *sdevs)
@@ -217,7 +194,6 @@ int getDevs(Devs *sdevs)
     Keys keys;
     keys.dev = NULL;
     getKeys(&keys);
-
     char *devs[keys.size];
     int i, count = 0;
     for (i = 0; i < keys.size; i++)
@@ -252,7 +228,7 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
         Keys keys;
         keys.dev = command;
         getKeys(&keys);
-        printf("findkey = (%s) size = (%d)\n", command, keys.size);
+        //printf("findkey = (%s) size = (%d)", command, keys.size);
 
         memset(command, 0, 10);
         //free(command);
@@ -322,28 +298,6 @@ void sortKeys(Keys *keys, int n)
     }
 }
 
-int DeviceMemoryInit()
-{
-    DeviceMemorysCount = 0;
-    Devs devs;
-    getDevs(&devs);
-    //DeviceMemory **dms = (DeviceMemory **)calloc(devs.size, sizeof(DeviceMemory));
-    DeviceMemory *dms[sizeof(DeviceMemory) * devs.size];
-    int i;
-    for (i = 0; i < devs.size; i++)
-    {
-        DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
-        dm->dev = devs.devs[i];
-        getDeviceMemory(dm, devs.devs[i]);
-        dms[i] = dm;
-    }
-    printf(" %s ", " devs.devs[i]");
-    DeviceMemorys = dms;
-    DeviceMemorysCount = i;
-    freeDevs(&devs);
-    return 0;
-}
-
 int freeDevs(Devs *devs)
 {
     int i;
@@ -368,17 +322,16 @@ int initDeviceMemoryAll()
 {
     Devs devs;
     getDevs(&devs);
-    DeviceMemory *dms[sizeof(DeviceMemory) * devs.size];
+    dma.dma = (DeviceMemory **)calloc(devs.size, sizeof(DeviceMemory));
+    dma.size = devs.size;
     int i;
     for (i = 0; i < devs.size; i++)
     {
         DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
-        dm->dev = strdup(devs.devs[i]);
+        sprintf(dm->dev, "%s", devs.devs[i]);
         getDeviceMemory(dm, devs.devs[i]);
-        dms[i] = dm;
+        dma.dma[i] = dm;
     }
-    dma.dma = dms;
-    dma.size = i;
     freeDevs(&devs);
     return 0;
 }
@@ -386,28 +339,26 @@ int DeviceMemoryAllUpdate()
 {
     sleep(0);
     int i;
-    char *asd;
     for (i = 0; i < dma.size; i++)
     {
-        if (dma.dma[i]->dev != 0)
-        {
-            free(dma.dma[i]->dev);
-        }
         free(dma.dma[i]);
     }
     Devs devs;
     getDevs(&devs);
-    DeviceMemory *dms[sizeof(DeviceMemory) * devs.size];
+    if (devs.size != dma.size)
+    {
+        dma.dma = realloc(dma.dma, sizeof(DeviceMemory) * dma.size);
+    }
+    dma.size = devs.size;
     for (i = 0; i < devs.size; i++)
     {
         DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
-        dm->dev = strdup(devs.devs[i]);
+        memset(dm->dev, 0, 4);
+        strncat(dm->dev, devs.devs[i], 4);
+
         getDeviceMemory(dm, devs.devs[i]);
-        dms[i] = dm;
+        dma.dma[i] = dm;
     }
-    
-    dma.dma = dms;
-    dma.size = i;
     freeDevs(&devs);
     return 0;
 }
