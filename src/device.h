@@ -68,6 +68,8 @@ DeviceMemoryAll dma;
 DeviceMemory **DeviceMemorys; //静态的当前所有设备的内存
 int DeviceMemorysCount;
 redisContext *redis;
+redisContext *keysredis;
+
 int bit8ToInt(char *strbuf);               //8位字符串转数字
 char *intToChar(int num);                  //数字转字符串
 int Unique(char **devs, int len);

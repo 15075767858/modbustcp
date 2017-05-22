@@ -1,8 +1,9 @@
 
 #include "device.h"
+
 int redisInit()
 {
-
+    keysredis = redisConnect("127.0.0.1", 6379);
     redis = redisConnect("127.0.0.1", 6379);
     //err 1 errstr[128]
     if (redis->err != 0)
@@ -65,7 +66,7 @@ void signal_handler(int m)
 void set_timer()
 {
     struct itimerval itv;
-    itv.it_interval.tv_sec = 10;
+    itv.it_interval.tv_sec = 1;
     itv.it_interval.tv_usec = 0;
     itv.it_value.tv_sec = 1;
     itv.it_value.tv_usec = 0;
@@ -136,7 +137,6 @@ int Unique(char **devs, int len)
 }
 int getKeys(Keys *keys)
 {
-
     char *command = (char *)malloc(100);
     command[0] = 'k';
     command[1] = 'e';
@@ -153,24 +153,17 @@ int getKeys(Keys *keys)
         strcat(command, "???????\0");
         printf("\n  command = (%s) \n", command);
     }
-    sleep(0);
-    redisContext *c = redisConnect("127.0.0.1", 6379);
-    redisReply *reply = (redisReply *)redisCommand(c, command);
+    //sleep(0);
+    //redisContext *c = redisConnect("127.0.0.1", 6379);
+    redisReply *reply = (redisReply *)redisCommand(keysredis, command);
+
     memset(command, 0, 100);
     free(command);
     int k;
     int len = reply->elements;
-    // printf("key(");
-    // for (k = 0; k < len; k++)
-    // {
-    //     printf("%s ", reply->element[k]->str);
-    // }
-    // printf(")\n");
     keys->keys = (char **)calloc(reply->elements, sizeof(char *));
-
     int i;
     int count = 0;
-
     for (i = 0; i < len; i++)
     {
         if (reply->element[i]->str[4] < '6')
@@ -179,12 +172,10 @@ int getKeys(Keys *keys)
             count++;
         }
     }
-
     keys->size = count;
-
     sortKeys(keys, keys->size - 1);
     freeReplyObject(reply);
-    redisFree(c);
+    //redisFree(c);
 
     return 0;
 }
@@ -337,7 +328,7 @@ int initDeviceMemoryAll()
 }
 int DeviceMemoryAllUpdate()
 {
-    sleep(0);
+    //sleep(0);
     int i;
     for (i = 0; i < dma.size; i++)
     {

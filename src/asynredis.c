@@ -1,6 +1,19 @@
 #include  "asynreids.h"
 
 
+// #include "../memwatch-2.71/memwatch.h"
+
+// #ifndef SIGSEGV
+// #error "SIGNAL.H does not define SIGSEGV; running this program WILL cause a core dump/crash!"
+// #endif
+
+// #ifndef MEMWATCH
+// #error "You really, really don't want to run this without memwatch. Trust me."
+// #endif
+
+// #if !defined(MW_STDIO) && !defined(MEMWATCH_STDIO)
+// #error "Define MW_STDIO and try again, please."
+// #endif
 
 int changeDeviceMemory(char *key, char *value)
 {
@@ -61,6 +74,7 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         }
         printf("pubdata =  %s %s %s ", key, type, val);
         free(str);
+        exit(0);
     }
 
     //freeReplyObject(reply);

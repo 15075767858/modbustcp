@@ -1,20 +1,10 @@
 #include "main.h"
 
-int isMac()
-{
-    struct utsname un;
-    uname(&un);
-
-    return strncmp(un.sysname, "Darwin", 5);
-}
 int main()
 {
     redisInit();
     initDeviceMemoryAll();
-    // while (1)
-    // {
-    //     DeviceMemoryAllUpdate();
-    // }
+    //DeviceMemoryAllUpdate();
     signal(14, signal_handler);
     set_timer();
     printf("redis run \n");
@@ -24,6 +14,13 @@ int main()
     redisFree(redis);
 
     return 0;
+}
+int isMac()
+{
+    struct utsname un;
+    uname(&un);
+
+    return strncmp(un.sysname, "Darwin", 5);
 }
 int socket_run()
 {

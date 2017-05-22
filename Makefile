@@ -29,7 +29,7 @@ run:
 	make all
 	./a.out
 all:
-	${cc} ${src} hiredis.a libevent.a -I${hiredisdir}  -g
+	${cc} ${src} memwatch-2.71/memwatch.c hiredis.a libevent.a -I${hiredisdir}  -g -DMEMWATCH -DMW_STDIO
 build:hiredis.a libevent.a ${libs}
 	rm ${libevent} ${hiredislibs} ${libs}
 asynredis.o:
