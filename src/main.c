@@ -11,6 +11,10 @@ int main()
 {
     redisInit();
     initDeviceMemoryAll();
+    // while (1)
+    // {
+    //     DeviceMemoryAllUpdate();
+    // }
     signal(14, signal_handler);
     set_timer();
     printf("redis run \n");
@@ -32,8 +36,6 @@ int socket_run()
     socketCount = 0;
     sockfd_server = socket(AF_INET, SOCK_STREAM, 0); //ipv4,TCP
     assert(sockfd_server != -1);
-
-    //before bind(), set the attr of structure sockaddr.
     memset(&s_addr_in, 0, sizeof(s_addr_in));
     s_addr_in.sin_family = AF_INET;
     s_addr_in.sin_addr.s_addr = htonl(INADDR_ANY); //trans addr from uint32_t host byte order to network byte order.
@@ -111,14 +113,18 @@ static void Data_handle(void *sock_fd)
         }
         printf(" ) socketCount = (%d)\n", socketCount);
         //write(fd, data_send, strlen(data_send));
-
+        //saveMessage(data_recv, i_recvBytes);
         if (i_recvBytes < 1)
         {
+            printf("datalength error\n");
             write(fd, data_recv, i_recvBytes);
+            close(fd);
+            pthread_exit(NULL);
             break;
         }
         else
         {
+            // write(fd, data_recv, i_recvBytes);
             int resNum = readMessage(data_recv, i_recvBytes, fd);
             if (resNum == -1)
             {
@@ -217,14 +223,14 @@ int readMessage(char *buffer, int len, int conn)
     }
     if (mrq.slave - 1 > dma.size)
     {
-        printf("error slave is not found (%d)\n ",mrq.slave);
+        printf("error slave is not found (%d)\n ", mrq.slave);
         send(conn, buffer, len, 0);
-        
+
         return 1;
     }
-    if (mrq.reg_str+mrq.reg_num>512)
+    if (mrq.reg_str + mrq.reg_num > 512)
     {
-        printf("error key stackoverflow (%d) ",mrq.reg_str+mrq.reg_num);
+        printf("error key stackoverflow (%d) ", mrq.reg_str + mrq.reg_num);
         send(conn, buffer, len, 0);
         return 1;
     }
@@ -242,10 +248,8 @@ int readMessage(char *buffer, int len, int conn)
     case 4:
         return fun04(&mrq, resdata);
         break;
-    case 6:
-
-        break;
     default:
+        saveMessage(buffer, len);
         return send(conn, resdata, 8, 0);
 
         break;
@@ -253,11 +257,26 @@ int readMessage(char *buffer, int len, int conn)
 
     return 0;
 }
+int saveMessage(char *buffer, int len)
+{
+    //    int fputc( int c, FILE *fp );
 
+    FILE *fp;
+    int i;
+    fp = fopen("message.text", "a+");
+    for (i = 0; i < len; i++)
+    {
+        fprintf(fp, "%02hhx ", buffer[i]);
+    }
+    fputc('\n', fp);
+    //fputs(buffer, fp);
+    fclose(fp);
+    return 0;
+}
 int fun01(modbus_request *mrq, char *resdata) //BO
 {
     //mrq->reg_str = mrq->reg_str + 1;
-    printf("fun(%d)  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun,mrq->slave, mrq->reg_str, mrq->reg_num);
+    printf("fun(%d)  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
 
     DeviceMemory dm = dma.dma[mrq->slave - 1][0];
@@ -307,7 +326,6 @@ int fun01(modbus_request *mrq, char *resdata) //BO
 
     printf("\n str = (%s) ", str);
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
-    
 }
 int fun02(modbus_request *mrq, char *resdata) //BI
 {

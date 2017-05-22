@@ -37,6 +37,7 @@ int fun03(modbus_request *mrq, char *resdata);
 int fun04(modbus_request *mrq, char *resdata);
 
 int readMessage(char *buffer, int len, int conn);
+int saveMessage(char *buffer, int len);
 //static const char *netnum;
 
 int socket_run();
