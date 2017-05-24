@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <device number="1001">
+        <AI pointType="AI">
+        <key number="1001001" point="1">UIO</key>
+        <key number="1001002" point="2">UI1</key>
+        </AI>
+        <AV pointType="AV">
+        <key number="1001001" point="1">UIO</key>
+        <key number="1001002" point="2">UI1</key>
+        </AV>
+        <BI pointType="DI">
+        <key number="1001001" point="1">UIO</key>
+        <key number="1001002" point="2">UI1</key>
+        </BI>
+        <BO pointType="DO">
+        <key number="1001001" point="1">UIO</key>
+        <key number="1001002" point="2">UI1</key>
+        </BO>
+    </device>
+   <device number="1001">
+        <AI pointType="AI">
+        <key number="1001001" point="1">UIO</key>
+        <key number="1001002" point="2">UI1</key>
+        </AI>
+        <AV pointType="AV">
+        <key number="1001001" point="1">UIO</key>
+        <key number="1001002" point="2">UI1</key>
+        </AV>
+        <BI pointType="DI">
+        <key number="1001001" point="1">UIO</key>
+        <key number="1001002" point="2">UI1</key>
+        </BI>
+        <BO pointType="DO">
+        <key number="1001001" point="1">UIO</key>
+        <key number="1001002" point="2">UI1</key>
+        </BO>
+    </device>
+</root>

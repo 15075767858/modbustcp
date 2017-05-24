@@ -10,10 +10,11 @@
 #include <sys/shm.h>
 #include <pthread.h>
 #include <assert.h>
-#include "hiredis/hiredis.h"
-#include "asynreids.h"
 #include <sys/utsname.h>
 
+#include "hiredis/hiredis.h"
+#include "asynreids.h"
+#include "devicexml.h"
 #ifndef include_device //X为你的标识符,保持唯一，可以长点，比如 #ifndef _INCLUDE_XXXXXX_H_
 #define include_device
 #include "device.h"

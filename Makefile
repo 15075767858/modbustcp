@@ -5,17 +5,17 @@ libdir=library
 hiredisdir=${libdir}/hiredis
 odir=output
 libeventdir=${libdir}/libevent2
-
+mxmldir=${libdir}/mxml
 mxmllibs=mxml-index.o mxml-private.o mxml-search.o mxml-attr.o mxml-entity.o mxml-get.o mxml-file.o mxml-node.o mxml-set.o mxml-string.o 
 libevent=evutil_rand.o epoll.o poll.o select.o signal.o evport.o devpoll.o log.o evthread.o evutil_time.o kqueue.o evmap.o evutil.o event.o
 hiredislibs=async.o dict.o net.o read.o sds.o hiredis.o
 libs = device.o asynredis.o
-src=src/main.c src/device.c src/asynredis.c
+src=src/main.c src/device.c src/asynredis.c src/devicexml.c
 win:
 	arm-none-linux-gnueabi-gcc src/main.c src/asynredis.c src/device.c \
 	winlibs/libevent_core.a winlibs/libevent_extra.a winlibs/libevent_pthreads.a winlibs/hiredis.a winlibs/libevent.a \
 	-Ilibrary -Ilibrary/libevent -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include \
-	-lpthread -lrt -o modbus-tcp-server
+	-lpthread -lrt -o modbus-tcp-server -O3
 aaa:
 	arm-none-linux-gnueabi-gcc -c src/asynredis.c src/device.c -Ilibrary/libevent -Ilibrary -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
 
@@ -28,10 +28,11 @@ testredis:
 run:
 	make all
 	./a.out
+#memwatch-2.71/memwatch.c
 all:
-	${cc} ${src} memwatch-2.71/memwatch.c hiredis.a libevent.a -I${hiredisdir}  -g -DMEMWATCH -DMW_STDIO
-build:hiredis.a libevent.a ${libs}
-	rm ${libevent} ${hiredislibs} ${libs}
+	${cc} ${src}  hiredis.a libevent.a mxml.a -I${hiredisdir}  -g -DMEMWATCH -DMW_STDIO 
+build:hiredis.a libevent.a mxml.a ${libs}  
+	rm ${libevent} ${hiredislibs} ${mxmllibs} ${libs}
 asynredis.o:
 	$(cc) -c src/asynredis.c -I${hiredisdir}
 device.o:
@@ -82,3 +83,26 @@ evutil.o:
 event.o:
 	${cc} -c ${libeventdir}/event.c -I${libeventdir}/include 
 
+
+mxml.a: ${mxmllibs}
+	ar -r mxml.a $(mxmllibs) 
+mxml-search.o:
+	$(cc) -c ${mxmldir}/mxml-search.c -I${mxmldir}/ 
+mxml-attr.o:
+	$(cc) -c ${mxmldir}/mxml-attr.c -I${mxmldir}/ 
+mxml-entity.o:
+	$(cc) -c ${mxmldir}/mxml-entity.c -I${mxmldir}/ 
+mxml-get.o:
+	$(cc) -c ${mxmldir}/mxml-get.c -I${mxmldir}/ 
+mxml-node.o:
+	$(cc) -c ${mxmldir}/mxml-node.c -I${mxmldir}/ 
+mxml-set.o:
+	$(cc) -c ${mxmldir}/mxml-set.c -I${mxmldir}/ 
+mxml-string.o:
+	$(cc) -c ${mxmldir}/mxml-string.c -I${mxmldir}/ 
+mxml-file.o:
+	$(cc) -c ${mxmldir}/mxml-file.c -I${mxmldir}/ 
+mxml-private.o:
+	$(cc) -c ${mxmldir}/mxml-private.c -I${mxmldir}/ 
+mxml-index.o:
+	$(cc) -c ${mxmldir}/mxml-index.c -I${mxmldir}/ 

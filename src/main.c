@@ -4,6 +4,8 @@ int main()
 {
     redisInit();
     initDeviceMemoryAll();
+    initDeviceXml();
+    return 0;
     //DeviceMemoryAllUpdate();
     signal(14, signal_handler);
     set_timer();
