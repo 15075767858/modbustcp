@@ -14,6 +14,24 @@ int redisInit()
     }
     return 0;
 }
+char *getKeyObjectName(char *key)
+{
+    char command[50];
+    memset(command, 0, 50);
+
+    sprintf(command, "hget %s Object_Name", key);
+    redisReply *reply = (redisReply *)redisCommand(keysredis, command);
+    if (reply->str != 0)
+    {
+        char *ObjectName = strdup(reply->str);
+        freeReplyObject(reply);
+        return ObjectName;
+    }
+    else
+    {
+        return strdup("");
+    }
+}
 int getDevIndex(char *dev)
 {
     int i;
@@ -60,7 +78,6 @@ int getKeyIndex(char *key)
 void signal_handler(int m)
 {
     DeviceMemoryAllUpdate();
-
 }
 
 void set_timer()
