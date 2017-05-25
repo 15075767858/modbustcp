@@ -11,9 +11,10 @@ libevent=evutil_rand.o epoll.o poll.o select.o signal.o evport.o devpoll.o log.o
 hiredislibs=async.o dict.o net.o read.o sds.o hiredis.o
 libs = device.o asynredis.o
 src=src/main.c src/device.c src/asynredis.c src/devicexml.c
+winlibs=winlibs/libevent_core.a winlibs/libevent_extra.a winlibs/libevent_pthreads.a winlibs/hiredis.a winlibs/libevent.a winlibs/mxml.a
+
 win:
-	arm-none-linux-gnueabi-gcc ${src} \
-	winlibs/libevent_core.a winlibs/libevent_extra.a winlibs/libevent_pthreads.a winlibs/hiredis.a winlibs/libevent.a \
+	arm-none-linux-gnueabi-gcc ${src} ${winlibs} \
 	-Ilibrary -Ilibrary/libevent -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include \
 	-lpthread -lrt -o modbus-tcp-server -O3
 aaa:
