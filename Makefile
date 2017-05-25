@@ -12,7 +12,7 @@ hiredislibs=async.o dict.o net.o read.o sds.o hiredis.o
 libs = device.o asynredis.o
 src=src/main.c src/device.c src/asynredis.c src/devicexml.c
 win:
-	arm-none-linux-gnueabi-gcc src/main.c src/asynredis.c src/device.c \
+	arm-none-linux-gnueabi-gcc ${src} \
 	winlibs/libevent_core.a winlibs/libevent_extra.a winlibs/libevent_pthreads.a winlibs/hiredis.a winlibs/libevent.a \
 	-Ilibrary -Ilibrary/libevent -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include \
 	-lpthread -lrt -o modbus-tcp-server -O3

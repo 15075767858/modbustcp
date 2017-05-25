@@ -15,6 +15,8 @@
 // #error "Define MW_STDIO and try again, please."
 // #endif
 
+
+//修改内存页的值
 int changeDeviceMemory(char *key, char *value)
 {
     char dev[10];
@@ -57,6 +59,7 @@ int changeDeviceMemory(char *key, char *value)
     }
     return 0;
 }
+//订阅回调函数
 void getCallback(redisAsyncContext *c, void *r, void *privdata)
 {
     redisReply *reply = r;
@@ -82,7 +85,7 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         return;
     //printf("argv[%s]: %s\n", (char *)privdata, reply->str);
 }
-
+//异步订阅
 void asyn()
 {
     signal(SIGPIPE, SIG_IGN);

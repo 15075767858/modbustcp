@@ -14,11 +14,11 @@ int redisInit()
     }
     return 0;
 }
+//根据key获取Object_Name
 char *getKeyObjectName(char *key)
 {
     char command[50];
     memset(command, 0, 50);
-
     sprintf(command, "hget %s Object_Name", key);
     redisReply *reply = (redisReply *)redisCommand(keysredis, command);
     if (reply->str != 0)
@@ -32,18 +32,12 @@ char *getKeyObjectName(char *key)
         return strdup("");
     }
 }
+//根据dev获取dev的index
 int getDevIndex(char *dev)
 {
     int i;
     for (i = 0; i < dma.size; i++)
     {
-
-        // if (dma.dma[i]->dev == 0)
-        // {
-        //     continue;
-        // }
-        //        printf("devstr = %s %d \n", dma.dma[i]->dev, strncmp(dev, dma.dma[i]->dev, 4));
-
         if (strncmp(dev, dma.dma[i]->dev, 4) == 0)
         {
             return i;
@@ -51,6 +45,7 @@ int getDevIndex(char *dev)
     }
     return -1;
 }
+//根据key获取key的index
 int getKeyIndex(char *key)
 {
     char qKey[20];
@@ -75,21 +70,23 @@ int getKeyIndex(char *key)
     freeKeys(&keys);
     return -1;
 }
+
+//自动更新内存页
 void signal_handler(int m)
 {
     DeviceMemoryAllUpdate();
 }
-
+//定时器
 void set_timer()
 {
     struct itimerval itv;
-    itv.it_interval.tv_sec = 1;
+    itv.it_interval.tv_sec = 10;
     itv.it_interval.tv_usec = 0;
     itv.it_value.tv_sec = 1;
     itv.it_value.tv_usec = 0;
     setitimer(ITIMER_REAL, &itv, &oldtv);
 }
-
+//字符串转数字
 int bit8ToInt(char *strbuf)
 {
     char resbuf[9];
@@ -116,6 +113,7 @@ int bit8ToInt(char *strbuf)
     }
     return reg_data;
 }
+//数字转字符串
 char *intToChar(int num)
 {
     char numbuf[100];
@@ -124,7 +122,7 @@ char *intToChar(int num)
     char *aa = numbuf;
     return aa;
 }
-
+//devs去重
 int Unique(char **devs, int len)
 {
 
@@ -152,6 +150,7 @@ int Unique(char **devs, int len)
     }
     return count;
 }
+//获取key
 int getKeys(Keys *keys)
 {
     char *command = (char *)malloc(100);
@@ -196,6 +195,7 @@ int getKeys(Keys *keys)
 
     return 0;
 }
+//获取dev
 int getDevs(Devs *sdevs)
 {
 
@@ -287,6 +287,7 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
 
     return 0;
 }
+//key排序
 void sortKeys(Keys *keys, int n)
 {
 
@@ -305,7 +306,7 @@ void sortKeys(Keys *keys, int n)
         }
     }
 }
-
+//释放devs内存
 int freeDevs(Devs *devs)
 {
     int i;
@@ -316,6 +317,7 @@ int freeDevs(Devs *devs)
     free(devs->devs);
     return 0;
 }
+//释放keys内存
 int freeKeys(Keys *keys)
 {
     int i;
@@ -326,6 +328,7 @@ int freeKeys(Keys *keys)
     free(keys->keys);
     return 0;
 }
+//初始化device内存
 int initDeviceMemoryAll()
 {
     Devs devs;
@@ -343,6 +346,7 @@ int initDeviceMemoryAll()
     freeDevs(&devs);
     return 0;
 }
+//device内存更新
 int DeviceMemoryAllUpdate()
 {
     //sleep(0);
@@ -370,6 +374,7 @@ int DeviceMemoryAllUpdate()
     freeDevs(&devs);
     return 0;
 }
+//数字转字符串
 void catNumAdd0(char *buffer, int num)
 {
     char buf[10];
@@ -377,6 +382,7 @@ void catNumAdd0(char *buffer, int num)
     sprintf(buf, "%02d", num);
     strcat(buffer, buf);
 }
+//缓冲区增加字节
 int bufAddSbit(char *resdata, char *sbit)
 {
     //修改返回值为int 表示增加的字节数

@@ -5,11 +5,10 @@ int rootAddDevice(mxml_node_t *root);
 int deviceAddTypes(mxml_node_t *device);
 int deviceTypeAddKey(mxml_node_t *deviceType);
 char getTypeNumberByDeviceTypeNode(mxml_node_t *deviceType);
-
+//格式化方法
 const char *whitespace_cb(mxml_node_t *node, int where)
 {
     const char *name;
-
     /*
       * We can conditionally break to a new line
       * before or after any element. These are
@@ -42,6 +41,8 @@ const char *whitespace_cb(mxml_node_t *node, int where)
     //return ("\n");
     return (NULL);
 }
+
+//初始化xml
 int initDeviceXml()
 {
     //创建一个xml文件
@@ -59,7 +60,7 @@ int initDeviceXml()
     mxmlDelete(xml);
     return 0;
 }
-
+//root增加device
 int rootAddDevice(mxml_node_t *root)
 {
     Devs devs;
@@ -79,7 +80,7 @@ int rootAddDevice(mxml_node_t *root)
     freeDevs(&devs);
     return 0;
 }
-
+//device增加types
 int deviceAddTypes(mxml_node_t *device)
 {
     const char *deviceNumber = mxmlElementGetAttr(device, "number");
@@ -97,7 +98,7 @@ int deviceAddTypes(mxml_node_t *device)
     }
     return 0;
 }
-
+//devicetypes 增加key
 int deviceTypeAddKey(mxml_node_t *deviceType)
 {
     //需要查找的key

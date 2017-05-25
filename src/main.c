@@ -2,15 +2,18 @@
 
 int main()
 {
+    //初始化redis
     redisInit();
+    printf("redis run \n");
+    //初始化设备内存页
     initDeviceMemoryAll();
+    //初始化设备内存
     initDeviceXml();
-    return 0;
-    //DeviceMemoryAllUpdate();
+    //开启10秒一次更新内存页
     signal(14, signal_handler);
     set_timer();
-    printf("redis run \n");
     sleep(10);
+    //开启多线程访问
     runThread();
     printf("asyn redis run\n");
     redisFree(redis);
@@ -158,8 +161,9 @@ int runThread()
     pthread_t a_thread;
     pthread_t b_thread;
     void *thread_result;
-
+    //开启redis订阅
     res = pthread_create(&a_thread, NULL, asynRedis, NULL);
+    //开启socket监听
     res = pthread_create(&b_thread, NULL, socketStart, NULL);
     res = pthread_join(a_thread, &thread_result);
     res = pthread_join(b_thread, &thread_result);
