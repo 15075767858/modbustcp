@@ -80,6 +80,10 @@ int socket_run()
             continue; //ignore current socket ,continue while loop.
         }
         socketCount++;
+        // if(socketCount>=10){
+        //     fprintf(stderr, "pthread_create error! max is %d\n",10);
+        //     continue;
+        // }
         printf("A new connection occurs!\n");
         if (pthread_create(&thread_id, NULL, (void *)(&Data_handle), (void *)(&sockfd)) == -1)
         {
@@ -87,27 +91,21 @@ int socket_run()
             break; //break while loop
         }
     }
-
     //Clear
     int ret = shutdown(sockfd_server, SHUT_WR); //shut down the all or part of a full-duplex connection.
     assert(ret != -1);
-
     printf("Server shuts down\n");
-
     return 0;
 }
 
 static void Data_handle(void *sock_fd)
 {
+
     int fd = *((int *)sock_fd);
     int i_recvBytes;
     char data_recv[BUFFER_LENGTH];
-    //const char *data_send = "Server has received your request!\n";
-
     while (1)
     {
-        //printf("waiting for request...\n");
-        //Reset data.
         memset(data_recv, 0, BUFFER_LENGTH);
         i_recvBytes = read(fd, data_recv, BUFFER_LENGTH);
         int i;
@@ -124,7 +122,7 @@ static void Data_handle(void *sock_fd)
             printf("datalength error\n");
             write(fd, data_recv, i_recvBytes);
             close(fd);
-            pthread_exit(NULL);
+            pthread_detach(pthread_self());
             break;
         }
         else
@@ -168,8 +166,8 @@ int runThread()
     res = pthread_create(&a_thread, NULL, asynRedis, NULL);
     //开启socket监听
     res = pthread_create(&b_thread, NULL, socketStart, NULL);
-    res = pthread_join(a_thread, &thread_result);
-    res = pthread_join(b_thread, &thread_result);
+    res = pthread_join(a_thread, NULL);
+    res = pthread_join(b_thread, NULL);
     return 0;
 }
 
