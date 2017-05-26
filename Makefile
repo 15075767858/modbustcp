@@ -16,7 +16,7 @@ winlibs=winlibs/libevent_core.a winlibs/libevent_extra.a winlibs/libevent_pthrea
 win:
 	arm-none-linux-gnueabi-gcc ${src} ${winlibs} \
 	-Ilibrary -Ilibrary/libevent -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include \
-	-lpthread -lrt -o modbus-tcp-server -O3
+	-lpthread -lrt -o modbus-tcp-server 
 aaa:
 	arm-none-linux-gnueabi-gcc -c src/asynredis.c src/device.c -Ilibrary/libevent -Ilibrary -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
 

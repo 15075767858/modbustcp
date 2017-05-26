@@ -43,11 +43,13 @@ typedef struct Keys
     char **keys;
     char *dev; //设备名
 } Keys;
+Keys keysAll;//全局存储key
 typedef struct Devs
 {
     int size;
     char **devs;
 } Devs;
+Devs devsAll;
 typedef struct DeviceMemory
 {
     char dev[5];
@@ -69,12 +71,15 @@ DeviceMemory **DeviceMemorys; //静态的当前所有设备的内存
 int DeviceMemorysCount;
 redisContext *redis;
 redisContext *keysredis;
-
+redisContext *memoryredis;
 int bit8ToInt(char *strbuf);               //8位字符串转数字
 char *intToChar(int num);                  //数字转字符串
 int Unique(char **devs, int len);
 int getKeys(Keys *keys);
 int getDevs(Devs *sdevs);
+int initKeysAll();
+int initDevsAll();
+int getKeysForKeysAll(Keys *keys);
 int getDeviceMemory(DeviceMemory *dm, char *dev);
 void sortKeys(Keys *keys, int n);
 int DeviceMemoryInit();
@@ -96,3 +101,13 @@ int getDevIndex(char *dev);
 int getKeyIndex(char *key);
 
 char *getKeyObjectName(char *key);
+
+typedef struct updateModule
+{
+    int size;
+    int slaves[100];
+} updateModule;
+updateModule uM;
+int initUpdateModule();
+int updateModuleAddSlave(int slave);
+int updateModuleIsHaveSlave(int salve);

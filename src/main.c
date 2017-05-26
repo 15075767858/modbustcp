@@ -4,6 +4,9 @@ int main()
 {
     //初始化redis
     redisInit();
+    //初始化全局所有key，方便后面用不再从数据库查询
+    initKeysAll();
+    initDevsAll();
     printf("redis run \n");
     //初始化设备内存页
     initDeviceMemoryAll();
@@ -170,6 +173,65 @@ int runThread()
     return 0;
 }
 
+char *getDevBySlave(int slave)
+{
+    if (slave > dma.size)
+    {
+        return NULL;
+    }
+
+    return dma.dma[slave]->dev;
+}
+
+char getTypeByFun(int fun)
+{
+    switch (fun)
+    {
+    case 1:
+        return '4';
+        break;
+    case 2:
+        return '3';
+        break;
+    case 3:
+        return '2';
+        break;
+    case 4:
+        return '0';
+        break;
+    default:
+        return 0;
+        break;
+    }
+    return 0;
+}
+char *getPointNumberByPoint(char *dev, char type, int point)
+{
+    char devtype[7];
+    memset(devtype, 0, 7);
+    sprintf(devtype, "%s%c", dev, type);
+    Keys keys;
+    keys.dev = devtype;
+    getKeysForKeysAll(&keys);
+    char *key = keys.keys[point];
+    free(keys.keys);
+    return key;
+}
+
+char *getKeyBySlavePoint(modbus_request *mrq)
+{
+    char *dev = getDevBySlave(mrq->slave);
+    char type = getTypeByFun(mrq->fun);
+
+    getPointNumberByPoint(dev, type, mrq->reg_str);
+
+    //char key[8];
+    //memset(key, 0, 8);
+    //sprintf(key,"%s%c",dev,type);
+
+    return NULL;
+}
+//根据报文返回数据
 int readMessage(char *buffer, int len, int conn)
 {
 
@@ -181,7 +243,18 @@ int readMessage(char *buffer, int len, int conn)
     mrq.slave = buffer[6];                     //设备地址
     mrq.fun = (int)buffer[7];                  //功能码
     mrq.reg_str = buffer[8] * 256 + buffer[9]; //点位编号
-    mrq.reg_num = reg_num;                     //数量
+    if (mrq.reg_str > dma.size)
+    {
+        printf("reg_str max is %d \n", dma.size);
+        mrq.reg_str = dma.size;
+    }
+
+    mrq.reg_num = reg_num; //数量
+    if (mrq.reg_num > 20)
+    {
+        printf("regnum max is 20");
+        mrq.reg_num = 20;
+    }
     mrq.buffer = buffer;
     mrq.bufferlen = len;
     mrq.conn = conn;
@@ -227,16 +300,18 @@ int readMessage(char *buffer, int len, int conn)
     if (mrq.slave - 1 > dma.size)
     {
         printf("error slave is not found (%d)\n ", mrq.slave);
+        buffer[7] = buffer[7] + 80;
         send(conn, buffer, len, 0);
-
         return 1;
     }
     if (mrq.reg_str + mrq.reg_num > 512)
     {
+        buffer[7] = buffer[7] + 80;
         printf("error key stackoverflow (%d) ", mrq.reg_str + mrq.reg_num);
         send(conn, buffer, len, 0);
         return 1;
     }
+    updateModuleAddSlave(mrq.slave);
     switch (mrq.fun)
     {
     case 1:
@@ -254,7 +329,6 @@ int readMessage(char *buffer, int len, int conn)
     default:
         saveMessage(buffer, len);
         return send(conn, resdata, 8, 0);
-
         break;
     }
 

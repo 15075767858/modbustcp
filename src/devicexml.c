@@ -28,7 +28,6 @@ const char *whitespace_cb(mxml_node_t *node, int where)
 	* Newlines before open and after
         * close...
 	*/
-        printf("%s %d\n", name, where);
 
         if (where == MXML_WS_BEFORE_OPEN)
             return ("\t");

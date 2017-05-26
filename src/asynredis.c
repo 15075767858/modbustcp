@@ -1,20 +1,4 @@
-#include  "asynreids.h"
-
-
-// #include "../memwatch-2.71/memwatch.h"
-
-// #ifndef SIGSEGV
-// #error "SIGNAL.H does not define SIGSEGV; running this program WILL cause a core dump/crash!"
-// #endif
-
-// #ifndef MEMWATCH
-// #error "You really, really don't want to run this without memwatch. Trust me."
-// #endif
-
-// #if !defined(MW_STDIO) && !defined(MEMWATCH_STDIO)
-// #error "Define MW_STDIO and try again, please."
-// #endif
-
+#include "asynreids.h"
 
 //修改内存页的值
 int changeDeviceMemory(char *key, char *value)
@@ -59,10 +43,28 @@ int changeDeviceMemory(char *key, char *value)
     }
     return 0;
 }
+
 //订阅回调函数
 void getCallback(redisAsyncContext *c, void *r, void *privdata)
 {
     redisReply *reply = r;
+    if (reply->elements == 4)
+    {
+        int index = getDevIndex(reply->element[3]->str);
+        //有这个设备才更新
+        if (index >= 0)
+        {
+            //没有记录的从机地址不更新
+            if (updateModuleIsHaveSlave(index + 1) != 0)
+            {
+                return;
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
     if (reply->elements == 4)
     {
         char *str = strdup(reply->element[3]->str);
@@ -77,7 +79,7 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         }
         printf("pubdata =  %s %s %s ", key, type, val);
         free(str);
-        exit(0);
+        //redisAsyncDisconnect(c);
     }
 
     //freeReplyObject(reply);

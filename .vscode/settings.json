@@ -41,6 +41,7 @@
     "cstring": "cpp",
     "queue": "cpp",
     "ostream": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "exception": "cpp"
   }
 }

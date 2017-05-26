@@ -4,7 +4,7 @@ pointNumber="1001001">UI1 </key>
 	<key number="1001002" pointNumber="1001002">UI2 </key>
 	<key number="1001003" pointNumber="1001003">UI3 </key>
 	<key number="1001004" pointNumber="1001004">UI4 </key>
-	<key number="1001005" pointNumber="1001005">UI5 </key>
+	<key number="1001005" pointNumber="1001005">UI5</key>
 	<key number="1001006" pointNumber="1001006">UI6 </key>
 	<key number="1001008" pointNumber="1001008"></key>
 </AI>
@@ -189,4 +189,8 @@ number="1101001" pointNumber="1101001">COPY OF COPY OF qw</key>
 pointType="DO">	<key number="1101401" pointNumber="1101401"></key>
 </BO>
 </device>
+	<device number="9901" SlaveAddress="7">	<AI pointType="AI" />	<AV
+pointType="AV">	<key number="9901205" pointNumber="9901205"></key>
+</AV>
+	<BI pointType="DI" />	<BO pointType="DO" /></device>
 </root>
