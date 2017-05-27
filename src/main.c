@@ -7,6 +7,7 @@ int main()
     //初始化全局所有key，方便后面用不再从数据库查询
     initKeysAll();
     initDevsAll();
+    initUpdateModule();
     printf("redis run \n");
     //初始化设备内存页
     initDeviceMemoryAll();
@@ -15,14 +16,12 @@ int main()
     //开启10秒一次更新内存页
     signal(14, signal_handler);
     set_timer();
-    sleep(10);
     //开启多线程访问
     runThread();
     printf("asyn redis run\n");
-    redisFree(redis);
-
     return 0;
 }
+//是否是mac
 int isMac()
 {
     struct utsname un;
@@ -67,6 +66,11 @@ int socket_run()
 
     while (1)
     {
+        // if (socketCount >= 10)
+        // {
+        //     fprintf(stderr, "pthread_create error! max is %d\n", 10);
+        //     continue;
+        // }
         printf("waiting for new connection...\n");
         pthread_t thread_id;
         client_length = sizeof(s_addr_client);
@@ -80,10 +84,7 @@ int socket_run()
             continue; //ignore current socket ,continue while loop.
         }
         socketCount++;
-        // if(socketCount>=10){
-        //     fprintf(stderr, "pthread_create error! max is %d\n",10);
-        //     continue;
-        // }
+
         printf("A new connection occurs!\n");
         if (pthread_create(&thread_id, NULL, (void *)(&Data_handle), (void *)(&sockfd)) == -1)
         {
@@ -104,6 +105,8 @@ static void Data_handle(void *sock_fd)
     int fd = *((int *)sock_fd);
     int i_recvBytes;
     char data_recv[BUFFER_LENGTH];
+    int errcount = 0;
+
     while (1)
     {
         memset(data_recv, 0, BUFFER_LENGTH);
@@ -119,11 +122,16 @@ static void Data_handle(void *sock_fd)
         //saveMessage(data_recv, i_recvBytes);
         if (i_recvBytes < 1)
         {
-            printf("datalength error\n");
-            write(fd, data_recv, i_recvBytes);
-            close(fd);
-            pthread_detach(pthread_self());
-            break;
+            errcount++;
+            if (errcount >= 100)
+            {
+                printf("datalength error\n");
+                write(fd, data_recv, i_recvBytes);
+                close(fd);
+                pthread_detach(pthread_self());
+                printf("close a pthread\n");
+                break;
+            }
         }
         else
         {
@@ -131,11 +139,11 @@ static void Data_handle(void *sock_fd)
             int resNum = readMessage(data_recv, i_recvBytes, fd);
             if (resNum == -1)
             {
+                pthread_detach(pthread_self());
                 break;
             }
         }
     }
-
     //Clear
     printf("terminating current client_connection...\n");
     close(fd);          //close a file descriptor.
@@ -244,7 +252,9 @@ int readMessage(char *buffer, int len, int conn)
     if (mrq.reg_str > dma.size)
     {
         printf("reg_str max is %d \n", dma.size);
-        mrq.reg_str = dma.size;
+        buffer[7] = buffer[7] + 80;
+        send(conn, buffer, len, 0);
+        return 1;
     }
 
     mrq.reg_num = reg_num; //数量
@@ -297,7 +307,7 @@ int readMessage(char *buffer, int len, int conn)
     }
     if (mrq.slave - 1 > dma.size)
     {
-        printf("error slave is not found (%d)\n ", mrq.slave);
+        printf("error slave is not found (%d) dma.size=(%d)\n ", mrq.slave,dma.size);
         buffer[7] = buffer[7] + 80;
         send(conn, buffer, len, 0);
         return 1;
@@ -347,7 +357,7 @@ int saveMessage(char *buffer, int len)
     //fputs(buffer, fp);
     fclose(fp);
     return 0;
-}
+} 
 int fun01(modbus_request *mrq, char *resdata) //BO
 {
     //mrq->reg_str = mrq->reg_str + 1;

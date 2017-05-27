@@ -18,13 +18,29 @@ int redisInit()
     keysredis = redisConnect("127.0.0.1", 6379);
     redis = redisConnect("127.0.0.1", 6379);
     memoryredis = redisConnect("127.0.0.1", 6379);
-    //err 1 errstr[128]
-    if (redis->err != 0)
+    int keyLen = 0;
+
+    while (1)
     {
-        printf("redis %s \n", redis->errstr);
-        exit(0);
-        return redis->err;
+        sleep(21);
+        redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
+        if (keyLen == reply->elements)
+        {
+            break;
+        }
+        keyLen = reply->elements;
+        printf("keyLen=(%d)", keyLen);
+        freeReplyObject(reply);
     }
+    //err 1 errstr[128]
+    // if (redis->err != 0)
+    // {
+    //     printf("redis %s \n", redis->errstr);
+    //     exit(0);
+    //     return redis->err;
+    // }
+    redisFree(redis);
+
     return 0;
 }
 //根据key获取Object_Name
@@ -86,7 +102,14 @@ int getKeyIndex(char *key)
 //自动更新内存页
 void signal_handler(int m)
 {
+
     DeviceMemoryAllUpdate();
+    // jsqCount++;
+    // if (jsqCount % 6 == 0)
+    // {
+    //     updateKeysAll();
+    //     printf("jsqCount = %ld\n", jsqCount);
+    // }
 }
 //定时器
 void set_timer()
@@ -103,6 +126,16 @@ void set_timer()
 int initKeysAll()
 {
     getKeys(&keysAll);
+    return 0;
+}
+int updateKeysAll()
+{
+    Keys keys;
+    keys.dev = NULL;
+    getKeys(&keys);
+    free(keysAll.keys);
+    keysAll.keys = keys.keys;
+    keysAll.size = keys.size;
     return 0;
 }
 int initDevsAll()
@@ -283,9 +316,10 @@ int initDeviceMemoryAll()
 int DeviceMemoryAllUpdate()
 {
     int i;
-
+    dma.size = devsAll.size;
     for (i = 0; i < devsAll.size; i++)
     {
+
         if (updateModuleIsHaveSlave(i + 1) == 0)
         {
             printf("updateModel =(%d)", i);

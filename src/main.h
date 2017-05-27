@@ -53,4 +53,3 @@ int isMac();
 char *getDevBySlave(int slave);
 char getTypeByFun(int fun);
 char *getPointNumberByPoint(char *dev, char type, int point);
-

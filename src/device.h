@@ -111,3 +111,6 @@ updateModule uM;
 int initUpdateModule();
 int updateModuleAddSlave(int slave);
 int updateModuleIsHaveSlave(int salve);
+
+//unsigned long jsqCount;
+//int updateKeysAll();
