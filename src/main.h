@@ -36,7 +36,10 @@ int fun01(modbus_request *mrq, char *resdata);
 int fun02(modbus_request *mrq, char *resdata);
 int fun03(modbus_request *mrq, char *resdata);
 int fun04(modbus_request *mrq, char *resdata);
-
+int fun05(modbus_request *mrq, char *resdata);
+int fun06(modbus_request *mrq, char *resdata);
+int fun15(modbus_request *mrq, char *resdata);
+int fun16(modbus_request *mrq, char *resdata);
 int readMessage(char *buffer, int len, int conn);
 int saveMessage(char *buffer, int len);
 //static const char *netnum;
@@ -52,4 +55,5 @@ int isMac();
 
 char *getDevBySlave(int slave);
 char getTypeByFun(int fun);
-char *getPointNumberByPoint(char *dev, char type, int point);
+//char *getPointNumberByPoint(char *dev, char type, int point);
+char *getKeyBySlavePoint(modbus_request *mrq);

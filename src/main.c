@@ -185,7 +185,6 @@ char *getDevBySlave(int slave)
     {
         return NULL;
     }
-
     return dma.dma[slave]->dev;
 }
 
@@ -211,153 +210,34 @@ char getTypeByFun(int fun)
     }
     return 0;
 }
-char *getPointNumberByPoint(char *dev, char type, int point)
+char *getKeyBySlavePoint(modbus_request *mrq)
 {
-    char devtype[7];
-    memset(devtype, 0, 7);
-    sprintf(devtype, "%s%c", dev, type);
+    //char *dev, char type, int point
+    char *dev = getDevBySlave(mrq->slave);
+    char type = getTypeByFun(mrq->fun);
+    int point= mrq->reg_str;
+    char devtype[8];
+    memset(devtype, 0, 8);
+    sprintf(devtype, "%s%c??", dev, type);
     Keys keys;
     keys.dev = devtype;
-    getKeysForKeysAll(&keys);
-    char *key = keys.keys[point];
-    free(keys.keys);
+    getKeys(&keys);
+
+    char *key;
+    if (keys.size >= point)
+    {
+        key = strdup(keys.keys[point]);
+    }
+    else
+    {
+        key = strdup("");
+    }
+    freeKeys(&keys);
+
     return key;
 }
 
-char *getKeyBySlavePoint(modbus_request *mrq)
-{
-    char *dev = getDevBySlave(mrq->slave);
-    char type = getTypeByFun(mrq->fun);
 
-    getPointNumberByPoint(dev, type, mrq->reg_str);
-
-    //char key[8];
-    //memset(key, 0, 8);
-    //sprintf(key,"%s%c",dev,type);
-
-    return NULL;
-}
-//根据报文返回数据
-int readMessage(char *buffer, int len, int conn)
-{
-
-    int reg_num = buffer[10] * 256 + buffer[11] - 1;
-    modbus_request mrq;
-    mrq.transaction = buffer[0] * 256 + (u8)buffer[1];
-    mrq.protocol = buffer[2] * 256 + buffer[3];
-    mrq.len = buffer[4] * 256 + buffer[5];
-    mrq.slave = buffer[6];                     //设备地址
-    mrq.fun = (int)buffer[7];                  //功能码
-    mrq.reg_str = buffer[8] * 256 + buffer[9]; //点位编号
-    if (mrq.reg_str > dma.size)
-    {
-        printf("reg_str max is %d \n", dma.size);
-        buffer[7] = buffer[7] + 80;
-        send(conn, buffer, len, 0);
-        return 1;
-    }
-
-    mrq.reg_num = reg_num; //数量
-    if (mrq.reg_num > 20)
-    {
-        printf("regnum max is 20");
-        mrq.reg_num = 20;
-    }
-    mrq.buffer = buffer;
-    mrq.bufferlen = len;
-    mrq.conn = conn;
-
-    char resdata[100];
-    memset(resdata, 0, 100);
-    //strncpy(resdata, buffer, 8);
-    resdata[0] = buffer[0];
-    resdata[1] = buffer[1];
-    resdata[2] = buffer[2];
-    resdata[3] = buffer[3];
-    resdata[4] = 0; //高位
-    resdata[5] = 7; //低位
-    resdata[6] = buffer[6];
-    resdata[7] = buffer[7];
-
-    if (buffer[7] == 2 || buffer[7] == 1)
-    {
-        if (reg_num % 8 == 0)
-        {
-            resdata[8] = reg_num / 8;
-        }
-        else
-        {
-            resdata[8] = reg_num / 8 + 1;
-        }
-        //resdata[7] = ;
-    }
-    if (buffer[7] == 4 || buffer[7] == 3)
-    {
-        resdata[8] = reg_num * 4; //字节数量
-    }
-    int len1 = 3 + resdata[8];
-
-    resdata[4] = len1 >> 8;
-    resdata[5] = len1 & 0x00FF;
-    if (len - 6 != mrq.len)
-    {
-        printf("data length error %d %d \n", len - 6, mrq.len);
-        send(conn, buffer, len, 0);
-        return 1;
-    }
-    if (mrq.slave - 1 > dma.size)
-    {
-        printf("error slave is not found (%d) dma.size=(%d)\n ", mrq.slave,dma.size);
-        buffer[7] = buffer[7] + 80;
-        send(conn, buffer, len, 0);
-        return 1;
-    }
-    if (mrq.reg_str + mrq.reg_num > 512)
-    {
-        buffer[7] = buffer[7] + 80;
-        printf("error key stackoverflow (%d) ", mrq.reg_str + mrq.reg_num);
-        send(conn, buffer, len, 0);
-        return 1;
-    }
-    updateModuleAddSlave(mrq.slave);
-    switch (mrq.fun)
-    {
-    case 1:
-        return fun01(&mrq, resdata);
-        break;
-    case 2:
-        return fun02(&mrq, resdata);
-        break;
-    case 3:
-        return fun03(&mrq, resdata);
-        break;
-    case 4:
-        return fun04(&mrq, resdata);
-        break;
-    default:
-        saveMessage(buffer, len);
-        return send(conn, resdata, 8, 0);
-        break;
-    }
-
-    return 0;
-}
-int saveMessage(char *buffer, int len)
-{
-    //    int fputc( int c, FILE *fp );
-
-    FILE *fp;
-    int i;
-    fp = fopen("message.text", "a+");
-    for (i = 0; i < len; i++)
-    {
-        fprintf(fp, "%02hhx ", buffer[i]);
-    }
-    fputc('\n', fp);
-    //fputs(buffer, fp);
-    fclose(fp);
-    return 0;
-} 
 int fun01(modbus_request *mrq, char *resdata) //BO
 {
     //mrq->reg_str = mrq->reg_str + 1;
@@ -463,6 +343,160 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     }
     printf(");\n");
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
+}
+
+int fun06(modbus_request *mrq, char *resdata)
+{
+    //return fun03(mrq, resdata);
+    return 0;
+}
+int fun15(modbus_request *mrq, char *resdata)
+{
+
+    //return fun03(mrq, resdata);
+    return 0;
+}
+int fun16(modbus_request *mrq, char *resdata)
+{
+
+    //return fun03(mrq, resdata);
+    return 0;
+}
+int fun05(modbus_request *mrq, char *resdata)
+{
+    // 0c 50 00 00 00 06 01 05 00 00 ff 00
+    char *key = getKeyBySlavePoint(mrq);
+    printf("key = (%s)\n", key);
+    return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
+}
+//根据报文返回数据
+int readMessage(char *buffer, int len, int conn)
+{
+
+    int reg_num = buffer[10] * 256 + buffer[11] - 1;
+    modbus_request mrq;
+    mrq.transaction = buffer[0] * 256 + (u8)buffer[1];
+    mrq.protocol = buffer[2] * 256 + buffer[3];
+    mrq.len = buffer[4] * 256 + buffer[5];
+    mrq.slave = buffer[6];                     //设备地址
+    mrq.fun = (int)buffer[7];                  //功能码
+    mrq.reg_str = buffer[8] * 256 + buffer[9]; //点位编号
+    if (mrq.reg_str > dma.size)
+    {
+        printf("reg_str max is %d \n", dma.size);
+        buffer[7] = buffer[7] + 80;
+        send(conn, buffer, len, 0);
+        return 1;
+    }
+
+    mrq.reg_num = reg_num; //数量
+    if (mrq.reg_num > 20)
+    {
+        printf("regnum max is 20");
+        mrq.reg_num = 20;
+    }
+    mrq.buffer = buffer;
+    mrq.bufferlen = len;
+    mrq.conn = conn;
+
+    char resdata[100];
+    memset(resdata, 0, 100);
+    //strncpy(resdata, buffer, 8);
+    resdata[0] = buffer[0];
+    resdata[1] = buffer[1];
+    resdata[2] = buffer[2];
+    resdata[3] = buffer[3];
+    resdata[4] = 0; //高位
+    resdata[5] = 7; //低位
+    resdata[6] = buffer[6];
+    resdata[7] = buffer[7];
+
+    if (buffer[7] == 2 || buffer[7] == 1)
+    {
+        if (reg_num % 8 == 0)
+        {
+            resdata[8] = reg_num / 8;
+        }
+        else
+        {
+            resdata[8] = reg_num / 8 + 1;
+        }
+        //resdata[7] = ;
+    }
+    if (buffer[7] == 4 || buffer[7] == 3)
+    {
+        resdata[8] = reg_num * 4; //字节数量
+    }
+    int len1 = 3 + resdata[8];
+
+    resdata[4] = len1 >> 8;
+    resdata[5] = len1 & 0x00FF;
+    if (len - 6 != mrq.len)
+    {
+        printf("data length error %d %d \n", len - 6, mrq.len);
+        send(conn, buffer, len, 0);
+        return 1;
+    }
+    if (mrq.slave - 1 > dma.size)
+    {
+        printf("error slave is not found (%d) dma.size=(%d)\n ", mrq.slave, dma.size);
+        buffer[7] = buffer[7] + 80;
+        send(conn, buffer, len, 0);
+        return 1;
+    }
+    if (mrq.reg_str + mrq.reg_num > 512)
+    {
+        buffer[7] = buffer[7] + 80;
+        printf("error key stackoverflow (%d) ", mrq.reg_str + mrq.reg_num);
+        send(conn, buffer, len, 0);
+        return 1;
+    }
+    updateModuleAddSlave(mrq.slave);
+    switch (mrq.fun)
+    {
+    case 1:
+        return fun01(&mrq, resdata);
+        break;
+    case 2:
+        return fun02(&mrq, resdata);
+        break;
+    case 3:
+        return fun03(&mrq, resdata);
+        break;
+    case 4:
+        return fun04(&mrq, resdata);
+        break;
+    case 5:
+        return fun05(&mrq, resdata);
+    case 6:
+        return fun06(&mrq, resdata);
+    case 15:
+        return fun15(&mrq, resdata);
+    case 16:
+        return fun16(&mrq, resdata);
+    default:
+        saveMessage(buffer, len);
+        return send(conn, resdata, 8, 0);
+        break;
+    }
+
+    return 0;
+}
+int saveMessage(char *buffer, int len)
+{
+    //    int fputc( int c, FILE *fp );
+
+    FILE *fp;
+    int i;
+    fp = fopen("message.text", "a+");
+    for (i = 0; i < len; i++)
+    {
+        fprintf(fp, "%02hhx ", buffer[i]);
+    }
+    fputc('\n', fp);
+    //fputs(buffer, fp);
+    fclose(fp);
+    return 0;
 }
 
 //回收站------------------------------------------------------------------------------------------------------------------------------

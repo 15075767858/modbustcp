@@ -1,5 +1,6 @@
 
 #include "device.h"
+#include <sys/utsname.h>
 // #include "../memwatch-2.71/memwatch.h"
 
 // #ifndef SIGSEGV
@@ -13,6 +14,7 @@
 // #if !defined(MW_STDIO) && !defined(MEMWATCH_STDIO)
 // #error "Define MW_STDIO and try again, please."
 // #endif
+
 int redisInit()
 {
     keysredis = redisConnect("127.0.0.1", 6379);
@@ -39,7 +41,7 @@ int redisInit()
     //     exit(0);
     //     return redis->err;
     // }
-    redisFree(redis);
+    //redisFree(redis);
 
     return 0;
 }

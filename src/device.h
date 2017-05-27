@@ -99,7 +99,6 @@ void signal_handler(int m);
 
 int getDevIndex(char *dev);
 int getKeyIndex(char *key);
-
 char *getKeyObjectName(char *key);
 
 typedef struct updateModule
