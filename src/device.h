@@ -100,7 +100,9 @@ void signal_handler(int m);
 int getDevIndex(char *dev);
 int getKeyIndex(char *key);
 char *getKeyObjectName(char *key);
-
+int redisSetValue(redisContext *redis, char *key, char *property, char *value);
+char *redisGetValue(redisContext *redis, char *key, char *property);
+int changePriority(redisContext *redis,char *key, char *value, int priority);
 typedef struct updateModule
 {
     int size;

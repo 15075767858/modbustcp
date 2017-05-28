@@ -24,7 +24,7 @@ int redisInit()
 
     while (1)
     {
-        sleep(21);
+        sleep(3);
         redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
         if (keyLen == reply->elements)
         {
@@ -62,6 +62,82 @@ char *getKeyObjectName(char *key)
     {
         return strdup("");
     }
+}
+
+int redisSetValue(redisContext *redis, char *key, char *property, char *value)
+{
+    char dev[5];
+    memset(dev, 0, 5);
+    strncat(dev, key, 4);
+    char valCommand[1000];
+    memset(valCommand, 0, 1000);
+    char pubCommand[1000];
+    memset(pubCommand, 0, 1000);
+    sprintf(valCommand, "hset %s %s %s", key, property, value);
+    redisReply *reply;
+    reply = (redisReply *)redisCommand(redis, valCommand);
+    freeReplyObject(reply);
+    sprintf(pubCommand, "PUBLISH %s.8.* %s\r\n%s\r\n%s", dev, key, property, value);
+    reply = (redisReply *)redisCommand(redis, pubCommand);
+    freeReplyObject(reply);
+    return 0;
+}
+char *redisGetValue(redisContext *redis, char *key, char *property)
+{
+    char valCommand[1000];
+    memset(valCommand, 0, 1000);
+    sprintf(valCommand, "hget %s %s ", key, property);
+    redisReply *reply;
+    reply = (redisReply *)redisCommand(redis, valCommand);
+    char *value;
+    if (reply->str != 0)
+    {
+        value = strdup(reply->str);
+    }
+    else
+    {
+        value = strdup("");
+    }
+    freeReplyObject(reply);
+    return value;
+}
+int changePriority(redisContext *redis, char *key, char *value, int priority)
+{
+    char *PriArray = redisGetValue(redis, key, "Priority_Array");
+    char arrs[16][10] = {"NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"};
+
+    if (strlen(PriArray) < 59)
+    {
+        int i = 0;
+        char *token = strtok(PriArray, ",");
+        while (token != NULL)
+        {
+            printf(" %s ", token);
+            memset(arrs[i], 0, 10);
+            if (i == priority)
+            {
+                sprintf(arrs[i], "%s", value);
+            }
+            else
+            {
+                sprintf(arrs[i], "%s", token);
+            }
+            i++;
+            token = strtok(NULL, ",");
+        }
+    }
+    else
+    {
+        memset(arrs[priority], 0, 10);
+        sprintf(arrs[priority], "%s", value);
+    }
+    char pValue[100];
+    memset(pValue, 0, 100);
+    sprintf(pValue, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", arrs[0], arrs[1], arrs[2], arrs[3], arrs[4], arrs[5], arrs[6], arrs[7], arrs[8], arrs[9], arrs[10], arrs[11], arrs[12], arrs[13], arrs[14], arrs[15]);
+    redisSetValue(redis, key, "Priority_Array", pValue);
+    printf("\nend %s\n", pValue);
+    free(PriArray);
+    return 0;
 }
 //根据dev获取dev的index
 int getDevIndex(char *dev)
@@ -353,22 +429,27 @@ int updateModuleAddSlave(int slave)
         }
         if (uM.slaves[i] == 0)
         {
+            uM.size += 1;
             uM.slaves[i] = slave;
             break;
         }
     }
+
     return 0;
 }
 int updateModuleIsHaveSlave(int salve)
 {
+    printf("module slave =(");
     int i;
-    for (i = 0; i < 100; i++)
+    for (i = 0; i < uM.size; i++)
     {
+        printf("%d  ", uM.slaves[i]);
         if (uM.slaves[i] == salve)
         {
             return 0;
         }
     }
+    printf(" ) \n");
     return i;
 }
 //数字转字符串

@@ -2,8 +2,10 @@
 
 int main()
 {
+
     //初始化redis
     redisInit();
+
     //初始化全局所有key，方便后面用不再从数据库查询
     initKeysAll();
     initDevsAll();
@@ -46,7 +48,7 @@ int socket_run()
     int port = 502;
     if (isMac() == 0)
     {
-        port = 8888;
+        port = SOCK_PORT;
     }
     s_addr_in.sin_port = htons(port); //trans port from uint16_t host byte order to network byte order.
     fd_temp = bind(sockfd_server, (struct scokaddr *)(&s_addr_in), sizeof(s_addr_in));
@@ -84,6 +86,8 @@ int socket_run()
             continue; //ignore current socket ,continue while loop.
         }
         socketCount++;
+        // pthread_attr_t *attr;
+        // pthread_attr_init(attr);
 
         printf("A new connection occurs!\n");
         if (pthread_create(&thread_id, NULL, (void *)(&Data_handle), (void *)(&sockfd)) == -1)
@@ -91,6 +95,7 @@ int socket_run()
             fprintf(stderr, "pthread_create error!\n");
             break; //break while loop
         }
+        pthread_detach(thread_id);
     }
     //Clear
     int ret = shutdown(sockfd_server, SHUT_WR); //shut down the all or part of a full-duplex connection.
@@ -101,14 +106,13 @@ int socket_run()
 
 static void Data_handle(void *sock_fd)
 {
-
     int fd = *((int *)sock_fd);
     int i_recvBytes;
     char data_recv[BUFFER_LENGTH];
     int errcount = 0;
-
     while (1)
     {
+        //pthread_detach(pthread_self());
         memset(data_recv, 0, BUFFER_LENGTH);
         i_recvBytes = read(fd, data_recv, BUFFER_LENGTH);
         int i;
@@ -128,7 +132,8 @@ static void Data_handle(void *sock_fd)
                 printf("datalength error\n");
                 write(fd, data_recv, i_recvBytes);
                 close(fd);
-                pthread_detach(pthread_self());
+                //pthread_detach(pthread_self());
+                pthread_exit(NULL);
                 printf("close a pthread\n");
                 break;
             }
@@ -204,6 +209,9 @@ char getTypeByFun(int fun)
     case 4:
         return '0';
         break;
+    case 5:
+        return '5';
+        break;
     default:
         return 0;
         break;
@@ -212,10 +220,12 @@ char getTypeByFun(int fun)
 }
 char *getKeyBySlavePoint(modbus_request *mrq)
 {
+
     //char *dev, char type, int point
-    char *dev = getDevBySlave(mrq->slave);
+    char *dev = getDevBySlave(mrq->slave - 1);
     char type = getTypeByFun(mrq->fun);
-    int point= mrq->reg_str;
+
+    int point = mrq->reg_str;
     char devtype[8];
     memset(devtype, 0, 8);
     sprintf(devtype, "%s%c??", dev, type);
@@ -233,10 +243,9 @@ char *getKeyBySlavePoint(modbus_request *mrq)
         key = strdup("");
     }
     freeKeys(&keys);
-
+    printf("fun5 key=%s\n", key);
     return key;
 }
-
 
 int fun01(modbus_request *mrq, char *resdata) //BO
 {
@@ -305,9 +314,8 @@ int fun03(modbus_request *mrq, char *resdata) //AV
 {
     printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
-
     DeviceMemory dm = dma.dma[mrq->slave - 1][0];
-    int start = mrq->reg_str;
+    int start = mrq->reg_str - 1;
     int end = mrq->reg_num;
     int count = 0;
     int i;
@@ -366,9 +374,22 @@ int fun05(modbus_request *mrq, char *resdata)
 {
     // 0c 50 00 00 00 06 01 05 00 00 ff 00
     char *key = getKeyBySlavePoint(mrq);
-    printf("key = (%s)\n", key);
+    if (mrq->buffer[10] == 0)
+    {
+        redisSetValue(redis, key, "Present_Value", "0");
+        changePriority(redis, key, "0", 7);
+    }
+    else
+    {
+        redisSetValue(redis, key, "Present_Value", "1");
+        changePriority(redis, key, "1", 7);
+    }
+    
+    free(key);
+    printf("change key = (%s)\n", key);
     return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
 }
+
 //根据报文返回数据
 int readMessage(char *buffer, int len, int conn)
 {
@@ -381,20 +402,38 @@ int readMessage(char *buffer, int len, int conn)
     mrq.slave = buffer[6];                     //设备地址
     mrq.fun = (int)buffer[7];                  //功能码
     mrq.reg_str = buffer[8] * 256 + buffer[9]; //点位编号
-    if (mrq.reg_str > dma.size)
+    if (mrq.fun == 1 || mrq.fun == 2 || mrq.fun == 3 || mrq.fun == 4)
     {
-        printf("reg_str max is %d \n", dma.size);
-        buffer[7] = buffer[7] + 80;
-        send(conn, buffer, len, 0);
-        return 1;
+        if (mrq.slave > dma.size)
+        {
+            printf("slave max is %d \n", dma.size);
+            buffer[7] = buffer[7] + 80;
+            send(conn, buffer, len, 0);
+            return 1;
+        }
+
+        mrq.reg_num = reg_num; //数量
+        if (mrq.reg_num > 20)
+        {
+            printf("regnum max is 20");
+            mrq.reg_num = 20;
+        }
+        // if (mrq.slave - 1 > dma.size)
+        // {
+        //     printf("error slave is not found (%d) dma.size=(%d)\n ", mrq.slave, dma.size);
+        //     buffer[7] = buffer[7] + 80;
+        //     send(conn, buffer, len, 0);
+        //     return 1;
+        // }
+        // if (mrq.reg_str + mrq.reg_num > 512)
+        // {
+        //     buffer[7] = buffer[7] + 80;
+        //     printf("error key stackoverflow (%d) ", mrq.reg_str + mrq.reg_num);
+        //     send(conn, buffer, len, 0);
+        //     return 1;
+        // }
     }
 
-    mrq.reg_num = reg_num; //数量
-    if (mrq.reg_num > 20)
-    {
-        printf("regnum max is 20");
-        mrq.reg_num = 20;
-    }
     mrq.buffer = buffer;
     mrq.bufferlen = len;
     mrq.conn = conn;
@@ -437,21 +476,8 @@ int readMessage(char *buffer, int len, int conn)
         send(conn, buffer, len, 0);
         return 1;
     }
-    if (mrq.slave - 1 > dma.size)
-    {
-        printf("error slave is not found (%d) dma.size=(%d)\n ", mrq.slave, dma.size);
-        buffer[7] = buffer[7] + 80;
-        send(conn, buffer, len, 0);
-        return 1;
-    }
-    if (mrq.reg_str + mrq.reg_num > 512)
-    {
-        buffer[7] = buffer[7] + 80;
-        printf("error key stackoverflow (%d) ", mrq.reg_str + mrq.reg_num);
-        send(conn, buffer, len, 0);
-        return 1;
-    }
     updateModuleAddSlave(mrq.slave);
+
     switch (mrq.fun)
     {
     case 1:
@@ -467,13 +493,14 @@ int readMessage(char *buffer, int len, int conn)
         return fun04(&mrq, resdata);
         break;
     case 5:
+        saveMessage(buffer, len);
         return fun05(&mrq, resdata);
-    case 6:
-        return fun06(&mrq, resdata);
-    case 15:
-        return fun15(&mrq, resdata);
-    case 16:
-        return fun16(&mrq, resdata);
+    // case 6:
+    //     return fun06(&mrq, resdata);
+    // case 15:
+    //     return fun15(&mrq, resdata);
+    // case 16:
+    //     return fun16(&mrq, resdata);
     default:
         saveMessage(buffer, len);
         return send(conn, resdata, 8, 0);
