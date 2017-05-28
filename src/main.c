@@ -210,7 +210,7 @@ char getTypeByFun(int fun)
         return '0';
         break;
     case 5:
-        return '5';
+        return '4';
         break;
     default:
         return 0;
@@ -384,7 +384,7 @@ int fun05(modbus_request *mrq, char *resdata)
         redisSetValue(redis, key, "Present_Value", "1");
         changePriority(redis, key, "1", 7);
     }
-    
+
     free(key);
     printf("change key = (%s)\n", key);
     return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
@@ -413,10 +413,10 @@ int readMessage(char *buffer, int len, int conn)
         }
 
         mrq.reg_num = reg_num; //数量
-        if (mrq.reg_num > 20)
+        if (mrq.reg_num > 30)
         {
-            printf("regnum max is 20");
-            mrq.reg_num = 20;
+            printf("regnum max is 30");
+            mrq.reg_num = 30;
         }
         // if (mrq.slave - 1 > dma.size)
         // {
