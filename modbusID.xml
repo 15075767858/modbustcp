@@ -1,551 +1,419 @@
 <?xml version="1.0" encoding="utf-8"?>	<root>	<device number="1001"
-SlaveAddress="1">	<AI pointType="AI">	<key number="1001001"
-pointNumber="1001001">UI1 </key>
-	<key number="1001002" pointNumber="1001002">UI2 </key>
-	<key number="1001003" pointNumber="1001003">UI3 </key>
-	<key number="1001004" pointNumber="1001004">UI4 </key>
-	<key number="1001005" pointNumber="1001005">UI5</key>
-	<key number="1001006" pointNumber="1001006">UI6 </key>
-	<key number="1001008" pointNumber="1001008"></key>
-</AI>
-	<AV pointType="AV">	<key number="1001201"
-pointNumber="1001201">ANALOG VALUE1</key>
-	<key number="1001202" pointNumber="1001202">ANALOG VALUE2</key>
-	<key number="1001203" pointNumber="1001203">ANALOG VALUE3</key>
-	<key number="1001204" pointNumber="1001204">ANALOG VALUE4</key>
-	<key number="1001205" pointNumber="1001205">ANALOG VALUE5</key>
+SlaveAddress="1">	<AI pointType="AI" />	<AV pointType="AV">	<key
+number="1001201" pointNumber="1001201">CH_B1_REQ</key>
+	<key number="1001202" pointNumber="1001202">CH_B1_QTY</key>
+	<key number="1001203" pointNumber="1001203">CH_B1_1HOURS</key>
+	<key number="1001204" pointNumber="1001204">CH_B1_2HOURS</key>
+	<key number="1001205" pointNumber="1001205">CH_B1_3HOURS</key>
+	<key number="1001206" pointNumber="1001206">AV6</key>
+	<key number="1001207" pointNumber="1001207">AV7</key>
+	<key number="1001208" pointNumber="1001208">AV8</key>
+	<key number="1001209" pointNumber="1001209">AV9</key>
+	<key number="1001210" pointNumber="1001210">AV10</key>
+	<key number="1001211" pointNumber="1001211">CH_B1_Load</key>
+	<key number="1001212" pointNumber="1001212">CH_chw_Flow</key>
+	<key number="1001213" pointNumber="1001213">Chw_DiffTemp</key>
 </AV>
 	<BI pointType="DI">	<key number="1001301"
-pointNumber="1001301">BINARY_INPUT1</key>
-	<key number="1001302" pointNumber="1001302">BINARY_INPUT2</key>
-	<key number="1001303" pointNumber="1001303">BINARY_INPUT3</key>
-	<key number="1001304" pointNumber="1001304">BINARY_INPUT4</key>
-	<key number="1001305" pointNumber="1001305">0.123</key>
-	<key number="1001306" pointNumber="1001306">BINARY_INPUT6</key>
-	<key number="1001307" pointNumber="1001307">BINARY_INPUT7</key>
-	<key number="1001308" pointNumber="1001308">BINARY_INPUT8</key>
-	<key number="1001309" pointNumber="1001309">BINARY_INPUT9</key>
-	<key number="1001310" pointNumber="1001310">BINARY_INPUT10</key>
-	<key number="1001311" pointNumber="1001311">BINARY_INPUT11</key>
-	<key number="1001312" pointNumber="1001312">BINARY_INPUT12</key>
-	<key number="1001313" pointNumber="1001313">BINARY_INPUT13</key>
-	<key number="1001314" pointNumber="1001314">BINARY_INPUT14</key>
-	<key number="1001315" pointNumber="1001315">BINARY_INPUT15</key>
-	<key number="1001316" pointNumber="1001316">BINARY_INPUT16</key>
+pointNumber="1001301">CT_RF_1Auto</key>
+	<key number="1001302" pointNumber="1001302">CT_RF_1Status</key>
+	<key number="1001303" pointNumber="1001303">CT_RF_1Alarm</key>
+	<key number="1001304" pointNumber="1001304">CH_B1_1Auto</key>
+	<key number="1001305" pointNumber="1001305">CH_B1_1Status</key>
+	<key number="1001306" pointNumber="1001306">CH_B1_1Alarm</key>
+	<key number="1001307" pointNumber="1001307">CH_B1_2Auto</key>
+	<key number="1001308" pointNumber="1001308">CH_B1_2Status</key>
+	<key number="1001309" pointNumber="1001309">CH_B1_2Alarm</key>
+	<key number="1001310" pointNumber="1001310">CH_B1_3Auto</key>
+	<key number="1001311" pointNumber="1001311">CH_B1_3Status</key>
+	<key number="1001312" pointNumber="1001312">CH_B1_3Alarm</key>
 </BI>
 	<BO pointType="DO">	<key number="1001401"
-pointNumber="1001401">BINARY_OUTPUT 1</key>
-	<key number="1001402" pointNumber="1001402">BINARY_OUTPUT 2</key>
-	<key number="1001403" pointNumber="1001403">BINARY_OUTPUT 3</key>
-	<key number="1001404" pointNumber="1001404">BINARY_OUTPUT 4</key>
-	<key number="1001405" pointNumber="1001405">BINARY_OUTPUT 5</key>
-	<key number="1001406" pointNumber="1001406">BINARY_OUTPUT 6</key>
-	<key number="1001407" pointNumber="1001407">COPY OF BINARY_OUTPUT 1</key>
-	<key number="1001408" pointNumber="1001408">COPY OF BINARY_OUTPUT 6</key>
-	<key number="1001409" pointNumber="1001409">COPY OF BINARY_OUTPUT 5</key>
-	<key number="1001410" pointNumber="1001410">COPY OF BINARY_OUTPUT 6</key>
+pointNumber="1001401">CH_B1_1OnOff</key>
+	<key number="1001402" pointNumber="1001402">CH_B1_2OnOff</key>
+	<key number="1001403" pointNumber="1001403">CH_B1_3OnOff</key>
+	<key number="1001404" pointNumber="1001404">CT_RF_1OnOff</key>
+	<key number="1001405" pointNumber="1001405">AHU_1F_1OnOff</key>
+	<key number="1001406" pointNumber="1001406">AHU_1F_2OnOff</key>
 </BO>
 </device>
-	<device number="1002" SlaveAddress="2">	<AI pointType="AI">	<key
-number="1002001" pointNumber="1002001">UI1 </key>
-	<key number="1002002" pointNumber="1002002">UI2 </key>
-	<key number="1002003" pointNumber="1002003">UI3 </key>
-	<key number="1002004" pointNumber="1002004">UI4 </key>
-	<key number="1002005" pointNumber="1002005">UI5 </key>
-	<key number="1002006" pointNumber="1002006">UI6 </key>
-</AI>
-	<AV pointType="AV">	<key number="1002201"
-pointNumber="1002201">ANALOG VALUE1</key>
-	<key number="1002202" pointNumber="1002202">ANALOG VALUE2</key>
-	<key number="1002203" pointNumber="1002203">ANALOG VALUE3</key>
-	<key number="1002204" pointNumber="1002204">ANALOG VALUE4</key>
-	<key number="1002205" pointNumber="1002205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1002301"
-pointNumber="1002301">BINARY_INPUT1</key>
-	<key number="1002302" pointNumber="1002302">BINARY_INPUT2</key>
-	<key number="1002303" pointNumber="1002303">BINARY_INPUT3</key>
-	<key number="1002304" pointNumber="1002304">BINARY_INPUT4</key>
-	<key number="1002305" pointNumber="1002305">BINARY_INPUT5</key>
-	<key number="1002306" pointNumber="1002306">BINARY_INPUT6</key>
-	<key number="1002307" pointNumber="1002307">BINARY_INPUT7</key>
-	<key number="1002308" pointNumber="1002308">BINARY_INPUT8</key>
+	<device number="1002" SlaveAddress="2">	<AI pointType="AI" />	<AV
+pointType="AV" />	<BI pointType="DI">	<key number="1002301"
+pointNumber="1002301">AHU_1F_1Auto</key>
+	<key number="1002302" pointNumber="1002302">AHU_1F_1Status</key>
+	<key number="1002303" pointNumber="1002303">AHU_1F_1Alarm</key>
+	<key number="1002304" pointNumber="1002304">Chwp_B1_1Auto</key>
+	<key number="1002305" pointNumber="1002305">Chwp_B1_1Status</key>
+	<key number="1002306" pointNumber="1002306">Chwp_B1_1Alarm</key>
+	<key number="1002307" pointNumber="1002307">Chwp_B1_2Auto</key>
+	<key number="1002308" pointNumber="1002308">Chwp_B1_2Status</key>
+	<key number="1002309" pointNumber="1002309">Chwp_B1_2Alarm</key>
+	<key number="1002310" pointNumber="1002310">Chwp_B1_3Auto</key>
+	<key number="1002311" pointNumber="1002311">Chwp_B1_3Status</key>
+	<key number="1002312" pointNumber="1002312">Chwp_B1_3Alarm</key>
 </BI>
 	<BO pointType="DO">	<key number="1002401"
-pointNumber="1002401">BINARY_OUTPUT 1</key>
-	<key number="1002402" pointNumber="1002402">BINARY_OUTPUT 2</key>
-	<key number="1002403" pointNumber="1002403">BINARY_OUTPUT 3</key>
-	<key number="1002404" pointNumber="1002404">BINARY_OUTPUT 4</key>
-	<key number="1002405" pointNumber="1002405">BINARY_OUTPUT 5</key>
-	<key number="1002406" pointNumber="1002406">BINARY_OUTPUT 6</key>
+pointNumber="1002401">Chwp_B1_1OnOff</key>
+	<key number="1002402" pointNumber="1002402">Chwp_B1_2OnOff</key>
+	<key number="1002403" pointNumber="1002403">Chwp_B1_3OnOff</key>
+	<key number="1002404" pointNumber="1002404">P_1F_2OnOff</key>
+	<key number="1002405" pointNumber="1002405">Chwp_2_1OnOff</key>
+	<key number="1002406" pointNumber="1002406">Hw_1OnOff</key>
 </BO>
 </device>
-	<device number="1003" SlaveAddress="3">	<AI pointType="AI">	<key
-number="1003001" pointNumber="1003001">UI1 </key>
-	<key number="1003002" pointNumber="1003002">UI2 </key>
-	<key number="1003003" pointNumber="1003003">UI3 </key>
-	<key number="1003004" pointNumber="1003004">UI4 </key>
-	<key number="1003005" pointNumber="1003005">UI5 </key>
-	<key number="1003006" pointNumber="1003006">UI6 </key>
-</AI>
-	<AV pointType="AV">	<key number="1003201"
-pointNumber="1003201">ANALOG VALUE1</key>
-	<key number="1003202" pointNumber="1003202">ANALOG VALUE2</key>
-	<key number="1003203" pointNumber="1003203">ANALOG VALUE3</key>
-	<key number="1003204" pointNumber="1003204">ANALOG VALUE4</key>
-	<key number="1003205" pointNumber="1003205">ANALOG VALUE5</key>
+	<device number="1003" SlaveAddress="3">	<AI pointType="AI" />	<AV
+pointType="AV">	<key number="1003201" pointNumber="1003201">Cwp_B1_REQ</key>
+	<key number="1003202" pointNumber="1003202">Cwp_B1_QTY</key>
+	<key number="1003203" pointNumber="1003203">Cwp_B1_1HOURS</key>
+	<key number="1003204" pointNumber="1003204">Cwp_B1_2HOURS</key>
+	<key number="1003205" pointNumber="1003205">Cwp_B1_3HOURS</key>
+	<key number="1003206" pointNumber="1003206">AV6</key>
+	<key number="1003207" pointNumber="1003207">AV7</key>
+	<key number="1003208" pointNumber="1003208">AV8</key>
+	<key number="1003209" pointNumber="1003209">AV9</key>
+	<key number="1003210" pointNumber="1003210">AV10</key>
 </AV>
 	<BI pointType="DI">	<key number="1003301"
-pointNumber="1003301">BINARY_INPUT1</key>
-	<key number="1003302" pointNumber="1003302">BINARY_INPUT2</key>
-	<key number="1003303" pointNumber="1003303">BINARY_INPUT3</key>
-	<key number="1003304" pointNumber="1003304">BINARY_INPUT4</key>
-	<key number="1003305" pointNumber="1003305">BINARY_INPUT5</key>
-	<key number="1003306" pointNumber="1003306">BINARY_INPUT6</key>
-	<key number="1003307" pointNumber="1003307">BINARY_INPUT7</key>
-	<key number="1003308" pointNumber="1003308">BINARY_INPUT8</key>
+pointNumber="1003301">AHU_1F_2Auto</key>
+	<key number="1003302" pointNumber="1003302">AHU_1F_2Status</key>
+	<key number="1003303" pointNumber="1003303">AHU_1F_2Alarm</key>
+	<key number="1003304" pointNumber="1003304">Cwp_B1_1Auto</key>
+	<key number="1003305" pointNumber="1003305">Cwp_B1_1Status</key>
+	<key number="1003306" pointNumber="1003306">Cwp_B1_1Alarm</key>
+	<key number="1003307" pointNumber="1003307">Cwp_B1_2Auto</key>
+	<key number="1003308" pointNumber="1003308">Cwp_B1_2Status</key>
+	<key number="1003309" pointNumber="1003309">Cwp_B1_2Alarm</key>
+	<key number="1003310" pointNumber="1003310">Cwp_B1_3Auto</key>
+	<key number="1003311" pointNumber="1003311">Cwp_B1_3Status</key>
+	<key number="1003312" pointNumber="1003312">Cwp_B1_3Alarm</key>
 </BI>
 	<BO pointType="DO">	<key number="1003401"
-pointNumber="1003401">BINARY_OUTPUT 1</key>
-	<key number="1003402" pointNumber="1003402">BINARY_OUTPUT 2</key>
-	<key number="1003403" pointNumber="1003403">BINARY_OUTPUT 3</key>
-	<key number="1003404" pointNumber="1003404">BINARY_OUTPUT 4</key>
+pointNumber="1003401">Cwp_B1_1OnOff</key>
+	<key number="1003402" pointNumber="1003402">Cwp_B1_2OnOff</key>
+	<key number="1003403" pointNumber="1003403">Cwp_B1_3OnOff</key>
+	<key number="1003404" pointNumber="1003404">Hw_2OnOff</key>
 	<key number="1003405" pointNumber="1003405">BINARY_OUTPUT 5</key>
 	<key number="1003406" pointNumber="1003406">BINARY_OUTPUT 6</key>
 </BO>
 </device>
-	<device number="1004" SlaveAddress="4">	<AI pointType="AI">	<key
-number="1004001" pointNumber="1004001">UI1 </key>
-	<key number="1004002" pointNumber="1004002">UI2 </key>
-	<key number="1004003" pointNumber="1004003">UI3 </key>
-	<key number="1004004" pointNumber="1004004">UI4 </key>
-	<key number="1004005" pointNumber="1004005">UI5 </key>
-	<key number="1004006" pointNumber="1004006">UI6 </key>
-</AI>
-	<AV pointType="AV">	<key number="1004201"
-pointNumber="1004201">ANALOG VALUE1</key>
-	<key number="1004202" pointNumber="1004202">ANALOG VALUE2</key>
-	<key number="1004203" pointNumber="1004203">ANALOG VALUE3</key>
-	<key number="1004204" pointNumber="1004204">ANALOG VALUE4</key>
-	<key number="1004205" pointNumber="1004205">ANALOG VALUE5</key>
+	<device number="1004" SlaveAddress="4">	<AI pointType="AI" />	<AV
+pointType="AV">	<key number="1004201" pointNumber="1004201">AHU1_SetStemp</key>
+	<key number="1004202" pointNumber="1004202">AHU1_SetRtemp</key>
+	<key number="1004203" pointNumber="1004203">AHU2_SetStemp</key>
+	<key number="1004204" pointNumber="1004204">AHU2_SetRtemp</key>
+	<key number="1004205" pointNumber="1004205">CHW_QTY</key>
+	<key number="1004206" pointNumber="1004206">CWP_QTY</key>
 </AV>
 	<BI pointType="DI">	<key number="1004301"
-pointNumber="1004301">BINARY_INPUT1</key>
-	<key number="1004302" pointNumber="1004302">BINARY_INPUT2</key>
-	<key number="1004303" pointNumber="1004303">BINARY_INPUT3</key>
-	<key number="1004304" pointNumber="1004304">BINARY_INPUT4</key>
-	<key number="1004305" pointNumber="1004305">BINARY_INPUT5</key>
-	<key number="1004306" pointNumber="1004306">BINARY_INPUT6</key>
-	<key number="1004307" pointNumber="1004307">BINARY_INPUT7</key>
-	<key number="1004308" pointNumber="1004308">BINARY_INPUT8</key>
+pointNumber="1004301">P_1F_2Auto</key>
+	<key number="1004302" pointNumber="1004302">P_1F_2Status</key>
+	<key number="1004303" pointNumber="1004303">P_1F_2Alarm</key>
+	<key number="1004304" pointNumber="1004304">Chwp_2_1Auto</key>
+	<key number="1004305" pointNumber="1004305">Chwp_2_1Status</key>
+	<key number="1004306" pointNumber="1004306">Chwp_2_1Alarm</key>
+	<key number="1004307" pointNumber="1004307">Hw_B1_1Auto</key>
+	<key number="1004308" pointNumber="1004308">Hw_B1_Status</key>
+	<key number="1004309" pointNumber="1004309">Hw_B1_1Alarm</key>
+	<key number="1004310" pointNumber="1004310">Heater_B1_1Alarm </key>
+	<key number="1004311" pointNumber="1004311">Heater_B1_2Alarm </key>
+	<key number="1004312" pointNumber="1004312">Humidifier_B1_1Alarm </key>
 </BI>
 	<BO pointType="DO">	<key number="1004401"
-pointNumber="1004401">BINARY_OUTPUT 1</key>
-	<key number="1004402" pointNumber="1004402">BINARY_OUTPUT 2</key>
-	<key number="1004403" pointNumber="1004403">BINARY_OUTPUT 3</key>
-	<key number="1004404" pointNumber="1004404">BINARY_OUTPUT 4</key>
-	<key number="1004405" pointNumber="1004405">BINARY_OUTPUT 5</key>
-	<key number="1004406" pointNumber="1004406">BINARY_OUTPUT 6</key>
+pointNumber="1004401">Water_6BVOnOff</key>
+	<key number="1004402" pointNumber="1004402">Water_1BVOnOff</key>
+	<key number="1004403" pointNumber="1004403">Water_2BVOnOff</key>
+	<key number="1004404" pointNumber="1004404">Water_3BVOnOff</key>
+	<key number="1004405" pointNumber="1004405">Water_4BVOnOff</key>
+	<key number="1004406" pointNumber="1004406">Water_5BVOnOff</key>
 </BO>
 </device>
 	<device number="1005" SlaveAddress="5">	<AI pointType="AI">	<key
-number="1005001" pointNumber="1005001">UI1 </key>
-	<key number="1005002" pointNumber="1005002">UI2 </key>
-	<key number="1005003" pointNumber="1005003">UI3 </key>
-	<key number="1005004" pointNumber="1005004">UI4 </key>
-	<key number="1005005" pointNumber="1005005">UI5 </key>
-	<key number="1005006" pointNumber="1005006">UI6 </key>
+number="1005001" pointNumber="1005001">CT_STemp </key>
+	<key number="1005002" pointNumber="1005002">CT_RTemp </key>
+	<key number="1005003" pointNumber="1005003">CH_Cwp_B1_1STemp </key>
+	<key number="1005004" pointNumber="1005004">CH_Cwp_B1_1RTemp </key>
 </AI>
 	<AV pointType="AV">	<key number="1005201"
-pointNumber="1005201">ANALOG VALUE1</key>
-	<key number="1005202" pointNumber="1005202">ANALOG VALUE2</key>
-	<key number="1005203" pointNumber="1005203">ANALOG VALUE3</key>
-	<key number="1005204" pointNumber="1005204">ANALOG VALUE4</key>
-	<key number="1005205" pointNumber="1005205">ANALOG VALUE5</key>
+pointNumber="1005201">RF_1FreqCTRL_CT</key>
+	<key number="1005204" pointNumber="1005204">STE_STEMP</key>
 </AV>
 	<BI pointType="DI">	<key number="1005301"
-pointNumber="1005301">BINARY_INPUT1</key>
-	<key number="1005302" pointNumber="1005302">BINARY_INPUT2</key>
-	<key number="1005303" pointNumber="1005303">BINARY_INPUT3</key>
-	<key number="1005304" pointNumber="1005304">BINARY_INPUT4</key>
-	<key number="1005305" pointNumber="1005305">BINARY_INPUT5</key>
-	<key number="1005306" pointNumber="1005306">BINARY_INPUT6</key>
-	<key number="1005307" pointNumber="1005307">BINARY_INPUT7</key>
-	<key number="1005308" pointNumber="1005308">BINARY_INPUT8</key>
+pointNumber="1005301">BINARY_INPUT 1</key>
+	<key number="1005302" pointNumber="1005302">CH_B1_1Wfs </key>
+	<key number="1005303" pointNumber="1005303">Hot_B1_2Wfs </key>
+	<key number="1005304" pointNumber="1005304">BINARY_INPUT 4</key>
+	<key number="1005305" pointNumber="1005305">AHU1_B1_1PFilter</key>
+	<key number="1005306" pointNumber="1005306">AHU1_B1_2PFilter</key>
+	<key number="1005307" pointNumber="1005307">AHU2_B1_1HFilter</key>
+	<key number="1005308" pointNumber="1005308">AHU2_B1_2HFilter</key>
 </BI>
 	<BO pointType="DO">	<key number="1005401"
 pointNumber="1005401">BINARY_OUTPUT 1</key>
 	<key number="1005402" pointNumber="1005402">BINARY_OUTPUT 2</key>
 	<key number="1005403" pointNumber="1005403">BINARY_OUTPUT 3</key>
-	<key number="1005404" pointNumber="1005404">BINARY_OUTPUT 4</key>
-	<key number="1005405" pointNumber="1005405">BINARY_OUTPUT 5</key>
-	<key number="1005406" pointNumber="1005406">BINARY_OUTPUT 6</key>
 </BO>
 </device>
-	<device number="1011" SlaveAddress="6">	<AI pointType="AI">	<key
-number="1011001" pointNumber="1011001">UI1 </key>
-	<key number="1011002" pointNumber="1011002">UI2 </key>
-	<key number="1011003" pointNumber="1011003">UI3 </key>
-	<key number="1011004" pointNumber="1011004">UI4 </key>
-	<key number="1011005" pointNumber="1011005">UI5</key>
-	<key number="1011006" pointNumber="1011006">UI6 </key>
-	<key number="1011008" pointNumber="1011008"></key>
+	<device number="1006" SlaveAddress="6">	<AI pointType="AI">	<key
+number="1006001" pointNumber="1006001">CH_Chwp_B1_STemp</key>
+	<key number="1006002" pointNumber="1006002">CH_Chwp_B1_1RTemp</key>
+	<key number="1006003" pointNumber="1006003">CH_Cwp_B1_2STemp</key>
+	<key number="1006004" pointNumber="1006004">CH_Cwp_B1_2RTemp</key>
 </AI>
-	<AV pointType="AV">	<key number="1011201"
-pointNumber="1011201">ANALOG VALUE1</key>
-	<key number="1011202" pointNumber="1011202">ANALOG VALUE2</key>
-	<key number="1011203" pointNumber="1011203">ANALOG VALUE3</key>
-	<key number="1011204" pointNumber="1011204">ANALOG VALUE4</key>
-	<key number="1011205" pointNumber="1011205">ANALOG VALUE5</key>
+	<AV pointType="AV">	<key number="1006201"
+pointNumber="1006201">1F_1FreqCTRL_AHU</key>
+	<key number="1006202" pointNumber="1006202">1F_2FreqCTRL_AHU</key>
+	<key number="1006203" pointNumber="1006203">B1_2FreqCTRL_CHhwp</key>
+	<key number="1006204" pointNumber="1006204">ANALOG VALUE4</key>
+	<key number="1006205" pointNumber="1006205">ANALOG VALUE5</key>
 </AV>
-	<BI pointType="DI">	<key number="1011301"
-pointNumber="1011301">BINARY_INPUT1</key>
-	<key number="1011302" pointNumber="1011302">BINARY_INPUT2</key>
-	<key number="1011303" pointNumber="1011303">BINARY_INPUT3</key>
-	<key number="1011304" pointNumber="1011304">BINARY_INPUT4</key>
-	<key number="1011305" pointNumber="1011305">0.123</key>
-	<key number="1011306" pointNumber="1011306">BINARY_INPUT6</key>
-	<key number="1011307" pointNumber="1011307">BINARY_INPUT7</key>
-	<key number="1011308" pointNumber="1011308">BINARY_INPUT8</key>
-	<key number="1011309" pointNumber="1011309">BINARY_INPUT9</key>
-	<key number="1011310" pointNumber="1011310">BINARY_INPUT10</key>
-	<key number="1011311" pointNumber="1011311">BINARY_INPUT11</key>
-	<key number="1011312" pointNumber="1011312">BINARY_INPUT12</key>
-	<key number="1011313" pointNumber="1011313">BINARY_INPUT13</key>
-	<key number="1011314" pointNumber="1011314">BINARY_INPUT14</key>
-	<key number="1011315" pointNumber="1011315">BINARY_INPUT15</key>
-	<key number="1011316" pointNumber="1011316">BINARY_INPUT16</key>
+	<BI pointType="DI">	<key number="1006301"
+pointNumber="1006301">CT_S_Wfs</key>
+	<key number="1006302" pointNumber="1006302">CT_R_Wfs</key>
+	<key number="1006303" pointNumber="1006303">Water_1BVsta</key>
+	<key number="1006304" pointNumber="1006304">Water_2BVsta</key>
+	<key number="1006305" pointNumber="1006305">Water_3BVsta</key>
+	<key number="1006306" pointNumber="1006306">Water_4BVsta</key>
+	<key number="1006307" pointNumber="1006307">Water_5BVsta</key>
+	<key number="1006308" pointNumber="1006308">Water_6BVsta</key>
 </BI>
-	<BO pointType="DO">	<key number="1011401"
-pointNumber="1011401">BINARY_OUTPUT 1</key>
+	<BO pointType="DO">	<key number="1006401"
+pointNumber="1006401">BINARY_OUTPUT 1</key>
+	<key number="1006402" pointNumber="1006402">BINARY_OUTPUT 2</key>
+	<key number="1006403" pointNumber="1006403">BINARY_OUTPUT 3</key>
+</BO>
+</device>
+	<device number="1007" SlaveAddress="7">	<AI pointType="AI">	<key
+number="1007005" pointNumber="1007005">CH_Chwp_2STemp</key>
+	<key number="1007006" pointNumber="1007006">CH_Chwp_2RTemp</key>
+	<key number="1007007" pointNumber="1007007">CH_Cwp_3STemp</key>
+	<key number="1007008" pointNumber="1007008">CH_Cwp_3RTemp</key>
+	<key number="1007009" pointNumber="1007009">CH_Chwp_3STemp</key>
+	<key number="1007010" pointNumber="1007010">CH_Chwp_3RTemp</key>
+	<key number="1007011" pointNumber="1007011">Hot_STemp</key>
+	<key number="1007012" pointNumber="1007012">Hot_RTemp</key>
+</AI>
+	<AV pointType="AV">	<key number="1007201"
+pointNumber="1007201">B1_1CTRL_Dampr</key>
+	<key number="1007202" pointNumber="1007202">B1_2CTRL_Dampr</key>
+	<key number="1007203" pointNumber="1007203">ValveCTRL_DiffPre</key>
+	<key number="1007204" pointNumber="1007204">ANALOG VALUE4</key>
+	<key number="1007205" pointNumber="1007205">ANALOG VALUE5</key>
+</AV>
+	<BI pointType="DI">	<key number="1007301"
+pointNumber="1007301">AHU_B1_1AntifreeON</key>
+	<key number="1007302" pointNumber="1007302">AHU_B1_2AntifreeON</key>
+	<key number="1007303" pointNumber="1007303">BINARY_INPUT 3</key>
+	<key number="1007304" pointNumber="1007304">BINARY_INPUT 4</key>
+</BI>
+	<BO pointType="DO">	<key number="1007401"
+pointNumber="1007401">BINARY_OUTPUT 1</key>
+	<key number="1007402" pointNumber="1007402">BINARY_OUTPUT 2</key>
+	<key number="1007403" pointNumber="1007403">BINARY_OUTPUT 3</key>
+</BO>
+</device>
+	<device number="1008" SlaveAddress="8">	<AI pointType="AI">	<key
+number="1008003" pointNumber="1008003">ANALOG INPUT 3</key>
+	<key number="1008004" pointNumber="1008004">ANALOG INPUT 4</key>
+	<key number="1008005" pointNumber="1008005">CHU_B1_1STemp</key>
+	<key number="1008006" pointNumber="1008006">CHU_B1_1RTemp</key>
+	<key number="1008007" pointNumber="1008007">CHU_B1_2STemp</key>
+	<key number="1008008" pointNumber="1008008">CHU_B1_2RTemp</key>
+	<key number="1008009" pointNumber="1008009">CT_Cwp_SFlow</key>
+	<key number="1008010" pointNumber="1008010">CH_Cwp_1Flow</key>
+	<key number="1008011" pointNumber="1008011">CH_Cwp_2Flow</key>
+	<key number="1008012" pointNumber="1008012">CH_Cwp_3Flow</key>
+</AI>
+	<AV pointType="AV">	<key number="1008201"
+pointNumber="1008201">B1_3CTRL_Dampr</key>
+	<key number="1008202" pointNumber="1008202">ANALOG VALUE2</key>
+	<key number="1008203" pointNumber="1008203">ANALOG VALUE3</key>
+</AV>
+	<BI pointType="DI">	<key number="1008301"
+pointNumber="1008301">CHU_B1_1HFilter</key>
+	<key number="1008302" pointNumber="1008302">CHU_B1_2HFilter</key>
+</BI>
+	<BO pointType="DO">	<key number="1008401"
+pointNumber="1008401">BINARY_OUTPUT 1</key>
+	<key number="1008402" pointNumber="1008402">BINARY_OUTPUT 2</key>
+	<key number="1008403" pointNumber="1008403">BINARY_OUTPUT 3</key>
+</BO>
+</device>
+	<device number="1009" SlaveAddress="9">	<AI pointType="AI">	<key
+number="1009005" pointNumber="1009005">CH_Chwp_1Flow</key>
+	<key number="1009006" pointNumber="1009006">CH_Chwp_2Flow</key>
+	<key number="1009007" pointNumber="1009007">CH_Chwp_3Flow</key>
+	<key number="1009008" pointNumber="1009008">ANALOG INPUT8</key>
+	<key number="1009009" pointNumber="1009009">CHU_2Flow</key>
+	<key number="1009010" pointNumber="1009010">DiffPre_Valve</key>
+	<key number="1009011" pointNumber="1009011">CHU_1SP</key>
+	<key number="1009012" pointNumber="1009012">CHU_1RP</key>
+</AI>
+	<AV pointType="AV">	<key number="1009201"
+pointNumber="1009201">ValveCTRL_AHU1</key>
+	<key number="1009202" pointNumber="1009202">ANALOG VALUE2</key>
+	<key number="1009203" pointNumber="1009203">ANALOG VALUE3</key>
+	<key number="1009204" pointNumber="1009204">ANALOG VALUE4</key>
+	<key number="1009205" pointNumber="1009205">ANALOG VALUE5</key>
+</AV>
+	<BI pointType="DI">	<key number="1009301"
+pointNumber="1009301">BINARY_INPUT 1</key>
+	<key number="1009302" pointNumber="1009302">BINARY_INPUT 2</key>
+	<key number="1009303" pointNumber="1009303">BINARY_INPUT 3</key>
+	<key number="1009304" pointNumber="1009304">BINARY_INPUT 4</key>
+</BI>
+	<BO pointType="DO">	<key number="1009401"
+pointNumber="1009401">BINARY_OUTPUT 1</key>
+	<key number="1009402" pointNumber="1009402">BINARY_OUTPUT 2</key>
+	<key number="1009403" pointNumber="1009403">BINARY_OUTPUT 3</key>
+</BO>
+</device>
+	<device number="1010" SlaveAddress="10">	<AI
+pointType="AI">	<key number="1010001" pointNumber="1010001">AHU1_RF_WS1</key>
+	<key number="1010002" pointNumber="1010002">CHU_2RP</key>
+	<key number="1010003" pointNumber="1010003">AHU2_RF_WS1</key>
+	<key number="1010004" pointNumber="1010004">ROOM1_P_1WS</key>
+	<key number="1010005" pointNumber="1010005">ROOM1_P_1Temp</key>
+	<key number="1010006" pointNumber="1010006">ROOM1_P_1Rh</key>
+	<key number="1010007" pointNumber="1010007">ROOM1_Temp</key>
+	<key number="1010008" pointNumber="1010008">ROOM1_Rh</key>
+	<key number="1010009" pointNumber="1010009">ROOM1_CO2</key>
+	<key number="1010010" pointNumber="1010010">ROOM1_P_2WS</key>
+	<key number="1010011" pointNumber="1010011">ROOM1_P_2Temp</key>
+	<key number="1010012" pointNumber="1010012">ROOM1_P_2Rh</key>
+</AI>
+	<AV pointType="AV">	<key number="1010201"
+pointNumber="1010201">ValveCTRL_AHU2</key>
+	<key number="1010202" pointNumber="1010202">B1_4CTRL_Dampr</key>
+</AV>
+	<BI pointType="DI" />	<BO pointType="DO">	<key
+number="1010401" pointNumber="1010401">BINARY_OUTPUT 1</key>
+	<key number="1010402" pointNumber="1010402">BINARY_OUTPUT 2</key>
+	<key number="1010403" pointNumber="1010403">BINARY_OUTPUT 3</key>
+</BO>
+</device>
+	<device number="1011" SlaveAddress="11">	<AI
+pointType="AI">	<key number="1011001" pointNumber="1011001">ROOM2_P_1WS</key>
+	<key number="1011002" pointNumber="1011002">ROOM2_P_Temp</key>
+	<key number="1011003" pointNumber="1011003">ROOM2_P_Rh</key>
+	<key number="1011004" pointNumber="1011004">ROOM2_Temp</key>
+	<key number="1011005" pointNumber="1011005">ROOM2_Rh</key>
+	<key number="1011006" pointNumber="1011006">ROOM2_CO2</key>
+	<key number="1011007" pointNumber="1011007">ROOM3_P_1WS</key>
+	<key number="1011008" pointNumber="1011008">ROOM3_P_Temp</key>
+	<key number="1011009" pointNumber="1011009">ROOM3_P_Rh</key>
+	<key number="1011010" pointNumber="1011010">ROOM3_Temp</key>
+	<key number="1011011" pointNumber="1011011">ROOM3_Rh</key>
+	<key number="1011012" pointNumber="1011012">ROOM3_CO2</key>
+</AI>
+	<AV pointType="AV" />	<BI pointType="DI" />	<BO
+pointType="DO">	<key number="1011401" pointNumber="1011401">BINARY_OUTPUT 1</key>
 	<key number="1011402" pointNumber="1011402">BINARY_OUTPUT 2</key>
 	<key number="1011403" pointNumber="1011403">BINARY_OUTPUT 3</key>
-	<key number="1011404" pointNumber="1011404">BINARY_OUTPUT 4</key>
-	<key number="1011405" pointNumber="1011405">BINARY_OUTPUT 5</key>
-	<key number="1011406" pointNumber="1011406">BINARY_OUTPUT 6</key>
-	<key number="1011407" pointNumber="1011407">COPY OF BINARY_OUTPUT 1</key>
-	<key number="1011408" pointNumber="1011408">COPY OF BINARY_OUTPUT 6</key>
-	<key number="1011409" pointNumber="1011409">COPY OF BINARY_OUTPUT 5</key>
-	<key number="1011410" pointNumber="1011410">COPY OF BINARY_OUTPUT 6</key>
 </BO>
 </device>
-	<device number="1012" SlaveAddress="7">	<AI pointType="AI">	<key
-number="1012001" pointNumber="1012001">UI1 </key>
-	<key number="1012002" pointNumber="1012002">UI2 </key>
-	<key number="1012003" pointNumber="1012003">UI3 </key>
-	<key number="1012004" pointNumber="1012004">UI4 </key>
-	<key number="1012005" pointNumber="1012005">UI5 </key>
-	<key number="1012006" pointNumber="1012006">UI6 </key>
+	<device number="1012" SlaveAddress="12">	<AI
+pointType="AI">	<key number="1012001" pointNumber="1012001">ROOM4_P_1WS</key>
+	<key number="1012002" pointNumber="1012002">ROOM4_P_Temp</key>
+	<key number="1012003" pointNumber="1012003">ROOM4_P_Rh</key>
+	<key number="1012004" pointNumber="1012004">ROOM4_Temp</key>
+	<key number="1012005" pointNumber="1012005">ROOM4_Rh</key>
+	<key number="1012006" pointNumber="1012006">ROOM4_CO2</key>
+	<key number="1012007" pointNumber="1012007">ROOM5_P_1WS</key>
+	<key number="1012008" pointNumber="1012008">ROOM5_P_Temp</key>
+	<key number="1012009" pointNumber="1012009">ROOM5_P_Rh</key>
+	<key number="1012010" pointNumber="1012010">ROOM5_Temp</key>
+	<key number="1012011" pointNumber="1012011">ROOM5_Rh</key>
+	<key number="1012012" pointNumber="1012012">ROOM5_CO2</key>
 </AI>
-	<AV pointType="AV">	<key number="1012201"
-pointNumber="1012201">ANALOG VALUE1</key>
-	<key number="1012202" pointNumber="1012202">ANALOG VALUE2</key>
-	<key number="1012203" pointNumber="1012203">ANALOG VALUE3</key>
-	<key number="1012204" pointNumber="1012204">ANALOG VALUE4</key>
-	<key number="1012205" pointNumber="1012205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1012301"
-pointNumber="1012301">BINARY_INPUT1</key>
-	<key number="1012302" pointNumber="1012302">BINARY_INPUT2</key>
-	<key number="1012303" pointNumber="1012303">BINARY_INPUT3</key>
-	<key number="1012304" pointNumber="1012304">BINARY_INPUT4</key>
-	<key number="1012305" pointNumber="1012305">BINARY_INPUT5</key>
-	<key number="1012306" pointNumber="1012306">BINARY_INPUT6</key>
-	<key number="1012307" pointNumber="1012307">BINARY_INPUT7</key>
-	<key number="1012308" pointNumber="1012308">BINARY_INPUT8</key>
-</BI>
-	<BO pointType="DO">	<key number="1012401"
-pointNumber="1012401">BINARY_OUTPUT 1</key>
+	<AV pointType="AV" />	<BI pointType="DI" />	<BO
+pointType="DO">	<key number="1012401" pointNumber="1012401">BINARY_OUTPUT 1</key>
 	<key number="1012402" pointNumber="1012402">BINARY_OUTPUT 2</key>
 	<key number="1012403" pointNumber="1012403">BINARY_OUTPUT 3</key>
-	<key number="1012404" pointNumber="1012404">BINARY_OUTPUT 4</key>
-	<key number="1012405" pointNumber="1012405">BINARY_OUTPUT 5</key>
-	<key number="1012406" pointNumber="1012406">BINARY_OUTPUT 6</key>
 </BO>
 </device>
-	<device number="1013" SlaveAddress="8">	<AI pointType="AI">	<key
-number="1013001" pointNumber="1013001">UI1 </key>
-	<key number="1013002" pointNumber="1013002">UI2 </key>
-	<key number="1013003" pointNumber="1013003">UI3 </key>
-	<key number="1013004" pointNumber="1013004">UI4 </key>
-	<key number="1013005" pointNumber="1013005">UI5 </key>
-	<key number="1013006" pointNumber="1013006">UI6 </key>
+	<device number="1013" SlaveAddress="13">	<AI
+pointType="AI">	<key number="1013001" pointNumber="1013001">ROOM6_P_1WS</key>
+	<key number="1013002" pointNumber="1013002">ROOM6_P_Temp</key>
+	<key number="1013003" pointNumber="1013003">ROOM6_P_Rh</key>
+	<key number="1013004" pointNumber="1013004">ROOM6_Temp</key>
+	<key number="1013005" pointNumber="1013005">ROOM6_Rh</key>
+	<key number="1013006" pointNumber="1013006">ROOM6_CO2</key>
+	<key number="1013007" pointNumber="1013007">Office_P_1WS</key>
+	<key number="1013008" pointNumber="1013008">Office_P_2WS</key>
+	<key number="1013009" pointNumber="1013009">Office_P_3WS</key>
+	<key number="1013010" pointNumber="1013010">Office_P_4WS</key>
+	<key number="1013011" pointNumber="1013011">Office_P_5WS</key>
+	<key number="1013012" pointNumber="1013012">Office_P_P</key>
 </AI>
-	<AV pointType="AV">	<key number="1013201"
-pointNumber="1013201">ANALOG VALUE1</key>
-	<key number="1013202" pointNumber="1013202">ANALOG VALUE2</key>
-	<key number="1013203" pointNumber="1013203">ANALOG VALUE3</key>
-	<key number="1013204" pointNumber="1013204">ANALOG VALUE4</key>
-	<key number="1013205" pointNumber="1013205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1013301"
-pointNumber="1013301">BINARY_INPUT1</key>
-	<key number="1013302" pointNumber="1013302">BINARY_INPUT2</key>
-	<key number="1013303" pointNumber="1013303">BINARY_INPUT3</key>
-	<key number="1013304" pointNumber="1013304">BINARY_INPUT4</key>
-	<key number="1013305" pointNumber="1013305">BINARY_INPUT5</key>
-	<key number="1013306" pointNumber="1013306">BINARY_INPUT6</key>
-	<key number="1013307" pointNumber="1013307">BINARY_INPUT7</key>
-	<key number="1013308" pointNumber="1013308">BINARY_INPUT8</key>
-</BI>
-	<BO pointType="DO">	<key number="1013401"
-pointNumber="1013401">BINARY_OUTPUT 1</key>
+	<AV pointType="AV" />	<BI pointType="DI" />	<BO
+pointType="DO">	<key number="1013401" pointNumber="1013401">BINARY_OUTPUT 1</key>
 	<key number="1013402" pointNumber="1013402">BINARY_OUTPUT 2</key>
 	<key number="1013403" pointNumber="1013403">BINARY_OUTPUT 3</key>
-	<key number="1013404" pointNumber="1013404">BINARY_OUTPUT 4</key>
-	<key number="1013405" pointNumber="1013405">BINARY_OUTPUT 5</key>
-	<key number="1013406" pointNumber="1013406">BINARY_OUTPUT 6</key>
 </BO>
 </device>
-	<device number="1014" SlaveAddress="9">	<AI pointType="AI">	<key
-number="1014001" pointNumber="1014001">UI1 </key>
-	<key number="1014002" pointNumber="1014002">UI2 </key>
-	<key number="1014003" pointNumber="1014003">UI3 </key>
-	<key number="1014004" pointNumber="1014004">UI4 </key>
-	<key number="1014005" pointNumber="1014005">UI5 </key>
-	<key number="1014006" pointNumber="1014006">UI6 </key>
+	<device number="1014" SlaveAddress="14">	<AI
+pointType="AI">	<key number="1014001" pointNumber="1014001">AHU1_FP_WS</key>
+	<key number="1014002" pointNumber="1014002">AHU1_FP_Temp</key>
+	<key number="1014003" pointNumber="1014003">AHU1_FP_Rh</key>
+	<key number="1014004" pointNumber="1014004">AHU1_FP_CO2</key>
+	<key number="1014005" pointNumber="1014005">AHU1_RP_Temp</key>
+	<key number="1014006" pointNumber="1014006">AHU1_RP_Rh</key>
+	<key number="1014007" pointNumber="1014007">AHU1_RP_CO2</key>
+	<key number="1014008" pointNumber="1014008">AHU1_SP_WS</key>
+	<key number="1014009" pointNumber="1014009">AHU1_SP_Temp</key>
+	<key number="1014010" pointNumber="1014010">AHU1_SP_Rh</key>
+	<key number="1014011" pointNumber="1014011">AHU1_SP_CO2</key>
+	<key number="1014012" pointNumber="1014012">AHU1_SP_P</key>
 </AI>
-	<AV pointType="AV">	<key number="1014201"
-pointNumber="1014201">ANALOG VALUE1</key>
-	<key number="1014202" pointNumber="1014202">ANALOG VALUE2</key>
-	<key number="1014203" pointNumber="1014203">ANALOG VALUE3</key>
-	<key number="1014204" pointNumber="1014204">ANALOG VALUE4</key>
-	<key number="1014205" pointNumber="1014205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1014301"
-pointNumber="1014301">BINARY_INPUT1</key>
-	<key number="1014302" pointNumber="1014302">BINARY_INPUT2</key>
-	<key number="1014303" pointNumber="1014303">BINARY_INPUT3</key>
-	<key number="1014304" pointNumber="1014304">BINARY_INPUT4</key>
-	<key number="1014305" pointNumber="1014305">BINARY_INPUT5</key>
-	<key number="1014306" pointNumber="1014306">BINARY_INPUT6</key>
-	<key number="1014307" pointNumber="1014307">BINARY_INPUT7</key>
-	<key number="1014308" pointNumber="1014308">BINARY_INPUT8</key>
-</BI>
-	<BO pointType="DO">	<key number="1014401"
-pointNumber="1014401">BINARY_OUTPUT 1</key>
+	<AV pointType="AV" />	<BI pointType="DI" />	<BO
+pointType="DO">	<key number="1014401" pointNumber="1014401">BINARY_OUTPUT 1</key>
 	<key number="1014402" pointNumber="1014402">BINARY_OUTPUT 2</key>
 	<key number="1014403" pointNumber="1014403">BINARY_OUTPUT 3</key>
-	<key number="1014404" pointNumber="1014404">BINARY_OUTPUT 4</key>
-	<key number="1014405" pointNumber="1014405">BINARY_OUTPUT 5</key>
-	<key number="1014406" pointNumber="1014406">BINARY_OUTPUT 6</key>
 </BO>
 </device>
-	<device number="1015" SlaveAddress="10">	<AI
-pointType="AI">	<key number="1015001" pointNumber="1015001">UI1 </key>
-	<key number="1015002" pointNumber="1015002">UI2 </key>
-	<key number="1015003" pointNumber="1015003">UI3 </key>
-	<key number="1015004" pointNumber="1015004">UI4 </key>
-	<key number="1015005" pointNumber="1015005">UI5 </key>
-	<key number="1015006" pointNumber="1015006">UI6 </key>
+	<device number="1015" SlaveAddress="15">	<AI
+pointType="AI">	<key number="1015001" pointNumber="1015001">AHU2_FP_WS</key>
+	<key number="1015002" pointNumber="1015002">AHU2_FP_Temp</key>
+	<key number="1015003" pointNumber="1015003">AHU2_FP_Rh</key>
+	<key number="1015004" pointNumber="1015004">AHU2_FP_CO2</key>
+	<key number="1015005" pointNumber="1015005">AHU2_RP_Temp</key>
+	<key number="1015006" pointNumber="1015006">AHU2_RP_Rh</key>
+	<key number="1015007" pointNumber="1015007">AHU2_RP_CO2</key>
+	<key number="1015008" pointNumber="1015008">AHU2_SP_WS</key>
+	<key number="1015009" pointNumber="1015009">AHU2_SP_Temp</key>
+	<key number="1015010" pointNumber="1015010">AHU2_SP_Rh</key>
+	<key number="1015011" pointNumber="1015011">AHU2_SP_CO2</key>
+	<key number="1015012" pointNumber="1015012">AHU2_SP_P</key>
 </AI>
-	<AV pointType="AV">	<key number="1015201"
-pointNumber="1015201">ANALOG VALUE1</key>
-	<key number="1015202" pointNumber="1015202">ANALOG VALUE2</key>
-	<key number="1015203" pointNumber="1015203">ANALOG VALUE3</key>
-	<key number="1015204" pointNumber="1015204">ANALOG VALUE4</key>
-	<key number="1015205" pointNumber="1015205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1015301"
-pointNumber="1015301">BINARY_INPUT1</key>
-	<key number="1015302" pointNumber="1015302">BINARY_INPUT2</key>
-	<key number="1015303" pointNumber="1015303">BINARY_INPUT3</key>
-	<key number="1015304" pointNumber="1015304">BINARY_INPUT4</key>
-	<key number="1015305" pointNumber="1015305">BINARY_INPUT5</key>
-	<key number="1015306" pointNumber="1015306">BINARY_INPUT6</key>
-	<key number="1015307" pointNumber="1015307">BINARY_INPUT7</key>
-	<key number="1015308" pointNumber="1015308">BINARY_INPUT8</key>
-</BI>
-	<BO pointType="DO">	<key number="1015401"
-pointNumber="1015401">BINARY_OUTPUT 1</key>
+	<AV pointType="AV" />	<BI pointType="DI" />	<BO
+pointType="DO">	<key number="1015401" pointNumber="1015401">BINARY_OUTPUT 1</key>
 	<key number="1015402" pointNumber="1015402">BINARY_OUTPUT 2</key>
 	<key number="1015403" pointNumber="1015403">BINARY_OUTPUT 3</key>
-	<key number="1015404" pointNumber="1015404">BINARY_OUTPUT 4</key>
-	<key number="1015405" pointNumber="1015405">BINARY_OUTPUT 5</key>
-	<key number="1015406" pointNumber="1015406">BINARY_OUTPUT 6</key>
 </BO>
 </device>
-	<device number="1021" SlaveAddress="11">	<AI
-pointType="AI">	<key number="1021001" pointNumber="1021001">UI1 </key>
-	<key number="1021002" pointNumber="1021002">UI2 </key>
-	<key number="1021003" pointNumber="1021003">UI3 </key>
-	<key number="1021004" pointNumber="1021004">UI4 </key>
-	<key number="1021005" pointNumber="1021005">UI5</key>
-	<key number="1021006" pointNumber="1021006">UI6 </key>
-	<key number="1021008" pointNumber="1021008"></key>
+	<device number="1016" SlaveAddress="16">	<AI
+pointType="AI">	<key number="1016001" pointNumber="1016001">AHU1_HA_Temp</key>
+	<key number="1016002" pointNumber="1016002">AHU1_HA_Rh</key>
+	<key number="1016003" pointNumber="1016003">AHU1_COOL_Temp</key>
+	<key number="1016004" pointNumber="1016004">AHU1_COOL_Rh</key>
+	<key number="1016005" pointNumber="1016005">AHU1_HH_Temp</key>
+	<key number="1016006" pointNumber="1016006">AHU1_HH_Rh</key>
+	<key number="1016007" pointNumber="1016007">AHU2_HA_Temp</key>
+	<key number="1016008" pointNumber="1016008">AHU2_HA_Rh</key>
+	<key number="1016009" pointNumber="1016009">AHU2_COOL_Temp</key>
+	<key number="1016010" pointNumber="1016010">AHU2_COOL_Rh</key>
+	<key number="1016011" pointNumber="1016011">AHU2_HH_Temp</key>
+	<key number="1016012" pointNumber="1016012">AHU2_HH_Rh</key>
 </AI>
-	<AV pointType="AV">	<key number="1021201"
-pointNumber="1021201">ANALOG VALUE1</key>
-	<key number="1021202" pointNumber="1021202">ANALOG VALUE2</key>
-	<key number="1021203" pointNumber="1021203">ANALOG VALUE3</key>
-	<key number="1021204" pointNumber="1021204">ANALOG VALUE4</key>
-	<key number="1021205" pointNumber="1021205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1021301"
-pointNumber="1021301">BINARY_INPUT1</key>
-	<key number="1021302" pointNumber="1021302">BINARY_INPUT2</key>
-	<key number="1021303" pointNumber="1021303">BINARY_INPUT3</key>
-	<key number="1021304" pointNumber="1021304">BINARY_INPUT4</key>
-	<key number="1021305" pointNumber="1021305">0.123</key>
-	<key number="1021306" pointNumber="1021306">BINARY_INPUT6</key>
-	<key number="1021307" pointNumber="1021307">BINARY_INPUT7</key>
-	<key number="1021308" pointNumber="1021308">BINARY_INPUT8</key>
-	<key number="1021309" pointNumber="1021309">BINARY_INPUT9</key>
-	<key number="1021310" pointNumber="1021310">BINARY_INPUT10</key>
-	<key number="1021311" pointNumber="1021311">BINARY_INPUT11</key>
-	<key number="1021312" pointNumber="1021312">BINARY_INPUT12</key>
-	<key number="1021313" pointNumber="1021313">BINARY_INPUT13</key>
-	<key number="1021314" pointNumber="1021314">BINARY_INPUT14</key>
-	<key number="1021315" pointNumber="1021315">BINARY_INPUT15</key>
-	<key number="1021316" pointNumber="1021316">BINARY_INPUT16</key>
-</BI>
-	<BO pointType="DO">	<key number="1021401"
-pointNumber="1021401">BINARY_OUTPUT 1</key>
-	<key number="1021402" pointNumber="1021402">BINARY_OUTPUT 2</key>
-	<key number="1021403" pointNumber="1021403">BINARY_OUTPUT 3</key>
-	<key number="1021404" pointNumber="1021404">BINARY_OUTPUT 4</key>
-	<key number="1021405" pointNumber="1021405">BINARY_OUTPUT 5</key>
-	<key number="1021406" pointNumber="1021406">BINARY_OUTPUT 6</key>
-	<key number="1021407" pointNumber="1021407">COPY OF BINARY_OUTPUT 1</key>
-	<key number="1021408" pointNumber="1021408">COPY OF BINARY_OUTPUT 6</key>
-	<key number="1021409" pointNumber="1021409">COPY OF BINARY_OUTPUT 5</key>
-	<key number="1021410" pointNumber="1021410">COPY OF BINARY_OUTPUT 6</key>
+	<AV pointType="AV" />	<BI pointType="DI" />	<BO
+pointType="DO">	<key number="1016401" pointNumber="1016401">BINARY_OUTPUT 1</key>
+	<key number="1016402" pointNumber="1016402">BINARY_OUTPUT 2</key>
+	<key number="1016403" pointNumber="1016403">BINARY_OUTPUT 3</key>
 </BO>
 </device>
-	<device number="1022" SlaveAddress="12">	<AI
-pointType="AI">	<key number="1022001" pointNumber="1022001">UI1 </key>
-	<key number="1022002" pointNumber="1022002">UI2 </key>
-	<key number="1022003" pointNumber="1022003">UI3 </key>
-	<key number="1022004" pointNumber="1022004">UI4 </key>
-	<key number="1022005" pointNumber="1022005">UI5 </key>
-	<key number="1022006" pointNumber="1022006">UI6 </key>
-</AI>
-	<AV pointType="AV">	<key number="1022201"
-pointNumber="1022201">ANALOG VALUE1</key>
-	<key number="1022202" pointNumber="1022202">ANALOG VALUE2</key>
-	<key number="1022203" pointNumber="1022203">ANALOG VALUE3</key>
-	<key number="1022204" pointNumber="1022204">ANALOG VALUE4</key>
-	<key number="1022205" pointNumber="1022205">ANALOG VALUE5</key>
+	<device number="9901" SlaveAddress="17">	<AI
+pointType="AI" />	<AV pointType="AV">	<key number="9901205"
+pointNumber="9901205"></key>
 </AV>
-	<BI pointType="DI">	<key number="1022301"
-pointNumber="1022301">BINARY_INPUT1</key>
-	<key number="1022302" pointNumber="1022302">BINARY_INPUT2</key>
-	<key number="1022303" pointNumber="1022303">BINARY_INPUT3</key>
-	<key number="1022304" pointNumber="1022304">BINARY_INPUT4</key>
-	<key number="1022305" pointNumber="1022305">BINARY_INPUT5</key>
-	<key number="1022306" pointNumber="1022306">BINARY_INPUT6</key>
-	<key number="1022307" pointNumber="1022307">BINARY_INPUT7</key>
-	<key number="1022308" pointNumber="1022308">BINARY_INPUT8</key>
-</BI>
-	<BO pointType="DO">	<key number="1022401"
-pointNumber="1022401">BINARY_OUTPUT 1</key>
-	<key number="1022402" pointNumber="1022402">BINARY_OUTPUT 2</key>
-	<key number="1022403" pointNumber="1022403">BINARY_OUTPUT 3</key>
-	<key number="1022404" pointNumber="1022404">BINARY_OUTPUT 4</key>
-	<key number="1022405" pointNumber="1022405">BINARY_OUTPUT 5</key>
-	<key number="1022406" pointNumber="1022406">BINARY_OUTPUT 6</key>
-</BO>
-</device>
-	<device number="1023" SlaveAddress="13">	<AI
-pointType="AI">	<key number="1023001" pointNumber="1023001">UI1 </key>
-	<key number="1023002" pointNumber="1023002">UI2 </key>
-	<key number="1023003" pointNumber="1023003">UI3 </key>
-	<key number="1023004" pointNumber="1023004">UI4 </key>
-	<key number="1023005" pointNumber="1023005">UI5 </key>
-	<key number="1023006" pointNumber="1023006">UI6 </key>
-</AI>
-	<AV pointType="AV">	<key number="1023201"
-pointNumber="1023201">ANALOG VALUE1</key>
-	<key number="1023202" pointNumber="1023202">ANALOG VALUE2</key>
-	<key number="1023203" pointNumber="1023203">ANALOG VALUE3</key>
-	<key number="1023204" pointNumber="1023204">ANALOG VALUE4</key>
-	<key number="1023205" pointNumber="1023205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1023301"
-pointNumber="1023301">BINARY_INPUT1</key>
-	<key number="1023302" pointNumber="1023302">BINARY_INPUT2</key>
-	<key number="1023303" pointNumber="1023303">BINARY_INPUT3</key>
-	<key number="1023304" pointNumber="1023304">BINARY_INPUT4</key>
-	<key number="1023305" pointNumber="1023305">BINARY_INPUT5</key>
-	<key number="1023306" pointNumber="1023306">BINARY_INPUT6</key>
-	<key number="1023307" pointNumber="1023307">BINARY_INPUT7</key>
-	<key number="1023308" pointNumber="1023308">BINARY_INPUT8</key>
-</BI>
-	<BO pointType="DO">	<key number="1023401"
-pointNumber="1023401">BINARY_OUTPUT 1</key>
-	<key number="1023402" pointNumber="1023402">BINARY_OUTPUT 2</key>
-	<key number="1023403" pointNumber="1023403">BINARY_OUTPUT 3</key>
-	<key number="1023404" pointNumber="1023404">BINARY_OUTPUT 4</key>
-	<key number="1023405" pointNumber="1023405">BINARY_OUTPUT 5</key>
-	<key number="1023406" pointNumber="1023406">BINARY_OUTPUT 6</key>
-</BO>
-</device>
-	<device number="1024" SlaveAddress="14">	<AI
-pointType="AI">	<key number="1024001" pointNumber="1024001">UI1 </key>
-	<key number="1024002" pointNumber="1024002">UI2 </key>
-	<key number="1024003" pointNumber="1024003">UI3 </key>
-	<key number="1024004" pointNumber="1024004">UI4 </key>
-	<key number="1024005" pointNumber="1024005">UI5 </key>
-	<key number="1024006" pointNumber="1024006">UI6 </key>
-</AI>
-	<AV pointType="AV">	<key number="1024201"
-pointNumber="1024201">ANALOG VALUE1</key>
-	<key number="1024202" pointNumber="1024202">ANALOG VALUE2</key>
-	<key number="1024203" pointNumber="1024203">ANALOG VALUE3</key>
-	<key number="1024204" pointNumber="1024204">ANALOG VALUE4</key>
-	<key number="1024205" pointNumber="1024205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1024301"
-pointNumber="1024301">BINARY_INPUT1</key>
-	<key number="1024302" pointNumber="1024302">BINARY_INPUT2</key>
-	<key number="1024303" pointNumber="1024303">BINARY_INPUT3</key>
-	<key number="1024304" pointNumber="1024304">BINARY_INPUT4</key>
-	<key number="1024305" pointNumber="1024305">BINARY_INPUT5</key>
-	<key number="1024306" pointNumber="1024306">BINARY_INPUT6</key>
-	<key number="1024307" pointNumber="1024307">BINARY_INPUT7</key>
-	<key number="1024308" pointNumber="1024308">BINARY_INPUT8</key>
-</BI>
-	<BO pointType="DO">	<key number="1024401"
-pointNumber="1024401">BINARY_OUTPUT 1</key>
-	<key number="1024402" pointNumber="1024402">BINARY_OUTPUT 2</key>
-	<key number="1024403" pointNumber="1024403">BINARY_OUTPUT 3</key>
-	<key number="1024404" pointNumber="1024404">BINARY_OUTPUT 4</key>
-	<key number="1024405" pointNumber="1024405">BINARY_OUTPUT 5</key>
-	<key number="1024406" pointNumber="1024406">BINARY_OUTPUT 6</key>
-</BO>
-</device>
-	<device number="1025" SlaveAddress="15">	<AI
-pointType="AI">	<key number="1025001" pointNumber="1025001">UI1 </key>
-	<key number="1025002" pointNumber="1025002">UI2 </key>
-	<key number="1025003" pointNumber="1025003">UI3 </key>
-	<key number="1025004" pointNumber="1025004">UI4 </key>
-	<key number="1025005" pointNumber="1025005">UI5 </key>
-	<key number="1025006" pointNumber="1025006">UI6 </key>
-</AI>
-	<AV pointType="AV">	<key number="1025201"
-pointNumber="1025201">ANALOG VALUE1</key>
-	<key number="1025202" pointNumber="1025202">ANALOG VALUE2</key>
-	<key number="1025203" pointNumber="1025203">ANALOG VALUE3</key>
-	<key number="1025204" pointNumber="1025204">ANALOG VALUE4</key>
-	<key number="1025205" pointNumber="1025205">ANALOG VALUE5</key>
-</AV>
-	<BI pointType="DI">	<key number="1025301"
-pointNumber="1025301">BINARY_INPUT1</key>
-	<key number="1025302" pointNumber="1025302">BINARY_INPUT2</key>
-	<key number="1025303" pointNumber="1025303">BINARY_INPUT3</key>
-	<key number="1025304" pointNumber="1025304">BINARY_INPUT4</key>
-	<key number="1025305" pointNumber="1025305">BINARY_INPUT5</key>
-	<key number="1025306" pointNumber="1025306">BINARY_INPUT6</key>
-	<key number="1025307" pointNumber="1025307">BINARY_INPUT7</key>
-	<key number="1025308" pointNumber="1025308">BINARY_INPUT8</key>
-</BI>
-	<BO pointType="DO">	<key number="1025401"
-pointNumber="1025401">BINARY_OUTPUT 1</key>
-	<key number="1025402" pointNumber="1025402">BINARY_OUTPUT 2</key>
-	<key number="1025403" pointNumber="1025403">BINARY_OUTPUT 3</key>
-	<key number="1025404" pointNumber="1025404">BINARY_OUTPUT 4</key>
-	<key number="1025405" pointNumber="1025405">BINARY_OUTPUT 5</key>
-	<key number="1025406" pointNumber="1025406">BINARY_OUTPUT 6</key>
-</BO>
-</device>
+	<BI pointType="DI" />	<BO pointType="DO" /></device>
 </root>

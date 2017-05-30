@@ -46,14 +46,16 @@ int saveMessage(char *buffer, int len);
 
 int socket_run();
 static void Data_handle(void *sock_fd);
-
+void *socketStart(void *arg);
 void *asynRedis(void *arg);
+void *DeviceMemoryAllUpdateStart(void *arg);
 int runThread();
 
 int isMac();
-
 
 char *getDevBySlave(int slave);
 char getTypeByFun(int fun);
 //char *getPointNumberByPoint(char *dev, char type, int point);
 char *getKeyBySlavePoint(modbus_request *mrq);
+
+int print =0;

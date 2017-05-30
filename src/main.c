@@ -1,14 +1,52 @@
 #include "main.h"
+#include <unistd.h>
+int sockfd_server;
+static void my_close_socket(int sig)
+{ // can be called asynchronously
+    close(sockfd_server);
 
+    shutdown(sockfd_server, SHUT_RDWR);
+
+    printf("shutdown");
+    exit(0);
+}
+void error_quit()
+{
+    signal(1, my_close_socket);
+    signal(2, my_close_socket);
+    signal(3, my_close_socket);
+    signal(4, my_close_socket);
+    signal(5, my_close_socket);
+    signal(6, my_close_socket);
+    signal(8, my_close_socket);
+    signal(9, my_close_socket);
+    signal(10, my_close_socket);
+    signal(11, my_close_socket);
+    signal(12, my_close_socket);
+    signal(13, my_close_socket);
+    signal(15, my_close_socket);
+    signal(16, my_close_socket);
+    signal(17, my_close_socket);
+    signal(18, my_close_socket);
+    signal(19, my_close_socket);
+    signal(20, my_close_socket);
+    signal(21, my_close_socket);
+    signal(22, my_close_socket);
+    signal(23, my_close_socket);
+    signal(24, my_close_socket);
+    signal(25, my_close_socket);
+}
 int main()
 {
-
+    error_quit();
     //初始化redis
     redisInit();
-
     //初始化全局所有key，方便后面用不再从数据库查询
     initKeysAll();
+    //初始化全局所有device，方便后面用不再从数据库查询
     initDevsAll();
+    //初始化全局所有map_key，方便后面用不再从数据库查询
+    initMapKeys();
     initUpdateModule();
     printf("redis run \n");
     //初始化设备内存页
@@ -16,11 +54,25 @@ int main()
     //初始化设备内存
     initDeviceXml();
     //开启10秒一次更新内存页
-    signal(14, signal_handler);
-    set_timer();
     //开启多线程访问
+
     runThread();
+
+    // while (1)
+    // {
+    //     time_t t_start, t_end;
+    //     t_start = time(NULL);
+    //     Keys keys;
+    //     keys.dev = "1001";
+    //     getKeysForKeysAll(&keys);
+    //     free(keys.keys);
+    //     t_end = time(NULL);
+    //     printf("time: %.0f s %ld\n", difftime(t_end, t_start),t_end-t_start);
+    // }
     printf("asyn redis run\n");
+    while (1)
+    {
+    }
     return 0;
 }
 //是否是mac
@@ -33,7 +85,6 @@ int isMac()
 }
 int socket_run()
 {
-    int sockfd_server;
     int sockfd;
     int fd_temp;
     struct sockaddr_in s_addr_in;
@@ -68,15 +119,9 @@ int socket_run()
 
     while (1)
     {
-        // if (socketCount >= 10)
-        // {
-        //     fprintf(stderr, "pthread_create error! max is %d\n", 10);
-        //     continue;
-        // }
         printf("waiting for new connection...\n");
         pthread_t thread_id;
         client_length = sizeof(s_addr_client);
-
         //Block here. Until server accpets a new connection.
         sockfd = accept(sockfd_server, (struct sockaddr_ *)(&s_addr_client), (socklen_t *)(&client_length));
 
@@ -141,12 +186,13 @@ static void Data_handle(void *sock_fd)
         else
         {
             // write(fd, data_recv, i_recvBytes);
-            int resNum = readMessage(data_recv, i_recvBytes, fd);
-            if (resNum == -1)
-            {
-                pthread_detach(pthread_self());
-                break;
-            }
+            readMessage(data_recv, i_recvBytes, fd);
+            // printf("resNum = %d \n", resNum);
+            // if (resNum == -1)
+            // {
+            //     pthread_detach(pthread_self());
+            //     break;
+            // }
         }
     }
     //Clear
@@ -168,19 +214,33 @@ void *socketStart(void *arg)
     socket_run();
     pthread_exit(NULL);
 }
+void *DeviceMemoryAllUpdateStart(void *arg)
+{
+    printf("DeviceMemoryAllUpdateStart run");
+    sleep(1);
+    signal(SIGALRM, signal_handler);
+    set_timer();
+    pthread_exit(NULL);
+}
 int runThread()
 {
-    //socket_run();
     int res;
     pthread_t a_thread;
     pthread_t b_thread;
+    pthread_t c_thread;
     void *thread_result;
     //开启redis订阅
     res = pthread_create(&a_thread, NULL, asynRedis, NULL);
     //开启socket监听
     res = pthread_create(&b_thread, NULL, socketStart, NULL);
-    res = pthread_join(a_thread, NULL);
-    res = pthread_join(b_thread, NULL);
+    //开启轮询数据库
+    res = pthread_create(&b_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
+    pthread_detach(a_thread);
+    pthread_detach(b_thread);
+    pthread_detach(c_thread);
+    //res = pthread_join(a_thread, NULL);
+    //res = pthread_join(b_thread, NULL);
+    //res = pthread_join(c_thread, NULL);
     return 0;
 }
 
@@ -250,7 +310,7 @@ char *getKeyBySlavePoint(modbus_request *mrq)
 int fun01(modbus_request *mrq, char *resdata) //BO
 {
     //mrq->reg_str = mrq->reg_str + 1;
-    printf("fun(%d)  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
+    printf("slave=(%d)   fun(%d)   reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->fun, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
 
     DeviceMemory dm = dma.dma[mrq->slave - 1][0];
@@ -315,7 +375,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
     DeviceMemory dm = dma.dma[mrq->slave - 1][0];
-    int start = mrq->reg_str - 1;
+    int start = mrq->reg_str;
     int end = mrq->reg_num;
     int count = 0;
     int i;
@@ -349,8 +409,10 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     {
         printf("%02hhx ", resdata[i]);
     }
-    printf(");\n");
-    return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
+    int resLen = 8 + resdata[8] + 1;
+    printf(");resLen = %d sizeof(resdata) = %ld\n", resLen, sizeof(resdata));
+
+    return send(mrq->conn, resdata, resLen, 0);
 }
 
 int fun06(modbus_request *mrq, char *resdata)
@@ -404,42 +466,29 @@ int readMessage(char *buffer, int len, int conn)
     mrq.reg_str = buffer[8] * 256 + buffer[9]; //点位编号
     if (mrq.fun == 1 || mrq.fun == 2 || mrq.fun == 3 || mrq.fun == 4)
     {
+
         if (mrq.slave > dma.size)
         {
             printf("slave max is %d \n", dma.size);
-            buffer[7] = buffer[7] + 80;
+            //buffer[7] = buffer[7] + 80;
             send(conn, buffer, len, 0);
             return 1;
         }
 
         mrq.reg_num = reg_num; //数量
-        if (mrq.reg_num > 30)
+        if (mrq.reg_num > 99)
         {
-            printf("regnum max is 30");
-            mrq.reg_num = 30;
+            printf("regnum max is 99");
+            mrq.reg_num = 99;
         }
-        // if (mrq.slave - 1 > dma.size)
-        // {
-        //     printf("error slave is not found (%d) dma.size=(%d)\n ", mrq.slave, dma.size);
-        //     buffer[7] = buffer[7] + 80;
-        //     send(conn, buffer, len, 0);
-        //     return 1;
-        // }
-        // if (mrq.reg_str + mrq.reg_num > 512)
-        // {
-        //     buffer[7] = buffer[7] + 80;
-        //     printf("error key stackoverflow (%d) ", mrq.reg_str + mrq.reg_num);
-        //     send(conn, buffer, len, 0);
-        //     return 1;
-        // }
     }
 
     mrq.buffer = buffer;
     mrq.bufferlen = len;
     mrq.conn = conn;
 
-    char resdata[100];
-    memset(resdata, 0, 100);
+    char resdata[BUFFER_LENGTH];
+    memset(resdata, 0, BUFFER_LENGTH);
     //strncpy(resdata, buffer, 8);
     resdata[0] = buffer[0];
     resdata[1] = buffer[1];

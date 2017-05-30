@@ -48,7 +48,7 @@ int changeDeviceMemory(char *key, char *value)
 void getCallback(redisAsyncContext *c, void *r, void *privdata)
 {
     redisReply *reply = r;
-    if (reply->elements == 4)
+    /*if (reply->elements == 4)
     {
         int index = getDevIndex(reply->element[3]->str);
         //有这个设备才更新
@@ -64,21 +64,22 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         {
             return;
         }
-    }
+    }*/
     if (reply->elements == 4)
     {
-        char *str = strdup(reply->element[3]->str);
+        //char *str = strdup(reply->element[3]->str);
         //printf("\n %s\n", str);
         char key[50];
         char type[100];
-        char val[10240];
-        sscanf(str, "%s\r\n%s\r\n%s", key, type, val);
+        char val[1024];
+        sscanf(reply->element[3]->str, "%s\r\n%s\r\n%s", key, type, val);
         if (strncmp(type, "Present_Value", 13) == 0)
         {
             changeDeviceMemory(key, val);
         }
-        printf("pubdata =  %s %s %s ", key, type, val);
-        free(str);
+        if (print == 0)
+            printf("pubdata =  %s %s %s ", key, type, val);
+        //free(str);
         //redisAsyncDisconnect(c);
     }
 

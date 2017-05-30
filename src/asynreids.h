@@ -24,3 +24,6 @@ int changeDeviceMemory(char *key, char *value);
 void disconnectCallback(const redisAsyncContext *c, int status);
 void connectCallback(const redisAsyncContext *c, int status);
 void getCallback(redisAsyncContext *c, void *r, void *privdata);
+
+
+extern int print;

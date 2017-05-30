@@ -43,7 +43,7 @@ typedef struct Keys
     char **keys;
     char *dev; //设备名
 } Keys;
-Keys keysAll;//全局存储key
+Keys keysAll; //全局存储key
 typedef struct Devs
 {
     int size;
@@ -65,6 +65,21 @@ typedef struct DeviceMemoryAll
     DeviceMemory **dma;
     int size;
 } DeviceMemoryAll;
+typedef struct
+{
+    char key[8];
+    char dev[5];
+    char type[2];
+    char number[3];
+    int slave;
+    int point;
+} map_key;
+typedef struct
+{
+    map_key **mks;
+    int size;
+} map_keys;
+map_keys mks;
 
 DeviceMemoryAll dma;
 DeviceMemory **DeviceMemorys; //静态的当前所有设备的内存
@@ -72,8 +87,8 @@ int DeviceMemorysCount;
 redisContext *redis;
 redisContext *keysredis;
 redisContext *memoryredis;
-int bit8ToInt(char *strbuf);               //8位字符串转数字
-char *intToChar(int num);                  //数字转字符串
+int bit8ToInt(char *strbuf); //8位字符串转数字
+char *intToChar(int num);    //数字转字符串
 int Unique(char **devs, int len);
 int getKeys(Keys *keys);
 int getDevs(Devs *sdevs);
@@ -90,19 +105,19 @@ void catNumAdd0(char *buffer, int num);    //在字符串后面加上一个两�
 int bufAddSbit(char *resdata, char *sbit); //字符数组后面添加一个16进制数字，每8位字符串就是一个数字
 static struct itimerval oldtv;
 
-
 int redisInit();
 int initDeviceMemoryAll();
+int initMapKeys();
+
 void set_timer();
 void signal_handler(int m);
-
 
 int getDevIndex(char *dev);
 int getKeyIndex(char *key);
 char *getKeyObjectName(char *key);
 int redisSetValue(redisContext *redis, char *key, char *property, char *value);
 char *redisGetValue(redisContext *redis, char *key, char *property);
-int changePriority(redisContext *redis,char *key, char *value, int priority);
+int changePriority(redisContext *redis, char *key, char *value, int priority);
 typedef struct updateModule
 {
     int size;
@@ -115,3 +130,5 @@ int updateModuleIsHaveSlave(int salve);
 
 //unsigned long jsqCount;
 //int updateKeysAll();
+
+extern int print;
