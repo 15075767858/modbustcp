@@ -26,7 +26,7 @@
 // #define SOCK_PORT 8888
 // #endif
 // #if defined(Q_OS_DARWIN64)
-#define SOCK_PORT 8888
+#define SOCK_PORT 8885
 //#define SOCK_PORT 502
 
 #define BUFFER_LENGTH 1024
@@ -57,5 +57,5 @@ char *getDevBySlave(int slave);
 char getTypeByFun(int fun);
 //char *getPointNumberByPoint(char *dev, char type, int point);
 char *getKeyBySlavePoint(modbus_request *mrq);
-
+void error_quit();
 int print =0;

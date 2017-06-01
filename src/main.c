@@ -1,43 +1,20 @@
 #include "main.h"
 #include <unistd.h>
 int sockfd_server;
-static void my_close_socket(int sig)
-{ // can be called asynchronously
-    close(sockfd_server);
 
-    shutdown(sockfd_server, SHUT_RDWR);
-
-    printf("shutdown");
-    exit(0);
-}
-void error_quit()
-{
-    signal(1, my_close_socket);
-    signal(2, my_close_socket);
-    signal(3, my_close_socket);
-    signal(4, my_close_socket);
-    signal(5, my_close_socket);
-    signal(6, my_close_socket);
-    signal(8, my_close_socket);
-    signal(9, my_close_socket);
-    signal(10, my_close_socket);
-    signal(11, my_close_socket);
-    signal(12, my_close_socket);
-    signal(13, my_close_socket);
-    signal(15, my_close_socket);
-    signal(16, my_close_socket);
-    signal(17, my_close_socket);
-    signal(18, my_close_socket);
-    signal(19, my_close_socket);
-    signal(20, my_close_socket);
-    signal(21, my_close_socket);
-    signal(22, my_close_socket);
-    signal(23, my_close_socket);
-    signal(24, my_close_socket);
-    signal(25, my_close_socket);
-}
 int main()
 {
+
+    // union {
+    //     uint8_t byte[8];
+    //     float real_value;
+    // } my_data;
+    // my_data.byte[3] = 0x42;
+    // my_data.byte[2] = 0x10;
+    // my_data.byte[1] = 0x0;
+    // my_data.byte[0] = 0x0;
+    // printf("%f\n",my_data.real_value);
+    // exit(0);
     error_quit();
     //初始化redis
     redisInit();
@@ -55,20 +32,7 @@ int main()
     initDeviceXml();
     //开启10秒一次更新内存页
     //开启多线程访问
-
     runThread();
-
-    // while (1)
-    // {
-    //     time_t t_start, t_end;
-    //     t_start = time(NULL);
-    //     Keys keys;
-    //     keys.dev = "1001";
-    //     getKeysForKeysAll(&keys);
-    //     free(keys.keys);
-    //     t_end = time(NULL);
-    //     printf("time: %.0f s %ld\n", difftime(t_end, t_start),t_end-t_start);
-    // }
     printf("asyn redis run\n");
     while (1)
     {
@@ -148,7 +112,41 @@ int socket_run()
     printf("Server shuts down\n");
     return 0;
 }
+static void my_close_socket(int sig)
+{ // can be called asynchronously
+    close(sockfd_server);
 
+    shutdown(sockfd_server, SHUT_RDWR);
+
+    printf("shutdown");
+    exit(0);
+}
+void error_quit()
+{
+    signal(1, my_close_socket);
+    signal(2, my_close_socket);
+    signal(3, my_close_socket);
+    signal(4, my_close_socket);
+    signal(5, my_close_socket);
+    signal(6, my_close_socket);
+    signal(8, my_close_socket);
+    signal(9, my_close_socket);
+    signal(10, my_close_socket);
+    signal(11, my_close_socket);
+    signal(12, my_close_socket);
+    signal(13, my_close_socket);
+    signal(15, my_close_socket);
+    signal(16, my_close_socket);
+    signal(17, my_close_socket);
+    signal(18, my_close_socket);
+    signal(19, my_close_socket);
+    signal(20, my_close_socket);
+    signal(21, my_close_socket);
+    signal(22, my_close_socket);
+    signal(23, my_close_socket);
+    signal(24, my_close_socket);
+    signal(25, my_close_socket);
+}
 static void Data_handle(void *sock_fd)
 {
     int fd = *((int *)sock_fd);
@@ -272,6 +270,8 @@ char getTypeByFun(int fun)
     case 5:
         return '4';
         break;
+    case 16:
+        return '5';
     default:
         return 0;
         break;
@@ -428,9 +428,20 @@ int fun15(modbus_request *mrq, char *resdata)
 }
 int fun16(modbus_request *mrq, char *resdata)
 {
-
+    char *key = getKeyBySlavePoint(mrq);
+    union {
+        uint8_t byte[8];
+        float real_value;
+    } my_data;
+    my_data.byte[3] = mrq->buffer[13];
+    my_data.byte[2] = mrq->buffer[14];
+    my_data.byte[1] = mrq->buffer[15];
+    my_data.byte[0] = mrq->buffer[16];
+    redisSetValue(redis, key, "Present_Value", my_data.real_value);
+    changePriority(redis, key, my_data.real_value, 7);
+    printf("key = %s real_value = %f\n", key, my_data.real_value);
     //return fun03(mrq, resdata);
-    return 0;
+    return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
 }
 int fun05(modbus_request *mrq, char *resdata)
 {
@@ -451,7 +462,6 @@ int fun05(modbus_request *mrq, char *resdata)
     printf("change key = (%s)\n", key);
     return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
 }
-
 //根据报文返回数据
 int readMessage(char *buffer, int len, int conn)
 {
@@ -542,16 +552,16 @@ int readMessage(char *buffer, int len, int conn)
         return fun04(&mrq, resdata);
         break;
     case 5:
-        saveMessage(buffer, len);
         return fun05(&mrq, resdata);
     // case 6:
     //     return fun06(&mrq, resdata);
     // case 15:
     //     return fun15(&mrq, resdata);
-    // case 16:
-    //     return fun16(&mrq, resdata);
+    case 16:
+        return fun16(&mrq, resdata);
     default:
         saveMessage(buffer, len);
+
         return send(conn, resdata, 8, 0);
         break;
     }
