@@ -262,7 +262,7 @@ char getTypeByFun(int fun)
         return '3';
         break;
     case 3:
-        return '2';
+        return '1';
         break;
     case 4:
         return '0';
@@ -271,7 +271,7 @@ char getTypeByFun(int fun)
         return '4';
         break;
     case 16:
-        return '5';
+        return '1';
     default:
         return 0;
         break;
@@ -286,6 +286,12 @@ char *getKeyBySlavePoint(modbus_request *mrq)
     char type = getTypeByFun(mrq->fun);
 
     int point = mrq->reg_str;
+
+    if (mrq->fun == 16)
+    {
+        point = point / 2;
+    }
+
     char devtype[8];
     memset(devtype, 0, 8);
     sprintf(devtype, "%s%c??", dev, type);
@@ -312,7 +318,7 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     //mrq->reg_str = mrq->reg_str + 1;
     printf("slave=(%d)   fun(%d)   reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->fun, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
-
+    mrq->reg_num = mrq->reg_num + 1;
     DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;
@@ -388,8 +394,8 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         } my_data;
         if (mrq->fun == 3)
         {
-            printf("%f, ", dm.AV[i]);
-            my_data.real_value = dm.AV[i];
+            printf("%f, ", dm.AO[i]);
+            my_data.real_value = dm.AO[i];
         }
         else
         {
@@ -437,8 +443,12 @@ int fun16(modbus_request *mrq, char *resdata)
     my_data.byte[2] = mrq->buffer[14];
     my_data.byte[1] = mrq->buffer[15];
     my_data.byte[0] = mrq->buffer[16];
-    redisSetValue(redis, key, "Present_Value", my_data.real_value);
-    changePriority(redis, key, my_data.real_value, 7);
+    char sVal[20];
+    memset(sVal, 0, 20);
+    sprintf(sVal, "%f", my_data.real_value);
+    redisSetValue(redis, key, "Present_Value", sVal);
+
+    changePriority(redis, key, sVal, 7);
     printf("key = %s real_value = %f\n", key, my_data.real_value);
     //return fun03(mrq, resdata);
     return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
