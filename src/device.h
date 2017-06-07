@@ -53,12 +53,12 @@ Devs devsAll;
 typedef struct DeviceMemory
 {
     char dev[5];
-    float AI[512];
-    float AO[512];
-    float AV[512];
-    char BI[512];
-    char BO[512];
-    char BV[512];
+    float AI[99];
+    float AO[99];
+    float AV[99];
+    char BI[99];
+    char BO[99];
+    char BV[99];
 } DeviceMemory;
 typedef struct DeviceMemoryAll
 {

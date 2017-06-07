@@ -23,7 +23,7 @@ int main()
     //初始化全局所有device，方便后面用不再从数据库查询
     initDevsAll();
     //初始化全局所有map_key，方便后面用不再从数据库查询
-    initMapKeys();
+    //initMapKeys();
     initUpdateModule();
     printf("redis run \n");
     //初始化设备内存页
