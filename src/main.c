@@ -88,22 +88,19 @@ int socket_run()
         client_length = sizeof(s_addr_client);
         //Block here. Until server accpets a new connection.
         sockfd = accept(sockfd_server, (struct sockaddr_ *)(&s_addr_client), (socklen_t *)(&client_length));
-
         if (sockfd == -1)
         {
             fprintf(stderr, "Accept error!\n");
             continue; //ignore current socket ,continue while loop.
         }
         socketCount++;
-        // pthread_attr_t *attr;
-        // pthread_attr_init(attr);
-
         printf("A new connection occurs!\n");
         if (pthread_create(&thread_id, NULL, (void *)(&Data_handle), (void *)(&sockfd)) == -1)
         {
             fprintf(stderr, "pthread_create error!\n");
             break; //break while loop
         }
+        //printf("%s", thread_id);
         pthread_detach(thread_id);
     }
     //Clear
@@ -149,6 +146,7 @@ void error_quit()
 }
 static void Data_handle(void *sock_fd)
 {
+
     int fd = *((int *)sock_fd);
     int i_recvBytes;
     char data_recv[BUFFER_LENGTH];
@@ -232,7 +230,7 @@ int runThread()
     //开启socket监听
     res = pthread_create(&b_thread, NULL, socketStart, NULL);
     //开启轮询数据库
-    res = pthread_create(&b_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
+    res = pthread_create(&c_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
     pthread_detach(a_thread);
     pthread_detach(b_thread);
     pthread_detach(c_thread);
