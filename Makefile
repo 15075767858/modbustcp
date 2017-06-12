@@ -9,16 +9,15 @@ mxmldir=${libdir}/mxml
 mxmllibs=mxml-index.o mxml-private.o mxml-search.o mxml-attr.o mxml-entity.o mxml-get.o mxml-file.o mxml-node.o mxml-set.o mxml-string.o 
 libevent=evutil_rand.o epoll.o poll.o select.o signal.o evport.o devpoll.o log.o evthread.o evutil_time.o kqueue.o evmap.o evutil.o event.o
 hiredislibs=async.o dict.o net.o read.o sds.o hiredis.o
-libs = device.o asynredis.o
-src=src/main.c src/device.c src/asynredis.c src/devicexml.c
+libs = device2.o asynredis.o
+src=src/main.c src/device2.c src/asynredis.c src/devicexml.c
 winlibs=winlibs/libevent_core.a winlibs/libevent_extra.a winlibs/libevent_pthreads.a winlibs/hiredis.a winlibs/libevent.a winlibs/mxml.a
 
 win:
 	arm-none-linux-gnueabi-gcc ${src} ${winlibs} \
 	-Ilibrary -Ilibrary/libevent -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include \
 	-lpthread -lrt -o modbus-tcp-server 
-aaa:
-	arm-none-linux-gnueabi-gcc -c src/asynredis.c src/device.c -Ilibrary/libevent -Ilibrary -Ilibrary/hiredis -Ilibrary/libevent/WIN32-Code/nmake -Ilibrary/libevent/include
+
 
 asynredis:
 	gcc src/asynredis.c src/device.c libevent.a hiredis.a -Ilibrary/hiredis
@@ -38,6 +37,8 @@ asynredis.o:
 	$(cc) -c src/asynredis.c -I${hiredisdir}
 device.o:
 	$(cc) -c src/device.c
+device2.o:
+	$(cc) -c src/device2.c
 hiredis.a: ${hiredislibs}
 	ar -r hiredis.a $(hiredislibs) 
 async.o:

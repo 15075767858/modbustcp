@@ -1,5 +1,5 @@
 
-#include "device.h"
+#include "device2.h"
 #include <sys/utsname.h>
 // #include "../memwatch-2.71/memwatch.h"
 
@@ -24,7 +24,7 @@ int redisInit()
 
     while (1)
     {
-        sleep(15);
+        sleep(3);
         redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
         if (keyLen == reply->elements)
         {
@@ -35,14 +35,6 @@ int redisInit()
             printf("keyLen=(%d)", keyLen);
         freeReplyObject(reply);
     }
-    //err 1 errstr[128]
-    // if (redis->err != 0)
-    // {
-    //     printf("redis %s \n", redis->errstr);
-    //     exit(0);
-    //     return redis->err;
-    // }
-    //redisFree(redis);
 
     return 0;
 }
@@ -175,9 +167,9 @@ int changePriority(redisContext *redis, char *key, char *value, int priority)
 int getDevIndex(char *dev)
 {
     int i;
-    for (i = 0; i < dma.size; i++)
+    for (i = 0; i < devsAll.size; i++)
     {
-        if (strncmp(dev, dma.dma[i]->dev, 4) == 0)
+        if (strncmp(dev, devsAll.devs[i], 4) == 0)
         {
             return i;
         }
@@ -212,8 +204,7 @@ int getKeyIndex(char *key)
 //自动更新内存页
 void signal_handler(int m)
 {
-    DeviceMemoryAllUpdate();
-
+    DeviceAllMemoryUpdate();
 }
 //定时器
 void set_timer()
@@ -232,6 +223,8 @@ int initKeysAll()
     getKeys(&keysAll);
     return 0;
 }
+
+
 int updateKeysAll()
 {
     Keys keys;
@@ -339,12 +332,35 @@ int getDevs(Devs *sdevs)
     return 0;
 }
 
-int getDeviceMemory(DeviceMemory *dm, char *dev)
+
+//初始化device内存
+void initDeviceAllMemory()
+{
+    dam.size = devsAll.size;
+    memset(dam.AI, 0, 9999 * sizeof(float));
+    memset(dam.AO, 0, 9999 * sizeof(float));
+    memset(dam.AV, 0, 9999 * sizeof(float));
+    memset(dam.BI, 0, 9999);
+    memset(dam.BO, 0, 9999);
+    memset(dam.BV, 0, 9999);
+    DeviceAllMemoryUpdate();
+    
+}
+void DeviceAllMemoryUpdate()
+{
+    int i;
+    for (i = 0; i < devsAll.size; i++)
+    {
+        getDeviceAllMemory(devsAll.devs[i], i);
+    }
+}
+void getDeviceAllMemory(char *dev, int devIndex)
 {
     int i, types = 6;
+    char command[10];
+    char command1[30];
     for (i = 0; i < types; i++)
     {
-        char command[10];
         memset(command, 0, 10);
         sprintf(command, "%s%d", dev, i);
         Keys keys;
@@ -352,7 +368,6 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
         getKeysForKeysAll(&keys);
         memset(command, 0, 10);
         int j;
-        char command1[30];
         for (j = 0; j < keys.size; j++)
         {
             memset(command1, 0, 30);
@@ -360,7 +375,6 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
             redisReply *reply = (redisReply *)redisCommand(memoryredis, command1);
             if (reply == 0)
             {
-
                 printf("error memoryredis --------------------------------\n");
                 //    return 0;
             }
@@ -373,22 +387,22 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
             switch (i)
             {
             case 0:
-                dm->AI[j] = atof(reply->str);
+                dam.AI[j + devIndex * 100] = atof(reply->str);
                 break;
             case 1:
-                dm->AO[j] = atof(reply->str);
+                dam.AO[j + devIndex * 100] = atof(reply->str);
                 break;
             case 2:
-                dm->AV[j] = atof(reply->str);
+                dam.AV[j + devIndex * 100] = atof(reply->str);
                 break;
             case 3:
-                dm->BI[j] = atoi(reply->str);
+                dam.BI[j + devIndex * 100] = atoi(reply->str);
                 break;
             case 4:
-                dm->BO[j] = atoi(reply->str);
+                dam.BO[j + devIndex * 100] = atoi(reply->str);
                 break;
             case 5:
-                dm->BV[j] = atoi(reply->str);
+                dam.BV[j + devIndex * 100] = atoi(reply->str);
                 break;
             }
             freeReplyObject(reply);
@@ -396,84 +410,9 @@ int getDeviceMemory(DeviceMemory *dm, char *dev)
         free(keys.keys);
         //freeKeys(&keys);
     }
-
-    return 0;
-}
-
-//初始化device内存
-int initDeviceMemoryAll()
-{
-    dma.dma = (DeviceMemory **)calloc(devsAll.size, sizeof(DeviceMemory));
-    dma.size = devsAll.size;
-    int i;
-    for (i = 0; i < devsAll.size; i++)
-    {
-        DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
-        sprintf(dm->dev, "%s", devsAll.devs[i]);
-        getDeviceMemory(dm, devsAll.devs[i]);
-        dma.dma[i] = dm;
-    }
-    return 0;
-}
-//device内存更新
-int DeviceMemoryAllUpdate()
-{
-    int i;
-    dma.size = devsAll.size;
-    for (i = 0; i < devsAll.size; i++)
-    {
-        //        if (updateModuleIsHaveSlave(i + 1) == 0)
-        //        {
-        //        }
-        if (print == 0)
-            printf("updateModel =(%d)", i);
-        DeviceMemory *dm = (DeviceMemory *)malloc(sizeof(DeviceMemory)); //获得一个设备 所有的5个点
-        memset(dm, 0, sizeof(DeviceMemory));
-        memset(dm->dev, 0, 4);
-        strncat(dm->dev, devsAll.devs[i], 4);
-        getDeviceMemory(dm, devsAll.devs[i]);
-        free(dma.dma[i]);
-        dma.dma[i] = dm;
-        //usleep(9000000 / devsAll.size);
-    }
-    return 0;
 }
 
 
-int updateModuleAddSlave(int slave)
-{
-    int i;
-    for (i = 0; i < 100; i++)
-    {
-        if (uM.slaves[i] == slave)
-        {
-            break;
-        }
-        if (uM.slaves[i] == 0)
-        {
-            uM.size += 1;
-            uM.slaves[i] = slave;
-            break;
-        }
-    }
-
-    return 0;
-}
-int updateModuleIsHaveSlave(int salve)
-{
-    printf("module slave =(");
-    int i;
-    for (i = 0; i < uM.size; i++)
-    {
-        printf("%d  ", uM.slaves[i]);
-        if (uM.slaves[i] == salve)
-        {
-            return 0;
-        }
-    }
-    printf(" ) \n");
-    return i;
-}
 //数字转字符串
 void catNumAdd0(char *buffer, int num)
 {

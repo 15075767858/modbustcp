@@ -15,7 +15,7 @@
 
 #ifndef include_device //X为你的标识符,保持唯一，可以长点，比如 #ifndef _INCLUDE_XXXXXX_H_
 #define include_device
-#include "device.h"
+#include "device2.h"
 #endif
 
 

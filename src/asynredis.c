@@ -17,26 +17,25 @@ int changeDeviceMemory(char *key, char *value)
         printf("dev not cmp %s", dev);
     }
     //printf("dev = %s\n", dma.dma[devIndex]->dev);
-
     switch (key[4])
     {
     case '0': //AI
-        dma.dma[devIndex]->AI[keyIndex] = atof(value);
+        dam.AI[devIndex * 100 + keyIndex] = atof(value);
         break;
     case '1': //AO
-        dma.dma[devIndex]->AO[keyIndex] = atof(value);
+        dam.AO[devIndex * 100 + keyIndex] = atof(value);
         break;
     case '2': //AV
-        dma.dma[devIndex]->AV[keyIndex] = atof(value);
+        dam.AV[devIndex * 100 + keyIndex] = atof(value);
         break;
     case '3': //BI
-        dma.dma[devIndex]->BI[keyIndex] = atoi(value);
+        dam.BI[devIndex * 100 + keyIndex] = atoi(value);
         break;
     case '4': //BO
-        dma.dma[devIndex]->BO[keyIndex] = atoi(value);
+        dam.BO[devIndex * 100 + keyIndex] = atoi(value);
         break;
     case '5': //BV
-        dma.dma[devIndex]->BV[keyIndex] = atoi(value);
+        dam.BV[devIndex * 100 + keyIndex] = atoi(value);
         break;
     default: //other
         break;
@@ -48,27 +47,8 @@ int changeDeviceMemory(char *key, char *value)
 void getCallback(redisAsyncContext *c, void *r, void *privdata)
 {
     redisReply *reply = r;
-    /*if (reply->elements == 4)
-    {
-        int index = getDevIndex(reply->element[3]->str);
-        //有这个设备才更新
-        if (index >= 0)
-        {
-            //没有记录的从机地址不更新
-            if (updateModuleIsHaveSlave(index + 1) != 0)
-            {
-                return;
-            }
-        }
-        else
-        {
-            return;
-        }
-    }*/
     if (reply->elements == 4)
     {
-        //char *str = strdup(reply->element[3]->str);
-        //printf("\n %s\n", str);
         char key[50];
         char type[100];
         char val[1024];
@@ -79,14 +59,9 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         }
         if (print == 0)
             printf("pubdata =  %s %s %s ", key, type, val);
-        //free(str);
-        //redisAsyncDisconnect(c);
     }
-
-    //freeReplyObject(reply);
     if (reply == NULL)
         return;
-    //printf("argv[%s]: %s\n", (char *)privdata, reply->str);
 }
 //异步订阅
 void asyn()

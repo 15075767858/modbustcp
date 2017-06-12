@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>	<root>	<device number="1001"
-SlaveAddress="1">	<AI pointType="AI" />	<AV pointType="AV">	<key
-number="1001201" pointNumber="1001201">CH_B1_REQ</key>
+SlaveAddress="1">	<AI pointType="AI">	<key number="1001001"
+pointNumber="1001001">qwe</key>
+	<key number="1001002" pointNumber="1001002">COPY OF qwe</key>
+</AI>
+	<AV pointType="AV">	<key number="1001201"
+pointNumber="1001201">CH_B1_REQ</key>
 	<key number="1001202" pointNumber="1001202">CH_B1_QTY</key>
 	<key number="1001203" pointNumber="1001203">CH_B1_1HOURS</key>
 	<key number="1001204" pointNumber="1001204">CH_B1_2HOURS</key>

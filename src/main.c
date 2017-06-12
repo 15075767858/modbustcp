@@ -22,12 +22,10 @@ int main()
     initKeysAll();
     //初始化全局所有device，方便后面用不再从数据库查询
     initDevsAll();
-    //初始化全局所有map_key，方便后面用不再从数据库查询
-    //initMapKeys();
-    initUpdateModule();
-    printf("redis run \n");
     //初始化设备内存页
-    initDeviceMemoryAll();
+    initDeviceAllMemory();
+    //初始化全局所有map_key，方便后面用不再从数据库查询
+    printf("redis run \n");
     //初始化设备内存
     initDeviceXml();
     //开启10秒一次更新内存页
@@ -213,7 +211,6 @@ void *socketStart(void *arg)
 void *DeviceMemoryAllUpdateStart(void *arg)
 {
     printf("DeviceMemoryAllUpdateStart run");
-    sleep(1);
     signal(SIGALRM, signal_handler);
     set_timer();
     pthread_exit(NULL);
@@ -226,17 +223,14 @@ int runThread()
     pthread_t c_thread;
     void *thread_result;
     //开启redis订阅
-    res = pthread_create(&a_thread, NULL, asynRedis, NULL);
+    //res = pthread_create(&a_thread, NULL, asynRedis, NULL);
     //开启socket监听
     res = pthread_create(&b_thread, NULL, socketStart, NULL);
     //开启轮询数据库
     res = pthread_create(&c_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
-    pthread_detach(a_thread);
+    //pthread_detach(a_thread);
     pthread_detach(b_thread);
     pthread_detach(c_thread);
-    //res = pthread_join(a_thread, NULL);
-    //res = pthread_join(b_thread, NULL);
-    //res = pthread_join(c_thread, NULL);
     return 0;
 }
 
@@ -317,7 +311,6 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     printf("slave=(%d)   fun(%d)   reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->fun, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
     mrq->reg_num = mrq->reg_num + 1;
-    DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;
     int count = 0;
@@ -330,11 +323,11 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         int val;
         if (mrq->fun == 1)
         {
-            val = dm.BO[i];
+            val = dam.BO[i];
         }
         else
         {
-            val = dm.BI[i];
+            val = dam.BI[i];
         }
         if (val != 0)
         {
@@ -352,7 +345,6 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     char sb[8]; //一次装8个数字
     memset(sb, 0, 8);
     int s8 = strlen(a) / 8 + 1; //循环次数
-
     for (i = 0; i < s8; i++)
     {
         strncpy(sb, a, 8);
@@ -361,7 +353,6 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         int res = bit8ToInt(sb);
         resdata[9 + i] = res;
     }
-
     printf("\n str = (%s) ", str);
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
 }
@@ -378,7 +369,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
 {
     printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
-    DeviceMemory dm = dma.dma[mrq->slave - 1][0];
+
     int start = mrq->reg_str;
     int end = mrq->reg_num;
     int count = 0;
@@ -392,13 +383,13 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         } my_data;
         if (mrq->fun == 3)
         {
-            printf("%f, ", dm.AO[i]);
-            my_data.real_value = dm.AO[i];
+            printf("%f, ", dam.AO[i]);
+            my_data.real_value = dam.AO[i];
         }
         else
         {
-            printf("%f, ", dm.AI[i]);
-            my_data.real_value = dm.AI[i];
+            printf("%f, ", dam.AI[i]);
+            my_data.real_value = dam.AI[i];
         }
         resdata[9 + count * 4] = my_data.byte[3];
         resdata[10 + count * 4] = my_data.byte[2];
@@ -474,7 +465,7 @@ int fun05(modbus_request *mrq, char *resdata)
 int readMessage(char *buffer, int len, int conn)
 {
 
-    int reg_num = buffer[10] * 256 + buffer[11] - 1;
+    int reg_num = buffer[10] * 256 + buffer[11];
     modbus_request mrq;
     mrq.transaction = buffer[0] * 256 + (u8)buffer[1];
     mrq.protocol = buffer[2] * 256 + buffer[3];
@@ -482,32 +473,16 @@ int readMessage(char *buffer, int len, int conn)
     mrq.slave = buffer[6];                     //设备地址
     mrq.fun = (int)buffer[7];                  //功能码
     mrq.reg_str = buffer[8] * 256 + buffer[9]; //点位编号
-    if (mrq.fun == 1 || mrq.fun == 2 || mrq.fun == 3 || mrq.fun == 4)
-    {
-
-        if (mrq.slave > dma.size)
-        {
-            printf("slave max is %d \n", dma.size);
-            //buffer[7] = buffer[7] + 80;
-            send(conn, buffer, len, 0);
-            return 1;
-        }
-
-        mrq.reg_num = reg_num; //数量
-        if (mrq.reg_num > 99)
-        {
-            printf("regnum max is 99");
-            mrq.reg_num = 99;
-        }
-    }
-
+    mrq.reg_num = reg_num;
     mrq.buffer = buffer;
     mrq.bufferlen = len;
     mrq.conn = conn;
-
+    if (mrq.fun == 1 || mrq.fun == 2 || mrq.fun == 3 || mrq.fun == 4)
+    {
+    }
     char resdata[BUFFER_LENGTH];
     memset(resdata, 0, BUFFER_LENGTH);
-    //strncpy(resdata, buffer, 8);
+    //strncpy(resdata, buffer, 7);
     resdata[0] = buffer[0];
     resdata[1] = buffer[1];
     resdata[2] = buffer[2];
@@ -543,7 +518,6 @@ int readMessage(char *buffer, int len, int conn)
         send(conn, buffer, len, 0);
         return 1;
     }
-    updateModuleAddSlave(mrq.slave);
 
     switch (mrq.fun)
     {

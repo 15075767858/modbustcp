@@ -17,7 +17,7 @@
 #include "devicexml.h"
 #ifndef include_device //X为你的标识符,保持唯一，可以长点，比如 #ifndef _INCLUDE_XXXXXX_H_
 #define include_device
-#include "device.h"
+#include "device2.h"
 #endif
 
 //#include "mxml-release-2.10/mxml.h"
@@ -58,4 +58,4 @@ char getTypeByFun(int fun);
 //char *getPointNumberByPoint(char *dev, char type, int point);
 char *getKeyBySlavePoint(modbus_request *mrq);
 void error_quit();
-int print =1;
+int print =0;
