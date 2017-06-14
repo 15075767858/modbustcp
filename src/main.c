@@ -5,16 +5,6 @@ int sockfd_server;
 int main()
 {
 
-    // union {
-    //     uint8_t byte[8];
-    //     float real_value;
-    // } my_data;
-    // my_data.byte[3] = 0x42;
-    // my_data.byte[2] = 0x10;
-    // my_data.byte[1] = 0x0;
-    // my_data.byte[0] = 0x0;
-    // printf("%f\n",my_data.real_value);
-    // exit(0);
     error_quit();
     //初始化redis
     redisInit();
@@ -23,13 +13,18 @@ int main()
     //初始化全局所有device，方便后面用不再从数据库查询
     initDevsAll();
     //初始化全局所有map_key，方便后面用不再从数据库查询
-    //initMapKeys();
-    initUpdateModule();
+    initMapKeys();
+
+    initDeviceByXml();
+    //while(1)
+    updateXmlMapKeys();
+
+    //initUpdateModule();
     printf("redis run \n");
     //初始化设备内存页
-    initDeviceMemoryAll();
+    //initDeviceMemoryAll();
     //初始化设备内存
-    initDeviceXml();
+    //initDeviceXml();
     //开启10秒一次更新内存页
     //开启多线程访问
     runThread();
@@ -230,10 +225,10 @@ int runThread()
     //开启socket监听
     res = pthread_create(&b_thread, NULL, socketStart, NULL);
     //开启轮询数据库
-    res = pthread_create(&c_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
+    //res = pthread_create(&c_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
     pthread_detach(a_thread);
     pthread_detach(b_thread);
-    pthread_detach(c_thread);
+    //pthread_detach(c_thread);
     //res = pthread_join(a_thread, NULL);
     //res = pthread_join(b_thread, NULL);
     //res = pthread_join(c_thread, NULL);
@@ -284,7 +279,6 @@ char *getKeyBySlavePoint(modbus_request *mrq)
     char type = getTypeByFun(mrq->fun);
 
     int point = mrq->reg_str;
-
     if (mrq->fun == 16)
     {
         point = point / 2;
@@ -314,10 +308,11 @@ char *getKeyBySlavePoint(modbus_request *mrq)
 int fun01(modbus_request *mrq, char *resdata) //BO
 {
     //mrq->reg_str = mrq->reg_str + 1;
+
     printf("slave=(%d)   fun(%d)   reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->fun, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
     mrq->reg_num = mrq->reg_num + 1;
-    DeviceMemory dm = dma.dma[mrq->slave - 1][0];
+    //DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;
     int count = 0;
@@ -327,27 +322,37 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     memset(str, 0, mrq->reg_num);
     for (i = start; i < end + start; i++)
     {
-        int val;
+        char type;
         if (mrq->fun == 1)
         {
-            val = dm.BO[i];
+            type = '4';
         }
         else
         {
-            val = dm.BI[i];
+            type = '3';
         }
-        if (val != 0)
+        xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
+        if (resxmk != NULL)
         {
-            str[count] = '1';
+            printf("key = (%s) slave = (%d) point = (%d) value = (%s) ", resxmk->key, resxmk->slave, resxmk->point, resxmk->value);
+            if (atoi(resxmk->value) != 0)
+            {
+                str[count] = '1';
+            }
+            else
+            {
+                str[count] = '0';
+            }
         }
         else
         {
             str[count] = '0';
         }
-        str[count + 1] = '\0';
         printf("count = %d str=%s i = %d end =  %d yushu = %d strlen =%lu \n", count, str, i, end, end % 8, strlen(str));
         count++;
     }
+    str[count + 1] = '\0';
+
     char *a = &str[0];
     char sb[8]; //一次装8个数字
     memset(sb, 0, 8);
@@ -376,9 +381,8 @@ int fun04(modbus_request *mrq, char *resdata)
 }
 int fun03(modbus_request *mrq, char *resdata) //AV
 {
+
     printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
-    //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
-    DeviceMemory dm = dma.dma[mrq->slave - 1][0];
     int start = mrq->reg_str;
     int end = mrq->reg_num;
     int count = 0;
@@ -390,16 +394,26 @@ int fun03(modbus_request *mrq, char *resdata) //AV
             uint8_t byte[8];
             float real_value;
         } my_data;
+        char type;
         if (mrq->fun == 3)
         {
-            printf("%f, ", dm.AO[i]);
-            my_data.real_value = dm.AO[i];
+            type = '1';
         }
         else
         {
-            printf("%f, ", dm.AI[i]);
-            my_data.real_value = dm.AI[i];
+            type = '0';
         }
+        xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
+        if (resxmk != NULL)
+        {
+            printf("key = (%s) slave = (%d) point = (%d) value = (%s) ", resxmk->key, resxmk->slave, resxmk->point, resxmk->value);
+            my_data.real_value = atof(resxmk->value);
+        }
+        else
+        {
+            my_data.real_value = 0;
+        }
+
         resdata[9 + count * 4] = my_data.byte[3];
         resdata[10 + count * 4] = my_data.byte[2];
         resdata[11 + count * 4] = my_data.byte[1];
@@ -432,7 +446,13 @@ int fun15(modbus_request *mrq, char *resdata)
 }
 int fun16(modbus_request *mrq, char *resdata)
 {
-    char *key = getKeyBySlavePoint(mrq);
+    //char *key = getKeyBySlavePoint(mrq);
+    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str + 1, '1');
+    if (xmk != NULL)
+    {
+        return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
+    }
+    char *key = xmk->key;
     union {
         uint8_t byte[8];
         float real_value;
@@ -454,7 +474,13 @@ int fun16(modbus_request *mrq, char *resdata)
 int fun05(modbus_request *mrq, char *resdata)
 {
     // 0c 50 00 00 00 06 01 05 00 00 ff 00
-    char *key = getKeyBySlavePoint(mrq);
+    //char *key = getKeyBySlavePoint(mrq);
+    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str + 1, '4');
+    if (xmk == NULL)
+    {
+        return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
+    }
+    char *key = xmk->key;
     if (mrq->buffer[10] == 0)
     {
         redisSetValue(redis, key, "Present_Value", "0");
@@ -466,7 +492,7 @@ int fun05(modbus_request *mrq, char *resdata)
         changePriority(redis, key, "1", 7);
     }
 
-    free(key);
+    //free(key);
     printf("change key = (%s)\n", key);
     return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
 }
@@ -482,23 +508,9 @@ int readMessage(char *buffer, int len, int conn)
     mrq.slave = buffer[6];                     //设备地址
     mrq.fun = (int)buffer[7];                  //功能码
     mrq.reg_str = buffer[8] * 256 + buffer[9]; //点位编号
+    mrq.reg_num = reg_num;
     if (mrq.fun == 1 || mrq.fun == 2 || mrq.fun == 3 || mrq.fun == 4)
     {
-
-        if (mrq.slave > dma.size)
-        {
-            printf("slave max is %d \n", dma.size);
-            //buffer[7] = buffer[7] + 80;
-            send(conn, buffer, len, 0);
-            return 1;
-        }
-
-        mrq.reg_num = reg_num; //数量
-        if (mrq.reg_num > 99)
-        {
-            printf("regnum max is 99");
-            mrq.reg_num = 99;
-        }
     }
 
     mrq.buffer = buffer;
@@ -543,7 +555,6 @@ int readMessage(char *buffer, int len, int conn)
         send(conn, buffer, len, 0);
         return 1;
     }
-    updateModuleAddSlave(mrq.slave);
 
     switch (mrq.fun)
     {

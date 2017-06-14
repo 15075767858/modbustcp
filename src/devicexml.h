@@ -15,3 +15,4 @@
 #include "device.h"
 #endif
 int initDeviceXml();
+void initDeviceByXml();

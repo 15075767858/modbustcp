@@ -26,7 +26,7 @@
 // #define SOCK_PORT 8888
 // #endif
 // #if defined(Q_OS_DARWIN64)
-#define SOCK_PORT 8888
+#define SOCK_PORT 8889
 //#define SOCK_PORT 502
 
 #define BUFFER_LENGTH 1024

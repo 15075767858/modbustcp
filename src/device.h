@@ -9,7 +9,6 @@
 #include <fcntl.h>
 #include <sys/shm.h>
 #include "hiredis/hiredis.h"
-
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef struct
@@ -81,6 +80,25 @@ typedef struct
 } map_keys;
 map_keys mks;
 
+typedef struct
+{
+    char key[8];
+    char dev[5];
+    char type[2];
+    char number[3];
+    char pointType[2];
+    int slave;
+    int point;
+    char value[20];
+} xml_map_key;
+
+typedef struct
+{
+    xml_map_key **xmks;
+    int size;
+} xml_map_keys;
+xml_map_keys xmks;
+
 DeviceMemoryAll dma;
 DeviceMemory **DeviceMemorys; //静态的当前所有设备的内存
 int DeviceMemorysCount;
@@ -99,6 +117,8 @@ int getDeviceMemory(DeviceMemory *dm, char *dev);
 void sortKeys(Keys *keys, int n);
 int DeviceMemoryInit();
 int DeviceMemoryAllUpdate();
+
+void updateXmlMapKeys();
 int freeKeys(Keys *keys);
 int freeDevs(Devs *devs);
 void catNumAdd0(char *buffer, int num);    //在字符串后面加上一个两位数的数字 如果该数字小于10则在前面补0
@@ -130,5 +150,7 @@ int updateModuleIsHaveSlave(int salve);
 
 //unsigned long jsqCount;
 //int updateKeysAll();
+
+xml_map_key* findXMKByXmlMapKey(int slave, int point,char pointType);
 
 extern int print;

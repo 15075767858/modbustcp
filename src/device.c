@@ -24,7 +24,7 @@ int redisInit()
 
     while (1)
     {
-        sleep(15);
+        sleep(1);
         redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
         if (keyLen == reply->elements)
         {
@@ -248,6 +248,32 @@ int updateKeysAll()
     keysAll.size = keys.size;
     return 0;
 }
+void updateXmlMapKeys()
+{
+    int i;
+    for (i = 0; i < xmks.size; i++)
+    {
+        char *value = redisGetValue(redis, xmks.xmks[i]->key, "Present_Value");
+        printf("%s %s ", xmks.xmks[i]->key, value);
+        strncat(xmks.xmks[i]->value, value, 20);
+        free(value);
+    }
+}
+
+xml_map_key* findXMKByXmlMapKey(int slave, int point,char pointType)
+{
+    int i;
+    for (i = 0; i < xmks.size; i++)
+    {
+        if (xmks.xmks[i]->slave == slave & xmks.xmks[i]->point==point&xmks.xmks[i]->pointType[0]==pointType)
+        {
+            return xmks.xmks[i];
+        }
+    }
+
+    return NULL;
+}
+
 int initDevsAll()
 {
     getDevs(&devsAll);

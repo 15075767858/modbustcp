@@ -5,6 +5,7 @@ int rootAddDevice(mxml_node_t *root);
 int deviceAddTypes(mxml_node_t *device);
 int deviceTypeAddKey(mxml_node_t *deviceType);
 char getTypeNumberByDeviceTypeNode(mxml_node_t *deviceType);
+
 //格式化方法
 const char *whitespace_cb(mxml_node_t *node, int where)
 {
@@ -124,6 +125,57 @@ int deviceTypeAddKey(mxml_node_t *deviceType)
     freeKeys(&keys);
     //printf("%s %s %s\n", device, deviceTypeName, findKey);
     return 0;
+}
+//根据xml初始化 点位
+void initDeviceByXml()
+{
+    typedef struct
+    {
+        mxml_node_t **nodes;
+        int size;
+    } xml_nodes;
+    xml_nodes xns;
+
+    FILE *fp;
+    mxml_node_t *tree;
+    mxml_node_t *node;
+    fp = fopen("modbusID.xml", "r");
+    tree = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
+    int i = 0;
+    printf(" %lu ", sizeof(xml_map_key));
+    for (node = mxmlFindElement(tree, tree,
+                                "key",
+                                NULL, NULL,
+                                MXML_DESCEND);
+         node != NULL;
+         node = mxmlFindElement(node, tree,
+                                "key",
+                                NULL, NULL,
+                                MXML_DESCEND))
+    {
+        xns.nodes[i] = node;
+        i++;
+    }
+    xns.size = i;
+    xmks.size = xns.size;
+    xmks.xmks = calloc(xmks.size, sizeof(xml_map_key));
+    for (i = 0; i < xns.size; i++)
+    {
+        xml_map_key *xmk = malloc(sizeof(xml_map_key));
+        const char *key = mxmlElementGetAttr(xns.nodes[i], "key");
+        sprintf(xmk->key, "%s", key);
+        sscanf(key, "%4s%1s%2s", xmk->dev, xmk->type, xmk->number);
+        xmk->slave = atoi(mxmlElementGetAttr(xns.nodes[i], "slavenumber"));
+        xmk->point = atoi(mxmlElementGetAttr(xns.nodes[i], "pointnumber"));
+        xmk->pointType[0]=key[4];
+        xmks.xmks[i] = xmk;
+        printf(" %s ", key);
+    }
+    fclose(fp);
+    // clock_t start, finish;
+    //     start = clock();
+    //     finish = clock();
+    //     printf(" %lu ", finish - start);
 }
 
 //------------------------工具方法------------------------------
