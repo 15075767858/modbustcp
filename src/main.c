@@ -8,19 +8,22 @@ int main()
     error_quit();
     //初始化redis
     redisInit();
+    printf("redisInit\n");
     //初始化全局所有key，方便后面用不再从数据库查询
     initKeysAll();
+    printf("initKeysAll\n");
     //初始化全局所有device，方便后面用不再从数据库查询
     initDevsAll();
+    printf("initDevsAll\n");
     //初始化全局所有map_key，方便后面用不再从数据库查询
-    initMapKeys();
-
+    //initMapKeys();
+    //printf("initMapKeys\n");
     initDeviceByXml();
+    printf("initDeviceByXml\n");
     //while(1)
     updateXmlMapKeys();
-
+    printf("updateXmlMapKeys\n");
     //initUpdateModule();
-    printf("redis run \n");
     //初始化设备内存页
     //initDeviceMemoryAll();
     //初始化设备内存
@@ -78,7 +81,7 @@ int socket_run()
 
     while (1)
     {
-        printf("waiting for new connection...\n");
+        printf("waiting for new connection... ");
         pthread_t thread_id;
         client_length = sizeof(s_addr_client);
         //Block here. Until server accpets a new connection.
@@ -222,13 +225,16 @@ int runThread()
     void *thread_result;
     //开启redis订阅
     res = pthread_create(&a_thread, NULL, asynRedis, NULL);
+    printf("asynRedis\n");
     //开启socket监听
     res = pthread_create(&b_thread, NULL, socketStart, NULL);
+    printf("socketStart\n");
     //开启轮询数据库
-    //res = pthread_create(&c_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
+    res = pthread_create(&c_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
+    printf("DeviceMemoryAllUpdateStart\n");
     pthread_detach(a_thread);
     pthread_detach(b_thread);
-    //pthread_detach(c_thread);
+    pthread_detach(c_thread);
     //res = pthread_join(a_thread, NULL);
     //res = pthread_join(b_thread, NULL);
     //res = pthread_join(c_thread, NULL);
@@ -465,7 +471,6 @@ int fun16(modbus_request *mrq, char *resdata)
     memset(sVal, 0, 20);
     sprintf(sVal, "%f", my_data.real_value);
     redisSetValue(redis, key, "Present_Value", sVal);
-
     changePriority(redis, key, sVal, 7);
     printf("key = %s real_value = %f\n", key, my_data.real_value);
     //return fun03(mrq, resdata);

@@ -212,7 +212,8 @@ int getKeyIndex(char *key)
 //自动更新内存页
 void signal_handler(int m)
 {
-    DeviceMemoryAllUpdate();
+    updateXmlMapKeys();
+    //DeviceMemoryAllUpdate();
 
     // jsqCount++;
     // if (jsqCount % 6 == 0)

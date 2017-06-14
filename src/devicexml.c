@@ -135,14 +135,14 @@ void initDeviceByXml()
         int size;
     } xml_nodes;
     xml_nodes xns;
-
+    xns.nodes = calloc(999 * 4, sizeof(mxml_node_t));
     FILE *fp;
     mxml_node_t *tree;
     mxml_node_t *node;
-    fp = fopen("modbusID.xml", "r");
+    fp = fopen("/mnt/nandflash/modbusID.xml", "r");
     tree = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
     int i = 0;
-    printf(" %lu ", sizeof(xml_map_key));
+    //printf(" %lu ", sizeof(xml_map_key));
     for (node = mxmlFindElement(tree, tree,
                                 "key",
                                 NULL, NULL,
@@ -167,7 +167,7 @@ void initDeviceByXml()
         sscanf(key, "%4s%1s%2s", xmk->dev, xmk->type, xmk->number);
         xmk->slave = atoi(mxmlElementGetAttr(xns.nodes[i], "slavenumber"));
         xmk->point = atoi(mxmlElementGetAttr(xns.nodes[i], "pointnumber"));
-        xmk->pointType[0]=key[4];
+        xmk->pointType[0] = key[4];
         xmks.xmks[i] = xmk;
         printf(" %s ", key);
     }
