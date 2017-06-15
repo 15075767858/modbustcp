@@ -22,19 +22,18 @@ int redisInit()
     memoryredis = redisConnect("127.0.0.1", 6379);
     int keyLen = 0;
 
-    while (1)
-    {
-        sleep(1);
-        redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
-        if (keyLen == reply->elements)
-        {
-            break;
-        }
-        keyLen = reply->elements;
-        if (print == 0)
-            printf("keyLen=(%d)", keyLen);
-        freeReplyObject(reply);
-    }
+    // while (1)
+    // {
+    //     sleep(15);
+    //     redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
+    //     if (keyLen == reply->elements)
+    //     {
+    //         break;
+    //     }
+    //     keyLen = reply->elements;
+    //     printf("keyLen=(%d)", keyLen);
+    //     freeReplyObject(reply);
+    // }
     //err 1 errstr[128]
     // if (redis->err != 0)
     // {
@@ -256,20 +255,20 @@ void updateXmlMapKeys()
     {
         char *value = redisGetValue(redis, xmks.xmks[i]->key, "Present_Value");
         printf("%s %s ", xmks.xmks[i]->key, value);
-        memset(xmks.xmks[i]->value,0,20);
-        
-        sprintf(xmks.xmks[i]->value,"%s",value);
-//        strncat(xmks.xmks[i]->value, value, 20);
+        memset(xmks.xmks[i]->value, 0, 20);
+
+        sprintf(xmks.xmks[i]->value, "%s", value);
+        //        strncat(xmks.xmks[i]->value, value, 20);
         free(value);
     }
 }
 
-xml_map_key* findXMKByXmlMapKey(int slave, int point,char pointType)
+xml_map_key *findXMKByXmlMapKey(int slave, int point, char pointType)
 {
     int i;
     for (i = 0; i < xmks.size; i++)
     {
-        if (xmks.xmks[i]->slave == slave & xmks.xmks[i]->point==point&xmks.xmks[i]->pointType[0]==pointType)
+        if (xmks.xmks[i]->slave == slave & xmks.xmks[i]->point == point & xmks.xmks[i]->pointType[0] == pointType)
         {
             return xmks.xmks[i];
         }

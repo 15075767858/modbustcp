@@ -1,5 +1,20 @@
 #include "asynreids.h"
 
+int changeXmlDeviceMemory(char *key, char *value)
+{
+    int i;
+
+    for (i = 0; i < xmks.size; i++)
+    {
+        if (strncmp(xmks.xmks[i]->key, key, 7) == 0)
+        {
+            memset(xmks.xmks[i]->value, 0, 20);
+            sprintf(xmks.xmks[i]->value, "%s", value);
+        }
+        //        strncat(xmks.xmks[i]->value, value, 20);
+    }
+    return 0;
+}
 //修改内存页的值
 int changeDeviceMemory(char *key, char *value)
 {
@@ -48,23 +63,7 @@ int changeDeviceMemory(char *key, char *value)
 void getCallback(redisAsyncContext *c, void *r, void *privdata)
 {
     redisReply *reply = r;
-    /*if (reply->elements == 4)
-    {
-        int index = getDevIndex(reply->element[3]->str);
-        //有这个设备才更新
-        if (index >= 0)
-        {
-            //没有记录的从机地址不更新
-            if (updateModuleIsHaveSlave(index + 1) != 0)
-            {
-                return;
-            }
-        }
-        else
-        {
-            return;
-        }
-    }*/
+
     if (reply->elements == 4)
     {
         //char *str = strdup(reply->element[3]->str);
@@ -75,7 +74,7 @@ void getCallback(redisAsyncContext *c, void *r, void *privdata)
         sscanf(reply->element[3]->str, "%s\r\n%s\r\n%s", key, type, val);
         if (strncmp(type, "Present_Value", 13) == 0)
         {
-            changeDeviceMemory(key, val);
+            changeXmlDeviceMemory(key, val);
         }
         if (print == 0)
             printf("pubdata =  %s %s %s ", key, type, val);

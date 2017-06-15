@@ -29,6 +29,7 @@ var gulp = require('gulp'),
 gulp.task('file', function() {
   gulp.watch([dest+'/**/**'], function() {
     console.log(arguments)
-    fileSync(dest,sources, {recursive: true,ignore: [".vscode","gulpfile.js",".DS_Store","._.DS_Store",".git","modbus-tcp-server"]});
+    var pbarr = [".vscode","gulpfile.js",".DS_Store","._.DS_Store",".git","modbus-tcp-server","libevent","library","node_modules"]
+    fileSync(dest,sources, {recursive: true,ignore: pbarr});
   });
 });

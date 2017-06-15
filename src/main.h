@@ -29,7 +29,8 @@
 #define SOCK_PORT 8889
 //#define SOCK_PORT 502
 
-#define BUFFER_LENGTH 1024
+#define BUFFER_LENGTH 102400
+
 #define MAX_CONN_LIMIT 512 //MAX connection limit
 int socketCount;
 int fun01(modbus_request *mrq, char *resdata);

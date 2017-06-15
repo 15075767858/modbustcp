@@ -326,52 +326,63 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     char str[mrq->reg_num + 1];
     int jishu = 0;
     memset(str, 0, mrq->reg_num);
+    char type;
+    if (mrq->fun == 1)
+    {
+        type = '4';
+    }
+    else
+    {
+        type = '3';
+    }
+    xml_map_key *resxmk;
+    //int byte8[] = {0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1};
+    int byte8[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};
+    unsigned char byte1 = 0x0;
+
     for (i = start; i < end + start; i++)
     {
-        char type;
-        if (mrq->fun == 1)
-        {
-            type = '4';
-        }
-        else
-        {
-            type = '3';
-        }
-        xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
+        resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
         if (resxmk != NULL)
         {
             printf("key = (%s) slave = (%d) point = (%d) value = (%s) ", resxmk->key, resxmk->slave, resxmk->point, resxmk->value);
             if (atoi(resxmk->value) != 0)
             {
-                str[count] = '1';
+                byte1 += byte8[count];
+                //str[count] = '1';
             }
-            else
-            {
-                str[count] = '0';
-            }
+            // else
+            // {
+            //     str[count] = '0';
+            // }
         }
-        else
+        // else
+        // {
+        //     str[count] = '0';
+        // }
+        resdata[9 + count / 8] = byte1;
+        if (count % 8 == 0)
         {
-            str[count] = '0';
+            byte1 = 0x0;
         }
+        //str[count + 1] = '\0';
         printf("count = %d str=%s i = %d end =  %d yushu = %d strlen =%lu \n", count, str, i, end, end % 8, strlen(str));
         count++;
     }
-    str[count + 1] = '\0';
 
-    char *a = &str[0];
-    char sb[8]; //一次装8个数字
-    memset(sb, 0, 8);
-    int s8 = strlen(a) / 8 + 1; //循环次数
+    // char *a = &str[0];
+    // char sb[8]; //一次装8个数字
+    // memset(sb, 0, 8);
+    // int s8 = strlen(a) / 8 + 1; //循环次数
 
-    for (i = 0; i < s8; i++)
-    {
-        strncpy(sb, a, 8);
-        printf("bit8ToInt(sb) = %d\n", bit8ToInt(sb));
-        a += 8;
-        int res = bit8ToInt(sb);
-        resdata[9 + i] = res;
-    }
+    // for (i = 0; i < s8; i++)
+    // {
+    //     strncpy(sb, a, 8);
+    //     printf("bit8ToInt(sb) = %d\n", bit8ToInt(sb));
+    //     a += 8;
+    //     int res = bit8ToInt(sb);
+    //     resdata[9 + i] = res;
+    // }
 
     printf("\n str = (%s) ", str);
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
@@ -394,21 +405,22 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     int count = 0;
     int i;
     printf("value = (");
+    char type;
+    if (mrq->fun == 3)
+    {
+        type = '1';
+    }
+    else
+    {
+        type = '0';
+    }
+    union {
+        uint8_t byte[8];
+        float real_value;
+    } my_data;
     for (i = start; i < end + start; i++)
     {
-        union {
-            uint8_t byte[8];
-            float real_value;
-        } my_data;
-        char type;
-        if (mrq->fun == 3)
-        {
-            type = '1';
-        }
-        else
-        {
-            type = '0';
-        }
+
         xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
         if (resxmk != NULL)
         {
@@ -419,7 +431,6 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         {
             my_data.real_value = 0;
         }
-
         resdata[9 + count * 4] = my_data.byte[3];
         resdata[10 + count * 4] = my_data.byte[2];
         resdata[11 + count * 4] = my_data.byte[1];
@@ -428,12 +439,13 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     }
     printf(")\n");
 
-    printf("resdata=(");
-    for (i = 0; i < 8 + resdata[8] + 1; i++)
-    {
-        printf("%02hhx ", resdata[i]);
-    }
-    int resLen = 8 + resdata[8] + 1;
+    // printf("resdata=(");
+    // for (i = 0; i < 8 + resdata[8] + 1; i++)
+    // {
+    //     printf("%02hhx ", resdata[i]);
+    // }
+    int resNum = resdata[7] * 256 + resdata[8];
+    int resLen = 8 + resNum + 1;
     printf(");resLen = %d sizeof(resdata) = %ld\n", resLen, sizeof(resdata));
 
     return send(mrq->conn, resdata, resLen, 0);
@@ -514,17 +526,15 @@ int readMessage(char *buffer, int len, int conn)
     mrq.fun = (int)buffer[7];                  //功能码
     mrq.reg_str = buffer[8] * 256 + buffer[9]; //点位编号
     mrq.reg_num = reg_num;
-    if (mrq.fun == 1 || mrq.fun == 2 || mrq.fun == 3 || mrq.fun == 4)
-    {
-    }
+    // if (mrq.fun == 1 || mrq.fun == 2 || mrq.fun == 3 || mrq.fun == 4)
+    // {
+    // }
 
     mrq.buffer = buffer;
     mrq.bufferlen = len;
     mrq.conn = conn;
-
     char resdata[BUFFER_LENGTH];
     memset(resdata, 0, BUFFER_LENGTH);
-    //strncpy(resdata, buffer, 8);
     resdata[0] = buffer[0];
     resdata[1] = buffer[1];
     resdata[2] = buffer[2];
@@ -544,7 +554,6 @@ int readMessage(char *buffer, int len, int conn)
         {
             resdata[8] = reg_num / 8 + 1;
         }
-        //resdata[7] = ;
     }
     if (buffer[7] == 4 || buffer[7] == 3)
     {

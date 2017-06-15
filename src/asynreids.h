@@ -20,6 +20,8 @@
 
 
 void asyn();
+
+int changeXmlDeviceMemory(char *key, char *value);
 int changeDeviceMemory(char *key, char *value);
 void disconnectCallback(const redisAsyncContext *c, int status);
 void connectCallback(const redisAsyncContext *c, int status);
