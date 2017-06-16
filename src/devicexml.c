@@ -129,6 +129,7 @@ int deviceTypeAddKey(mxml_node_t *deviceType)
 //根据xml初始化 点位
 void initDeviceByXml()
 {
+
     typedef struct
     {
         mxml_node_t **nodes;
@@ -141,6 +142,16 @@ void initDeviceByXml()
     mxml_node_t *node;
     fp = fopen("/mnt/nandflash/modbusID.xml", "r");
     tree = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
+ 
+    node = mxmlFindElement(tree, tree, "aioffset", NULL, NULL, MXML_DESCEND);
+    aioffset = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "aooffset", NULL, NULL, MXML_DESCEND);
+    aooffset = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "dioffset", NULL, NULL, MXML_DESCEND);
+    dioffset = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "dooffset", NULL, NULL, MXML_DESCEND);
+    dooffset = atoi(mxmlGetText(node, 0));
+
     int i = 0;
     //printf(" %lu ", sizeof(xml_map_key));
     for (node = mxmlFindElement(tree, tree,

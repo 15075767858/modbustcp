@@ -336,54 +336,27 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         type = '3';
     }
     xml_map_key *resxmk;
-    //int byte8[] = {0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1};
     int byte8[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};
     unsigned char byte1 = 0x0;
 
     for (i = start; i < end + start; i++)
     {
-        resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
-        if (resxmk != NULL)
-        {
-            printf("key = (%s) slave = (%d) point = (%d) value = (%s) ", resxmk->key, resxmk->slave, resxmk->point, resxmk->value);
-            if (atoi(resxmk->value) != 0)
-            {
-                byte1 += byte8[count];
-                //str[count] = '1';
-            }
-            // else
-            // {
-            //     str[count] = '0';
-            // }
-        }
-        // else
-        // {
-        //     str[count] = '0';
-        // }
-        resdata[9 + count / 8] = byte1;
         if (count % 8 == 0)
         {
             byte1 = 0x0;
         }
-        //str[count + 1] = '\0';
-        printf("count = %d str=%s i = %d end =  %d yushu = %d strlen =%lu \n", count, str, i, end, end % 8, strlen(str));
+        resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
+        if (resxmk != NULL)
+        {
+            if (atoi(resxmk->value) != 0)
+            {
+                byte1 += byte8[count];
+            }
+        }
+        resdata[9 + count / 8] = byte1;
+
         count++;
     }
-
-    // char *a = &str[0];
-    // char sb[8]; //一次装8个数字
-    // memset(sb, 0, 8);
-    // int s8 = strlen(a) / 8 + 1; //循环次数
-
-    // for (i = 0; i < s8; i++)
-    // {
-    //     strncpy(sb, a, 8);
-    //     printf("bit8ToInt(sb) = %d\n", bit8ToInt(sb));
-    //     a += 8;
-    //     int res = bit8ToInt(sb);
-    //     resdata[9 + i] = res;
-    // }
-
     printf("\n str = (%s) ", str);
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
 }
@@ -414,13 +387,13 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     {
         type = '0';
     }
-    union {
-        uint8_t byte[8];
-        float real_value;
-    } my_data;
+
     for (i = start; i < end + start; i++)
     {
-
+        union {
+            uint8_t byte[8];
+            float real_value;
+        } my_data;
         xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
         if (resxmk != NULL)
         {
@@ -438,15 +411,17 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         count++;
     }
     printf(")\n");
-
-    // printf("resdata=(");
-    // for (i = 0; i < 8 + resdata[8] + 1; i++)
-    // {
-    //     printf("%02hhx ", resdata[i]);
-    // }
-    int resNum = resdata[7] * 256 + resdata[8];
+    int resNum = count * 2+2;
+    resdata[4] = (resNum + 3) >> 8;
+    resdata[5] = (resNum + 3) & 0x00FF;
+    resdata[8] = (unsigned char)resNum;
     int resLen = 8 + resNum + 1;
-    printf(");resLen = %d sizeof(resdata) = %ld\n", resLen, sizeof(resdata));
+    printf("response=(");
+    for (i = 0; i < resLen; i++)
+    {
+        printf("%02hhx ", resdata[i]);
+    }
+    printf(");\nresLen = %d resNum= %d resdata[8]=%d \n", resLen, resNum, resdata[8]);
 
     return send(mrq->conn, resdata, resLen, 0);
 }
@@ -519,8 +494,8 @@ int readMessage(char *buffer, int len, int conn)
 
     int reg_num = buffer[10] * 256 + buffer[11] - 1;
     modbus_request mrq;
-    mrq.transaction = buffer[0] * 256 + (u8)buffer[1];
-    mrq.protocol = buffer[2] * 256 + buffer[3];
+    //mrq.transaction = buffer[0] * 256 + (u8)buffer[1];
+    //mrq.protocol = buffer[2] * 256 + buffer[3];
     mrq.len = buffer[4] * 256 + buffer[5];
     mrq.slave = buffer[6];                     //设备地址
     mrq.fun = (int)buffer[7];                  //功能码

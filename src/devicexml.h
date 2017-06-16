@@ -16,3 +16,8 @@
 #endif
 int initDeviceXml();
 void initDeviceByXml();
+
+int aioffset;
+int aooffset;
+int dioffset;
+int dooffset;

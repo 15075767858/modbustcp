@@ -150,7 +150,10 @@ int updateModuleIsHaveSlave(int salve);
 
 //unsigned long jsqCount;
 //int updateKeysAll();
-
-xml_map_key* findXMKByXmlMapKey(int slave, int point,char pointType);
+extern int aioffset;
+extern int aooffset;
+extern int dioffset;
+extern int dooffset;
+xml_map_key *findXMKByXmlMapKey(int slave, int point, char pointType);
 
 extern int print;
