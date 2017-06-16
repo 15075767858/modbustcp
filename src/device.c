@@ -280,7 +280,7 @@ xml_map_key *findXMKByXmlMapKey(int slave, int point, char pointType)
         point += dooffset;
         break;
     }
-   
+    
     int i;
     for (i = 0; i < xmks.size; i++)
     {

@@ -4,6 +4,18 @@ int sockfd_server;
 
 int main()
 {
+    // int a=10;
+    // printf("%d\n",~a+1);
+    // exit(0);
+    union {
+        uint8_t byte[8];
+        float real_value;
+    } my_data;
+    my_data.byte[3] = 0x73;
+    my_data.byte[2] = 0x68;
+    my_data.byte[1] = 0xed;
+    my_data.byte[0] = 0x41;
+
 
     error_quit();
     //初始化redis
@@ -323,9 +335,7 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     int end = mrq->reg_num;
     int count = 0;
     int i;
-    char str[mrq->reg_num + 1];
     int jishu = 0;
-    memset(str, 0, mrq->reg_num);
     char type;
     if (mrq->fun == 1)
     {
@@ -338,26 +348,37 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     xml_map_key *resxmk;
     int byte8[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};
     unsigned char byte1 = 0x0;
-
+    printf("fun%d data= (", mrq->fun);
     for (i = start; i < end + start; i++)
     {
         if (count % 8 == 0)
         {
-            byte1 = 0x0;
+            //printf("v=(%x) ", byte1);
+            byte1 = 0;
         }
         resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
+        printf(" %s ", resxmk->key);
         if (resxmk != NULL)
         {
+
             if (atoi(resxmk->value) != 0)
             {
-                byte1 += byte8[count];
+                printf(" 1");
+                byte1 += byte8[count % 8];
+            }
+            else
+            {
+                printf(" 0");
             }
         }
+        else
+        {
+            printf(" 0");
+        }
         resdata[9 + count / 8] = byte1;
-
         count++;
     }
-    printf("\n str = (%s) ", str);
+    printf(")\n");
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
 }
 int fun02(modbus_request *mrq, char *resdata) //BI
@@ -404,6 +425,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         {
             my_data.real_value = 0;
         }
+
         resdata[9 + count * 4] = my_data.byte[3];
         resdata[10 + count * 4] = my_data.byte[2];
         resdata[11 + count * 4] = my_data.byte[1];
@@ -411,7 +433,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         count++;
     }
     printf(")\n");
-    int resNum = count * 2+2;
+    int resNum = count * 2 + 2;
     resdata[4] = (resNum + 3) >> 8;
     resdata[5] = (resNum + 3) & 0x00FF;
     resdata[8] = (unsigned char)resNum;
@@ -473,6 +495,7 @@ int fun05(modbus_request *mrq, char *resdata)
         return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
     }
     char *key = xmk->key;
+    printf("key=(%s)",key);
     if (mrq->buffer[10] == 0)
     {
         redisSetValue(redis, key, "Present_Value", "0");

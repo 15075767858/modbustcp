@@ -145,12 +145,16 @@ void initDeviceByXml()
  
     node = mxmlFindElement(tree, tree, "aioffset", NULL, NULL, MXML_DESCEND);
     aioffset = atoi(mxmlGetText(node, 0));
+    aioffset=~aioffset+1;
     node = mxmlFindElement(tree, tree, "aooffset", NULL, NULL, MXML_DESCEND);
     aooffset = atoi(mxmlGetText(node, 0));
+    aooffset=~aooffset+1;
     node = mxmlFindElement(tree, tree, "dioffset", NULL, NULL, MXML_DESCEND);
     dioffset = atoi(mxmlGetText(node, 0));
+    dioffset=~dioffset+1;
     node = mxmlFindElement(tree, tree, "dooffset", NULL, NULL, MXML_DESCEND);
     dooffset = atoi(mxmlGetText(node, 0));
+    dooffset=~dooffset+1;
 
     int i = 0;
     //printf(" %lu ", sizeof(xml_map_key));
