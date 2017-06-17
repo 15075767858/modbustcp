@@ -367,7 +367,7 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         {
             byte1 = 0;
         }
-        resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
+        resxmk = findXMKByXmlMapKey(mrq->slave, i, type);
         if (resxmk != NULL)
         {
 
@@ -393,9 +393,9 @@ int fun04(modbus_request *mrq, char *resdata)
 }
 int fun03(modbus_request *mrq, char *resdata) //AV
 {
-
+    int reg_num = mrq->buffer[10] * 256 + mrq->buffer[11];
     //printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
-    int start = mrq->reg_str;
+    int start = (mrq->reg_str+1)/2;
     int end = mrq->reg_num;
     int count = 0;
     int i;
@@ -415,7 +415,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
             uint8_t byte[8];
             float real_value;
         } my_data;
-        xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
+        xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i, type);
         if (resxmk != NULL)
         {
             //printf("key = (%s) slave = (%d) point = (%d) value = (%s) ", resxmk->key, resxmk->slave, resxmk->point, resxmk->value);
@@ -432,7 +432,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         resdata[12 + count * 4] = my_data.byte[0];
         count++;
     }
-    int resNum = count * 2 + 2;
+    int resNum = reg_num * 2;
     resdata[4] = (resNum + 3) >> 8;
     resdata[5] = (resNum + 3) & 0x00FF;
     resdata[8] = (unsigned char)resNum;
@@ -461,7 +461,7 @@ int fun15(modbus_request *mrq, char *resdata)
 int fun16(modbus_request *mrq, char *resdata)
 {
     //char *key = getKeyBySlavePoint(mrq);
-    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str + 1, '1');
+    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str , '1');
     if (xmk != NULL)
     {
         return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
@@ -488,7 +488,7 @@ int fun05(modbus_request *mrq, char *resdata)
 {
     // 0c 50 00 00 00 06 01 05 00 00 ff 00
     //char *key = getKeyBySlavePoint(mrq);
-    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str + 1, '4');
+    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str, '4');
     if (xmk == NULL)
     {
         return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
