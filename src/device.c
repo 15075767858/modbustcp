@@ -22,18 +22,19 @@ int redisInit()
     memoryredis = redisConnect("127.0.0.1", 6379);
     int keyLen = 0;
 
-    // while (1)
-    // {
-    //     sleep(15);
-    //     redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
-    //     if (keyLen == reply->elements)
-    //     {
-    //         break;
-    //     }
-    //     keyLen = reply->elements;
-    //     printf("keyLen=(%d)", keyLen);
-    //     freeReplyObject(reply);
-    // }
+    while (1)
+    {
+        sleep(10);
+        redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
+        if (keyLen == reply->elements)
+        {
+            break;
+        }
+        keyLen = reply->elements;
+        printf("keyLen=(%d)", keyLen);
+        freeReplyObject(reply);
+    }
+    
     //err 1 errstr[128]
     // if (redis->err != 0)
     // {
@@ -254,7 +255,7 @@ void updateXmlMapKeys()
     for (i = 0; i < xmks.size; i++)
     {
         char *value = redisGetValue(redis, xmks.xmks[i]->key, "Present_Value");
-        printf("%s %s ", xmks.xmks[i]->key, value);
+        //printf("%s %s ", xmks.xmks[i]->key, value);
         memset(xmks.xmks[i]->value, 0, 20);
 
         sprintf(xmks.xmks[i]->value, "%s", value);

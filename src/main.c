@@ -4,23 +4,34 @@ int sockfd_server;
 
 int main()
 {
-    // int a=10;
-    // printf("%d\n",~a+1);
-    // exit(0);
-    union {
-        uint8_t byte[8];
-        float real_value;
-    } my_data;
-    my_data.byte[3] = 0x73;
-    my_data.byte[2] = 0x68;
-    my_data.byte[1] = 0xed;
-    my_data.byte[0] = 0x41;
-
+    // clock_t start, finish;
+    // int a;
+    // a = 99999;
+    // start = clock();
+    // while (a--)
+    // {
+    //     printf("%d", a);
+    // }
+    // finish = clock();
+    // FILE *fp;
+    // fp = fopen("/mnt/nandflash/message.text", "a+");
+    // fprintf(fp, "%lu", finish - start);
+    // fputc('\n', fp);
+    // a = 99999;
+    // start = clock();
+    // while (a--)
+    // {
+    // }
+    // finish = clock();
+    // fprintf(fp, "%lu", finish - start);
+    // fputc('\n', fp);
+    // fclose(fp);
 
     error_quit();
     //初始化redis
     redisInit();
     printf("redisInit\n");
+    //sleep(60);
     //初始化全局所有key，方便后面用不再从数据库查询
     initKeysAll();
     printf("initKeysAll\n");
@@ -44,9 +55,10 @@ int main()
     //开启多线程访问
     runThread();
     printf("asyn redis run\n");
-    while (1)
-    {
-    }
+    socket_run();
+    // while (1)
+    // {
+    // }
     return 0;
 }
 //是否是mac
@@ -167,12 +179,12 @@ static void Data_handle(void *sock_fd)
         memset(data_recv, 0, BUFFER_LENGTH);
         i_recvBytes = read(fd, data_recv, BUFFER_LENGTH);
         int i;
-        printf("reqdata=(");
-        for (i = 0; i < i_recvBytes; i++)
-        {
-            printf("%02hhx ", data_recv[i]);
-        }
-        printf(" ) socketCount = (%d)\n", socketCount);
+        // printf("reqdata=(");
+        // for (i = 0; i < i_recvBytes; i++)
+        // {
+        //     printf("%02hhx ", data_recv[i]);
+        // }
+        // printf(" ) socketCount = (%d)\n", socketCount);
         //write(fd, data_send, strlen(data_send));
         //saveMessage(data_recv, i_recvBytes);
         if (i_recvBytes < 1)
@@ -192,6 +204,7 @@ static void Data_handle(void *sock_fd)
         else
         {
             // write(fd, data_recv, i_recvBytes);
+
             readMessage(data_recv, i_recvBytes, fd);
             // printf("resNum = %d \n", resNum);
             // if (resNum == -1)
@@ -232,20 +245,20 @@ int runThread()
 {
     int res;
     pthread_t a_thread;
-    pthread_t b_thread;
+    //pthread_t b_thread;
     pthread_t c_thread;
     void *thread_result;
     //开启redis订阅
     res = pthread_create(&a_thread, NULL, asynRedis, NULL);
     printf("asynRedis\n");
     //开启socket监听
-    res = pthread_create(&b_thread, NULL, socketStart, NULL);
-    printf("socketStart\n");
+    //res = pthread_create(&b_thread, NULL, socketStart, NULL);
+    //printf("socketStart\n");
     //开启轮询数据库
     res = pthread_create(&c_thread, NULL, DeviceMemoryAllUpdateStart, NULL);
     printf("DeviceMemoryAllUpdateStart\n");
     pthread_detach(a_thread);
-    pthread_detach(b_thread);
+    //pthread_detach(b_thread);
     pthread_detach(c_thread);
     //res = pthread_join(a_thread, NULL);
     //res = pthread_join(b_thread, NULL);
@@ -319,7 +332,7 @@ char *getKeyBySlavePoint(modbus_request *mrq)
         key = strdup("");
     }
     freeKeys(&keys);
-    printf("fun5 key=%s\n", key);
+    //printf("fun5 key=%s\n", key);
     return key;
 }
 
@@ -327,7 +340,7 @@ int fun01(modbus_request *mrq, char *resdata) //BO
 {
     //mrq->reg_str = mrq->reg_str + 1;
 
-    printf("slave=(%d)   fun(%d)   reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->fun, mrq->reg_str, mrq->reg_num);
+    //printf("slave=(%d)   fun(%d)   reg_str=(%d) reg_num=(%d)\n", mrq->slave, mrq->fun, mrq->reg_str, mrq->reg_num);
     //DeviceMemory dm = DeviceMemorys[mrq->slave - 1][0];
     mrq->reg_num = mrq->reg_num + 1;
     //DeviceMemory dm = dma.dma[mrq->slave - 1][0];
@@ -348,37 +361,25 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     xml_map_key *resxmk;
     int byte8[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};
     unsigned char byte1 = 0x0;
-    printf("fun%d data= (", mrq->fun);
     for (i = start; i < end + start; i++)
     {
         if (count % 8 == 0)
         {
-            //printf("v=(%x) ", byte1);
             byte1 = 0;
         }
         resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
-        printf(" %s ", resxmk->key);
         if (resxmk != NULL)
         {
 
             if (atoi(resxmk->value) != 0)
             {
-                printf(" 1");
                 byte1 += byte8[count % 8];
             }
-            else
-            {
-                printf(" 0");
-            }
         }
-        else
-        {
-            printf(" 0");
-        }
+
         resdata[9 + count / 8] = byte1;
         count++;
     }
-    printf(")\n");
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
 }
 int fun02(modbus_request *mrq, char *resdata) //BI
@@ -393,12 +394,11 @@ int fun04(modbus_request *mrq, char *resdata)
 int fun03(modbus_request *mrq, char *resdata) //AV
 {
 
-    printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
+    //printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
     int start = mrq->reg_str;
     int end = mrq->reg_num;
     int count = 0;
     int i;
-    printf("value = (");
     char type;
     if (mrq->fun == 3)
     {
@@ -418,7 +418,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i + 1, type);
         if (resxmk != NULL)
         {
-            printf("key = (%s) slave = (%d) point = (%d) value = (%s) ", resxmk->key, resxmk->slave, resxmk->point, resxmk->value);
+            //printf("key = (%s) slave = (%d) point = (%d) value = (%s) ", resxmk->key, resxmk->slave, resxmk->point, resxmk->value);
             my_data.real_value = atof(resxmk->value);
         }
         else
@@ -432,18 +432,17 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         resdata[12 + count * 4] = my_data.byte[0];
         count++;
     }
-    printf(")\n");
     int resNum = count * 2 + 2;
     resdata[4] = (resNum + 3) >> 8;
     resdata[5] = (resNum + 3) & 0x00FF;
     resdata[8] = (unsigned char)resNum;
     int resLen = 8 + resNum + 1;
-    printf("response=(");
-    for (i = 0; i < resLen; i++)
-    {
-        printf("%02hhx ", resdata[i]);
-    }
-    printf(");\nresLen = %d resNum= %d resdata[8]=%d \n", resLen, resNum, resdata[8]);
+    // printf("response=(");
+    // for (i = 0; i < resLen; i++)
+    // {
+    //     printf("%02hhx ", resdata[i]);
+    // }
+    // printf(");\nresLen = %d resNum= %d resdata[8]=%d \n", resLen, resNum, resdata[8]);
 
     return send(mrq->conn, resdata, resLen, 0);
 }
@@ -495,7 +494,7 @@ int fun05(modbus_request *mrq, char *resdata)
         return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
     }
     char *key = xmk->key;
-    printf("key=(%s)",key);
+    printf("key=(%s)", key);
     if (mrq->buffer[10] == 0)
     {
         redisSetValue(redis, key, "Present_Value", "0");
@@ -591,7 +590,7 @@ int readMessage(char *buffer, int len, int conn)
     case 16:
         return fun16(&mrq, resdata);
     default:
-        saveMessage(buffer, len);
+        //saveMessage(buffer, len);
 
         return send(conn, resdata, 8, 0);
         break;
