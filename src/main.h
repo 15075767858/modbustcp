@@ -11,7 +11,6 @@
 #include <pthread.h>
 #include <assert.h>
 #include <sys/utsname.h>
-
 #include "hiredis/hiredis.h"
 #include "asynreids.h"
 #include "devicexml.h"
@@ -60,3 +59,4 @@ char getTypeByFun(int fun);
 char *getKeyBySlavePoint(modbus_request *mrq);
 void error_quit();
 int print =1;
+void savePid();

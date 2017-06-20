@@ -2,8 +2,20 @@
 #include <unistd.h>
 int sockfd_server;
 
+void savePid()
+{
+    char * pidFileName = "/var/run/modbus-tcp-server.pid";
+    printf("pid = %d \n", getpid());
+    remove(pidFileName);
+    FILE *fp;
+    fp = fopen(pidFileName, "a+");
+    fprintf(fp, "%d", getpid());
+    fputc('\n', fp);
+    fclose(fp);
+}
 int main()
 {
+
     // clock_t start, finish;
     // int a;
     // a = 99999;
@@ -27,7 +39,9 @@ int main()
     // fputc('\n', fp);
     // fclose(fp);
 
+    // return 0;
     error_quit();
+    savePid();
     //初始化redis
     redisInit();
     printf("redisInit\n");
@@ -44,7 +58,17 @@ int main()
     initDeviceByXml();
     printf("initDeviceByXml\n");
     //while(1)
+    // clock_t start, finish;
+
+    // while (1)
+    // {
+    //     start = clock();
+
+    //     finish = clock();
+    //     printf("%lu\n", finish - start);
+    // }
     updateXmlMapKeys();
+
     printf("updateXmlMapKeys\n");
     //initUpdateModule();
     //初始化设备内存页
@@ -370,7 +394,6 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         resxmk = findXMKByXmlMapKey(mrq->slave, i, type);
         if (resxmk != NULL)
         {
-
             if (atoi(resxmk->value) != 0)
             {
                 byte1 += byte8[count % 8];
@@ -395,7 +418,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
 {
     int reg_num = mrq->buffer[10] * 256 + mrq->buffer[11];
     //printf("fun%d  slave=(%d) reg_str=(%d) reg_num=(%d)\n", mrq->fun, mrq->slave, mrq->reg_str, mrq->reg_num);
-    int start = (mrq->reg_str+1)/2;
+    int start = (mrq->reg_str + 1) / 2;
     int end = mrq->reg_num;
     int count = 0;
     int i;
@@ -461,12 +484,17 @@ int fun15(modbus_request *mrq, char *resdata)
 int fun16(modbus_request *mrq, char *resdata)
 {
     //char *key = getKeyBySlavePoint(mrq);
-    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str , '1');
-    if (xmk != NULL)
+    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, (mrq->reg_str+1) / 2, '1');
+    printf("fun 16 slave = %d regstr = %d xmk = %p \n", mrq->slave, mrq->reg_str / 2, xmk);
+
+    if (xmk == NULL)
     {
         return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
     }
-    char *key = xmk->key;
+    else
+    {
+        printf("you key\n");
+    }
     union {
         uint8_t byte[8];
         float real_value;
@@ -477,11 +505,14 @@ int fun16(modbus_request *mrq, char *resdata)
     my_data.byte[0] = mrq->buffer[16];
     char sVal[20];
     memset(sVal, 0, 20);
+    redisContext *changeredis = redisConnect("127.0.0.1", 6379);
+
     sprintf(sVal, "%f", my_data.real_value);
-    redisSetValue(redis, key, "Present_Value", sVal);
-    changePriority(redis, key, sVal, 7);
-    printf("key = %s real_value = %f\n", key, my_data.real_value);
+    redisSetValue(changeredis, xmk->key, "Present_Value", sVal);
+    changePriority(changeredis, xmk->key, sVal, 7);
+    printf("key = %s real_value = %f\n", xmk->key, my_data.real_value);
     //return fun03(mrq, resdata);
+    redisFree(changeredis);
     return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);
 }
 int fun05(modbus_request *mrq, char *resdata)
@@ -495,17 +526,19 @@ int fun05(modbus_request *mrq, char *resdata)
     }
     char *key = xmk->key;
     printf("key=(%s)", key);
+    redisContext *changeredis = redisConnect("127.0.0.1", 6379);
+
     if (mrq->buffer[10] == 0)
     {
-        redisSetValue(redis, key, "Present_Value", "0");
-        changePriority(redis, key, "0", 7);
+        redisSetValue(changeredis, key, "Present_Value", "0");
+        changePriority(changeredis, key, "0", 7);
     }
     else
     {
-        redisSetValue(redis, key, "Present_Value", "1");
-        changePriority(redis, key, "1", 7);
+        redisSetValue(changeredis, key, "Present_Value", "1");
+        changePriority(changeredis, key, "1", 7);
     }
-
+    redisFree(changeredis);
     //free(key);
     printf("change key = (%s)\n", key);
     return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);

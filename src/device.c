@@ -18,7 +18,7 @@
 int redisInit()
 {
     keysredis = redisConnect("127.0.0.1", 6379);
-    redis = redisConnect("127.0.0.1", 6379);
+    redisContext *redis = redisConnect("127.0.0.1", 6379);
     memoryredis = redisConnect("127.0.0.1", 6379);
     int keyLen = 0;
 
@@ -34,7 +34,7 @@ int redisInit()
         printf("keyLen=(%d)", keyLen);
         freeReplyObject(reply);
     }
-    
+
     //err 1 errstr[128]
     // if (redis->err != 0)
     // {
@@ -165,6 +165,7 @@ int changePriority(redisContext *redis, char *key, char *value, int priority)
     char pValue[100];
     memset(pValue, 0, 100);
     sprintf(pValue, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", arrs[0], arrs[1], arrs[2], arrs[3], arrs[4], arrs[5], arrs[6], arrs[7], arrs[8], arrs[9], arrs[10], arrs[11], arrs[12], arrs[13], arrs[14], arrs[15]);
+
     redisSetValue(redis, key, "Priority_Array", pValue);
     if (print == 0)
         printf("\nend %s\n", pValue);
@@ -251,10 +252,12 @@ int updateKeysAll()
 }
 void updateXmlMapKeys()
 {
+    redisContext *redisMk = redisConnect("127.0.0.1", 6379);
+
     int i;
     for (i = 0; i < xmks.size; i++)
     {
-        char *value = redisGetValue(redis, xmks.xmks[i]->key, "Present_Value");
+        char *value = redisGetValue(redisMk, xmks.xmks[i]->key, "Present_Value");
         //printf("%s %s ", xmks.xmks[i]->key, value);
         memset(xmks.xmks[i]->value, 0, 20);
 
@@ -262,6 +265,7 @@ void updateXmlMapKeys()
         //        strncat(xmks.xmks[i]->value, value, 20);
         free(value);
     }
+    redisFree(redisMk);
 }
 
 xml_map_key *findXMKByXmlMapKey(int slave, int point, char pointType)
@@ -281,7 +285,7 @@ xml_map_key *findXMKByXmlMapKey(int slave, int point, char pointType)
         point += dooffset;
         break;
     }
-    
+
     int i;
     for (i = 0; i < xmks.size; i++)
     {
