@@ -142,19 +142,35 @@ void initDeviceByXml()
     mxml_node_t *node;
     fp = fopen("/mnt/nandflash/modbusID.xml", "r");
     tree = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
- 
+
+    int ai_map_reg, ao_map_reg, av_map_reg, bi_map_reg, bo_map_reg, bv_map_reg;
+    node = mxmlFindElement(tree, tree, "ai_map_reg", NULL, NULL, MXML_DESCEND);
+    ai_map_reg = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "ao_map_reg", NULL, NULL, MXML_DESCEND);
+    ao_map_reg = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "av_map_reg", NULL, NULL, MXML_DESCEND);
+    av_map_reg = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "bi_map_reg", NULL, NULL, MXML_DESCEND);
+    bi_map_reg = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "bo_map_reg", NULL, NULL, MXML_DESCEND);
+    bo_map_reg = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "bv_map_reg", NULL, NULL, MXML_DESCEND);
+    bv_map_reg = atoi(mxmlGetText(node, 0));
+
+    node = mxmlFindElement(tree, tree, "float_invert", NULL, NULL, MXML_DESCEND);
+    float_invert = atoi(mxmlGetText(node, 0));
     node = mxmlFindElement(tree, tree, "aioffset", NULL, NULL, MXML_DESCEND);
     aioffset = atoi(mxmlGetText(node, 0));
-    aioffset=~aioffset+1;
+    aioffset = ~aioffset + 1;
     node = mxmlFindElement(tree, tree, "aooffset", NULL, NULL, MXML_DESCEND);
     aooffset = atoi(mxmlGetText(node, 0));
-    aooffset=~aooffset+1;
+    aooffset = ~aooffset + 1;
     node = mxmlFindElement(tree, tree, "dioffset", NULL, NULL, MXML_DESCEND);
     dioffset = atoi(mxmlGetText(node, 0));
-    dioffset=~dioffset+1;
+    dioffset = ~dioffset + 1;
     node = mxmlFindElement(tree, tree, "dooffset", NULL, NULL, MXML_DESCEND);
     dooffset = atoi(mxmlGetText(node, 0));
-    dooffset=~dooffset+1;
+    dooffset = ~dooffset + 1;
 
     int i = 0;
     //printf(" %lu ", sizeof(xml_map_key));
@@ -174,6 +190,7 @@ void initDeviceByXml()
     xns.size = i;
     xmks.size = xns.size;
     xmks.xmks = calloc(xmks.size, sizeof(xml_map_key));
+
     for (i = 0; i < xns.size; i++)
     {
         xml_map_key *xmk = malloc(sizeof(xml_map_key));
@@ -183,6 +200,30 @@ void initDeviceByXml()
         xmk->slave = atoi(mxmlElementGetAttr(xns.nodes[i], "slavenumber"));
         xmk->point = atoi(mxmlElementGetAttr(xns.nodes[i], "pointnumber"));
         xmk->pointType[0] = key[4];
+        printf(" %c ", xmk->pointType[0]);
+        switch (xmk->pointType[0])
+        {
+        case '0':
+            xmk->fun = ai_map_reg;
+            break;
+        case '1':
+            xmk->fun = ao_map_reg;
+            break;
+        case '2':
+            xmk->fun = av_map_reg;
+            break;
+        case '3':
+            xmk->fun = bv_map_reg;
+            break;
+        case '4':
+            xmk->fun = bv_map_reg;
+            break;
+        case '5':
+            xmk->fun = bv_map_reg;
+            break;
+        default:
+            break;
+        }
         xmks.xmks[i] = xmk;
         printf(" %s ", key);
     }

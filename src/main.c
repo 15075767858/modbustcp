@@ -36,7 +36,6 @@ int main()
     printf("initDeviceByXml\n");
     //while(1)
     // clock_t start, finish;
-
     // while (1)
     // {
     //     start = clock();
@@ -442,7 +441,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
             float real_value;
         } my_data;
         //xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i, type);
-        xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i, type);
+        xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i, mrq->fun);
         if (resxmk != NULL)
         {
             //printf("key = (%s) slave = (%d) point = (%d) value = (%s) ", resxmk->key, resxmk->slave, resxmk->point, resxmk->value);

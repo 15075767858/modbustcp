@@ -21,3 +21,4 @@ int aioffset;
 int aooffset;
 int dioffset;
 int dooffset;
+int float_invert;

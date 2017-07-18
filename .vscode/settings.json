@@ -80,6 +80,21 @@
     "x509_vfy.h": "c",
     "x509v3.h": "c",
     "uv.h": "c",
-    "modbus-private.h": "c"
+    "modbus-private.h": "c",
+    "stdio.h": "c",
+    "stddef.h": "c",
+    "_null.h": "c",
+    "modbus-tcp-private.h": "c",
+    "debugxml.h": "c",
+    "parser.h": "c",
+    "valid.h": "c",
+    "xmlerror.h": "c",
+    "host_priv.h": "c",
+    "stdlib.h": "c",
+    "dsa.h": "c",
+    "ecdsa.h": "c",
+    "async.h": "c",
+    "kmod.h": "c",
+    "mig.h": "c"
   }
 }

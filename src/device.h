@@ -89,6 +89,7 @@ typedef struct
     char pointType[2];
     int slave;
     int point;
+    int fun;
     char value[20];
 } xml_map_key;
 
