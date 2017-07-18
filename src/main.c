@@ -4,7 +4,7 @@ int sockfd_server;
 
 void savePid()
 {
-    char * pidFileName = "/var/run/modbus-tcp-server.pid";
+    char *pidFileName = "/var/run/modbus-tcp-server.pid";
     printf("pid = %d \n", getpid());
     remove(pidFileName);
     FILE *fp;
@@ -15,31 +15,9 @@ void savePid()
 }
 int main()
 {
-    // clock_t start, finish;
-    // int a;
-    // a = 99999;
-    // start = clock();
-    // while (a--)
-    // {
-    //     printf("%d", a);
-    // }
-    // finish = clock();
-    // FILE *fp;
-    // fp = fopen("/mnt/nandflash/message.text", "a+");
-    // fprintf(fp, "%lu", finish - start);
-    // fputc('\n', fp);
-    // a = 99999;
-    // start = clock();
-    // while (a--)
-    // {
-    // }
-    // finish = clock();
-    // fprintf(fp, "%lu", finish - start);
-    // fputc('\n', fp);
-    // fclose(fp);
-
-    // return 0;
+   
     error_quit();
+    if(isMac()!=0)
     savePid();
     //初始化redis
     redisInit();
@@ -323,6 +301,29 @@ char getTypeByFun(int fun)
         return 0;
         break;
     }
+    //   switch (fun)
+    // {
+    // case 1:
+    //     return '4';
+    //     break;
+    // case 2:
+    //     return '3';
+    //     break;
+    // case 3:
+    //     return '1';
+    //     break;
+    // case 4:
+    //     return '0';
+    //     break;
+    // case 5:
+    //     return '4';
+    //     break;
+    // case 16:
+    //     return '1';
+    // default:
+    //     return 0;
+    //     break;
+    // }
     return 0;
 }
 char *getKeyBySlavePoint(modbus_request *mrq)
@@ -375,10 +376,12 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     char type;
     if (mrq->fun == 1)
     {
+        //00001
         type = '4';
     }
     else
     {
+        //10001
         type = '3';
     }
     xml_map_key *resxmk;
@@ -408,7 +411,6 @@ int fun02(modbus_request *mrq, char *resdata) //BI
 {
     return fun01(mrq, resdata);
 }
-
 int fun04(modbus_request *mrq, char *resdata)
 {
     return fun03(mrq, resdata);
@@ -424,10 +426,12 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     char type;
     if (mrq->fun == 3)
     {
+        //40001
         type = '1';
     }
     else
     {
+        //30001
         type = '0';
     }
 
@@ -437,6 +441,7 @@ int fun03(modbus_request *mrq, char *resdata) //AV
             uint8_t byte[8];
             float real_value;
         } my_data;
+        //xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i, type);
         xml_map_key *resxmk = findXMKByXmlMapKey(mrq->slave, i, type);
         if (resxmk != NULL)
         {
@@ -465,7 +470,6 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     //     printf("%02hhx ", resdata[i]);
     // }
     // printf(");\nresLen = %d resNum= %d resdata[8]=%d \n", resLen, resNum, resdata[8]);
-
     return send(mrq->conn, resdata, resLen, 0);
 }
 
@@ -483,7 +487,7 @@ int fun15(modbus_request *mrq, char *resdata)
 int fun16(modbus_request *mrq, char *resdata)
 {
     //char *key = getKeyBySlavePoint(mrq);
-    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, (mrq->reg_str+1) / 2, '1');
+    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, (mrq->reg_str + 1) / 2, '1');
     printf("fun 16 slave = %d regstr = %d xmk = %p \n", mrq->slave, mrq->reg_str / 2, xmk);
 
     if (xmk == NULL)

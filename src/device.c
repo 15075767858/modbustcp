@@ -289,9 +289,9 @@ xml_map_key *findXMKByXmlMapKey(int slave, int point, char pointType)
     int i;
     for (i = 0; i < xmks.size; i++)
     {
+        
         if (xmks.xmks[i]->slave == slave & xmks.xmks[i]->point == point & xmks.xmks[i]->pointType[0] == pointType)
         {
-
             return xmks.xmks[i];
         }
     }
