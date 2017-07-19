@@ -399,7 +399,6 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         {
             if (atoi(resxmk->value) != 0)
             {
-                
                 byte1 += byte8[count % 8];
             }
         }
@@ -409,7 +408,11 @@ int fun01(modbus_request *mrq, char *resdata) //BO
         
         count++;
     }
-    return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
+    int resLen = 8 + resdata[8] + 2;
+    // if(count==1){
+    //     resLen+=1;
+    // }
+    return send(mrq->conn, resdata, resLen, 0);
 }
 int fun02(modbus_request *mrq, char *resdata) //BI
 {
@@ -428,16 +431,16 @@ int fun03(modbus_request *mrq, char *resdata) //AV
     int count = 0;
     int i;
     char type;
-    if (mrq->fun == 3)
-    {
-        //40001
-        type = '1';
-    }
-    else
-    {
-        //30001
-        type = '0';
-    }
+    // if (mrq->fun == 3)
+    // {
+    //     //40001
+    //     type = '1';
+    // }
+    // else
+    // {
+    //     //30001
+    //     type = '0';
+    // }
     for (i = start; i < end + start; i++)
     {
 

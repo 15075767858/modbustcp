@@ -24,7 +24,7 @@ int redisInit()
 
     while (1)
     {
-        sleep(10);
+        sleep(5);
         redisReply *reply = (redisReply *)redisCommand(keysredis, "keys *");
         if (keyLen == reply->elements)
         {

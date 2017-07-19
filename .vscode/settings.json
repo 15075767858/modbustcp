@@ -106,6 +106,8 @@
     "htmlparser.h": "c",
     "task.h": "c",
     "conf.h": "c",
-    "crypto.h": "c"
+    "crypto.h": "c",
+    "pthread.h": "c",
+    "config.h": "c"
   }
 }
