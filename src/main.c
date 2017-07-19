@@ -15,10 +15,10 @@ void savePid()
 }
 int main()
 {
-   
+
     error_quit();
-    if(isMac()!=0)
-    savePid();
+    if (isMac() != 0)
+        savePid();
     //初始化redis
     redisInit();
     printf("redisInit\n");
@@ -373,35 +373,40 @@ int fun01(modbus_request *mrq, char *resdata) //BO
     int i;
     int jishu = 0;
     char type;
-    if (mrq->fun == 1)
-    {
-        //00001
-        type = '4';
-    }
-    else
-    {
-        //10001
-        type = '3';
-    }
+    // if (mrq->fun == 1)
+    // {
+    //     //00001
+    //     type = '4';
+    // }
+    // else
+    // {
+    //     //10001
+    //     type = '3';
+    // }
     xml_map_key *resxmk;
     int byte8[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};
     unsigned char byte1 = 0x0;
+    //printf("---start %d end+start %d  ---\n", start, end + start);
+
     for (i = start; i < end + start; i++)
     {
         if (count % 8 == 0)
         {
             byte1 = 0;
         }
-        resxmk = findXMKByXmlMapKey(mrq->slave, i, type);
+        resxmk = findXMKByXmlMapKey(mrq->slave, i, mrq->fun);
         if (resxmk != NULL)
         {
             if (atoi(resxmk->value) != 0)
             {
+                
                 byte1 += byte8[count % 8];
             }
         }
 
         resdata[9 + count / 8] = byte1;
+        //printf("i = %d %d\n",i,byte1);
+        
         count++;
     }
     return send(mrq->conn, resdata, 8 + resdata[8] + 1, 0);
@@ -433,9 +438,9 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         //30001
         type = '0';
     }
-
     for (i = start; i < end + start; i++)
     {
+
         union {
             uint8_t byte[8];
             float real_value;
@@ -451,11 +456,20 @@ int fun03(modbus_request *mrq, char *resdata) //AV
         {
             my_data.real_value = 0;
         }
-
-        resdata[9 + count * 4] = my_data.byte[3];
-        resdata[10 + count * 4] = my_data.byte[2];
-        resdata[11 + count * 4] = my_data.byte[1];
-        resdata[12 + count * 4] = my_data.byte[0];
+        if (float_invert == 1)
+        {
+            resdata[9 + count * 4] = my_data.byte[3];
+            resdata[10 + count * 4] = my_data.byte[2];
+            resdata[11 + count * 4] = my_data.byte[1];
+            resdata[12 + count * 4] = my_data.byte[0];
+        }
+        else
+        {
+            resdata[9 + count * 4] = my_data.byte[1];
+            resdata[10 + count * 4] = my_data.byte[0];
+            resdata[11 + count * 4] = my_data.byte[3];
+            resdata[12 + count * 4] = my_data.byte[2];
+        }
         count++;
     }
     int resNum = reg_num * 2;
@@ -486,7 +500,7 @@ int fun15(modbus_request *mrq, char *resdata)
 int fun16(modbus_request *mrq, char *resdata)
 {
     //char *key = getKeyBySlavePoint(mrq);
-    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, (mrq->reg_str + 1) / 2, '1');
+    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, (mrq->reg_str + 1) / 2, 3);
     printf("fun 16 slave = %d regstr = %d xmk = %p \n", mrq->slave, mrq->reg_str / 2, xmk);
 
     if (xmk == NULL)
@@ -501,10 +515,20 @@ int fun16(modbus_request *mrq, char *resdata)
         uint8_t byte[8];
         float real_value;
     } my_data;
-    my_data.byte[3] = mrq->buffer[13];
-    my_data.byte[2] = mrq->buffer[14];
-    my_data.byte[1] = mrq->buffer[15];
-    my_data.byte[0] = mrq->buffer[16];
+    if (float_invert == 1)
+    {
+        my_data.byte[3] = mrq->buffer[13];
+        my_data.byte[2] = mrq->buffer[14];
+        my_data.byte[1] = mrq->buffer[15];
+        my_data.byte[0] = mrq->buffer[16];
+    }
+    else
+    {
+        my_data.byte[1] = mrq->buffer[13];
+        my_data.byte[0] = mrq->buffer[14];
+        my_data.byte[3] = mrq->buffer[15];
+        my_data.byte[2] = mrq->buffer[16];
+    }
     char sVal[20];
     memset(sVal, 0, 20);
     redisContext *changeredis = redisConnect("127.0.0.1", 6379);
@@ -521,7 +545,8 @@ int fun05(modbus_request *mrq, char *resdata)
 {
     // 0c 50 00 00 00 06 01 05 00 00 ff 00
     //char *key = getKeyBySlavePoint(mrq);
-    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str, '4');
+    xml_map_key *xmk = findXMKByXmlMapKey(mrq->slave, mrq->reg_str, 1);
+
     if (xmk == NULL)
     {
         return send(mrq->conn, mrq->buffer, mrq->bufferlen, 0);

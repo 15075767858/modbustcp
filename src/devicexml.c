@@ -213,10 +213,10 @@ void initDeviceByXml()
             xmk->fun = av_map_reg;
             break;
         case '3':
-            xmk->fun = bv_map_reg;
+            xmk->fun = bi_map_reg;
             break;
         case '4':
-            xmk->fun = bv_map_reg;
+            xmk->fun = bo_map_reg;
             break;
         case '5':
             xmk->fun = bv_map_reg;

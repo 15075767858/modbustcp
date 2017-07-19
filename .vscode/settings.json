@@ -95,6 +95,17 @@
     "ecdsa.h": "c",
     "async.h": "c",
     "kmod.h": "c",
-    "mig.h": "c"
+    "mig.h": "c",
+    "thread_info.h": "c",
+    "vm_map.h": "c",
+    "vm_statistics.h": "c",
+    "evbuffer-internal.h": "c",
+    "xmlio.h": "c",
+    "b.h": "c",
+    "keyvalq_struct.h": "c",
+    "htmlparser.h": "c",
+    "task.h": "c",
+    "conf.h": "c",
+    "crypto.h": "c"
   }
 }
