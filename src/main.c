@@ -405,13 +405,16 @@ int fun01(modbus_request *mrq, char *resdata) //BO
 
         resdata[9 + count / 8] = byte1;
         //printf("i = %d %d\n",i,byte1);
-        
+
         count++;
     }
-    int resLen = 8 + resdata[8] + 2;
-    // if(count==1){
-    //     resLen+=1;
+
+    int resLen = 8 + resdata[8] + 1;
+    // if (count % 8 == 0)
+    // {
+    //     resLen += 1;
     // }
+
     return send(mrq->conn, resdata, resLen, 0);
 }
 int fun02(modbus_request *mrq, char *resdata) //BI
@@ -608,7 +611,7 @@ int readMessage(char *buffer, int len, int conn)
     {
         if (reg_num % 8 == 0)
         {
-            resdata[8] = reg_num / 8;
+            resdata[8] = reg_num / 8+1;
         }
         else
         {
