@@ -133,6 +133,30 @@ char *redisGetValue(redisContext *redis, char *key, char *property)
 }
 int changePriority(redisContext *redis, char *key, char *value, int priority)
 {
+    switch (key[4])
+    {
+    case '0':
+        priority = aipriority;
+        break;
+    case '1':
+        priority = aopriority;
+        break;
+    case '2':
+        priority = avpriority;
+        break;
+    case '3':
+        priority = bipriority;
+        break;
+    case '4':
+        priority = bopriority;
+        break;
+    case '5':
+        priority = bvpriority;
+        break;
+    default:
+        break;
+    }
+
     char *PriArray = redisGetValue(redis, key, "Priority_Array");
     char arrs[16][10] = {"NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"};
 
@@ -289,7 +313,7 @@ xml_map_key *findXMKByXmlMapKey(int slave, int point, char pointType)
     int i;
     for (i = 0; i < xmks.size; i++)
     {
-        if (xmks.xmks[i]->slave == slave & xmks.xmks[i]->point == point & xmks.xmks[i]->fun== pointType)
+        if (xmks.xmks[i]->slave == slave & xmks.xmks[i]->point == point & xmks.xmks[i]->fun == pointType)
         {
             return xmks.xmks[i];
         }

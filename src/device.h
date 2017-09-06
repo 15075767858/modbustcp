@@ -155,6 +155,14 @@ extern int aioffset;
 extern int aooffset;
 extern int dioffset;
 extern int dooffset;
+
+extern int aipriority;
+extern int aopriority;
+extern int avpriority;
+extern int bipriority;
+extern int bopriority;
+extern int bvpriority;
+
 xml_map_key *findXMKByXmlMapKey(int slave, int point, char pointType);
 
 extern int print;

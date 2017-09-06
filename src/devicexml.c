@@ -172,6 +172,19 @@ void initDeviceByXml()
     dooffset = atoi(mxmlGetText(node, 0));
     dooffset = ~dooffset + 1;
 
+    node = mxmlFindElement(tree, tree, "ai_priority", NULL, NULL, MXML_DESCEND);
+    aipriority = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "ao_priority", NULL, NULL, MXML_DESCEND);
+    aopriority = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "av_priority", NULL, NULL, MXML_DESCEND);
+    avpriority = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "bi_priority", NULL, NULL, MXML_DESCEND);
+    bipriority = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "bo_priority", NULL, NULL, MXML_DESCEND);
+    bopriority = atoi(mxmlGetText(node, 0));
+    node = mxmlFindElement(tree, tree, "bv_priority", NULL, NULL, MXML_DESCEND);
+    bvpriority = atoi(mxmlGetText(node, 0));
+
     int i = 0;
     //printf(" %lu ", sizeof(xml_map_key));
     for (node = mxmlFindElement(tree, tree,
